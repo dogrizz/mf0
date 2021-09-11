@@ -31,7 +31,6 @@ angular.module('mf0App', [])
             let mostSystemsPlayer = teamSetup.players[0];
             let leastSystemsPlayer = teamSetup.players[0];
             teamSetup.players.forEach(player => {
-                console.log("loopin")
                 player.score = 5;
                 player.role = "Offense";
                 if(player.mf > mostFramesPlayer.mf) {
@@ -48,13 +47,23 @@ angular.module('mf0App', [])
                 }
             })
 
+            teamSetup.players.forEach(player => {
+                player.totalScore = player.score * (player.mf + player.st)
+            });
+
             mostFramesPlayer.score = mostFramesPlayer.score - 1;
             mostSystemsPlayer.score = mostSystemsPlayer.score - 1;
             leastFramesPlayer.score = leastFramesPlayer.score + 1;
             leastSystemsPlayer.score = leastSystemsPlayer.score + 1;
 
-            
+            teamSetup.players.forEach(player => {
+                player.totalScore = player.score * (player.mf + player.st)
+            });
 
+            let players = [...teamSetup.players].sort((player1, player2) => {
+                return (player1.totalScore) - (player2.totalScore);
+            })
+            players[0].role = "Defender";
             persistToLocalStorage()
         }
 
