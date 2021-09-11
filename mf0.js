@@ -4,7 +4,6 @@ angular.module('mf0App', [])
         const LOCAL_STORAGE_KEY = "mf0-tools";
 
         teamSetup.$onInit = function () {
-            console.log("Init")
             let oldPlayers = localStorage.getItem(LOCAL_STORAGE_KEY);
             if(oldPlayers === null) {
                 teamSetup.players = getNewPlayersList();
@@ -26,6 +25,35 @@ angular.module('mf0App', [])
         }
 
         function recalculate() {
+            console.log("Recounting")
+            let mostFramesPlayer = teamSetup.players[0];
+            let leastFramesPlayer = teamSetup.players[0];
+            let mostSystemsPlayer = teamSetup.players[0];
+            let leastSystemsPlayer = teamSetup.players[0];
+            teamSetup.players.forEach(player => {
+                console.log("loopin")
+                player.score = 5;
+                player.role = "Offense";
+                if(player.mf > mostFramesPlayer.mf) {
+                    mostFramesPlayer = player;
+                }
+                if(player.mf < leastFramesPlayer.mf) {
+                    leastFramesPlayer = player;
+                }
+                if(player.systems > mostSystemsPlayer.systems) {
+                    mostSystemsPlayer = player;
+                }
+                if(player.systems < leastSystemsPlayer.systems) {
+                    leastSystemsPlayer = player
+                }
+            })
+
+            mostFramesPlayer.score = mostFramesPlayer.score - 1;
+            mostSystemsPlayer.score = mostSystemsPlayer.score - 1;
+            leastFramesPlayer.score = leastFramesPlayer.score + 1;
+            leastSystemsPlayer.score = leastSystemsPlayer.score + 1;
+
+            
 
             persistToLocalStorage()
         }

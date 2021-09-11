@@ -15,6 +15,7 @@
         <div>Mobile frame systems: <input type="number" name="mobile-frame-systems" ng-model="player.systems" ng-change="teamSetup.recalculate()"></div>
         <div>Stations: <input type="number" name="Mobile stations" ng-model="player.st" ng-change="teamSetup.recalculate()"></div>
         <div>Role: {{ player.role }}</div>
+        <div>Score: {{ player.score }}</div>
         <div><button ng-click="teamSetup.removePlayer(player)" style="margin-top: 10px;">Remove player</button></div>
       </div>
     </div>
