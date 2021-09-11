@@ -1,6 +1,51 @@
 angular.module('mf0App', [])
     .controller('TeamSetupController', function () {
-        
+        let teamSetup = this;
+        const LOCAL_STORAGE_KEY = "mf0-tools";
+        teamSetup.players = []
+
+        teamSetup.players = (function () {
+            let oldPlayers = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if(oldPlayers === null) {
+                return getNewPlayersList();
+            }
+            return JSON.parse(oldPlayers);
+        })();
+
+        function addPlayer() {
+            teamSetup.players.push({
+                uuid: getUUID(),
+                name: "",
+                mf: 0,
+                st: 0,
+                score: 5
+            })
+            recalculate()
+        }
+
+        function recalculate() {
+
+        }
+
+        function getNewPlayersList() {
+            teamSetup.players = [];
+            addPlayer();
+        }
+
+
+        function getUUID() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            )
+        }
+
+        function persistToLocalStorage() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(players));   
+        }
+
+        teamSetup.recalculate = recalculate;
+        teamSetup.addPlayer = addPlayer;
+
     })
     .controller('SumUpController', function () {
         let sumUp = this;

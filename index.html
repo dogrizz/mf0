@@ -2,12 +2,16 @@
 <html ng-app="mf0App">
 <head>
     <meta charset="UTF-8">
+    <title>MF0 Tools</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="mf0.js"></script>
 </head>
 <body>
-  <div ng-controller="TeamSetupController as tcs">
-
+  <div ng-controller="TeamSetupController as teamSetup">
+    <div ng-repeat="player in teamSetup.players track by player.uuid">
+      Player
+    </div>
+    <button ng-click="teamSetup.addPlayer()">Add player</button>
   </div>
 </body>
 </html>
