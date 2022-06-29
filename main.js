@@ -156,21 +156,85 @@
 			}
 		}
 
+		function dice(ship) {
+			var diceDescription = "2W"
+			if(ship.hasOwnProperty("class") && ship.class === "frigate"){
+				diceDescription+="1G"
+			}
+			if(ship.hasOwnProperty("systems")) {
+				var catapults = ship.systems.filter(function (system){
+					return system.class === "catapult"
+				}).length
+				if(catapults == 1){
+					diceDescription+="1K"
+				}
+				if(catapults == 2){
+					diceDescription+="3K"
+				}
+
+				var defence = ship.systems.filter(function (system){
+					return system.class === "defence"
+				}).length
+				if(defence) {
+					diceDescription=`${diceDescription}${defence}B`
+				}
+
+				var sensors = ship.systems.filter(function (system){
+					return system.class === "sensor"
+				}).length
+				if(sensors) {
+					diceDescription=`${diceDescription}${sensors}Y`
+				}
+
+				var attack = ship.systems.filter(function (system){
+					return system.class === "attack"
+				})
+				var attacks = {
+					"p": 0,
+					"a": 0,
+					"s": 0
+				}
+				attack.forEach(function (att){
+					if(att.hasOwnProperty("attackType2")){
+						attacks[att.attackType]+=1;
+						attacks[att.attackType2]+=1;
+					} else {
+						attacks[att.attackType]+=2;
+					}
+				})
+
+				var atts = Object.entries(attacks);
+				atts.forEach(function (att) {
+					var val = att[1]
+					if(val){
+						var dice = val <= 3 ? val : "2d8"
+						diceDescription=`${diceDescription}R${att[0]}${dice}`
+					}
+				})
+			}
+
+			return diceDescription;
+		}
 
 		return {
 			view: function(vnode) {
 				var ship = vnode.attrs.ship
 
 				return [
-						m("div", {style: "display: flex"},[
-							m("input", {value: ship.name, oninput: function (e) { changeName(ship, e.target.value); } }),
+						m("div", {style: "display: flex;flex-direction: column;"}, [
+							m("div",[
+								m("input", {value: ship.name, oninput: function (e) { changeName(ship, e.target.value); } }),
+								m("span", dice(ship))
+							]),
+							m("div", {style: "display: flex"}, [
 							m("select", {value: ship.class, oninput: function (e) { changeClass(ship, e.target.value); } }, [
 								m("option",{value: "capital"}, "Capital"),
 								m("option",{value: "frigate"}, "Frigate"),
 							]),
-							ship.hasOwnProperty("systems") ? ship.systems.map(function (system){
+							ship.hasOwnProperty("systems") ? ship.systems.map(function (system) {
 								return m(SystemComponent, {system: system})
 							}) : null
+							]),
 						]),
 						shipCatapults(ship).map(function(system) {
 								return m("div", "Mech company")
