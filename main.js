@@ -105,6 +105,7 @@
 				var system = vnode.attrs.system
 				return [
 							m("select", {value: system.class, oninput: function (e) { changeClass(system, e.target.value); } }, [
+								m("option",{value: ""}, ""),
 								m("option",{value: "attack"}, "Attack"),
 								m("option",{value: "defence"}, "Defence"),
 								m("option",{value: "sensor"}, "Sensors"),
@@ -168,7 +169,7 @@
 				if(catapults == 1){
 					diceDescription+="1K"
 				}
-				if(catapults == 2){
+				if(catapults > 1){
 					diceDescription+="3K"
 				}
 
@@ -220,31 +221,41 @@
 			view: function(vnode) {
 				var ship = vnode.attrs.ship
 
-				return [
-						m("div", {style: "display: flex;flex-direction: column;"}, [
+				return m("div", {style: "display: flex;flex-direction: column;"}, [
 							m("div",[
 								m("input", {value: ship.name, oninput: function (e) { changeName(ship, e.target.value); } }),
 								m("span", dice(ship))
 							]),
-							m("div", {style: "display: flex"}, [
-							m("select", {value: ship.class, oninput: function (e) { changeClass(ship, e.target.value); } }, [
-								m("option",{value: "capital"}, "Capital"),
-								m("option",{value: "frigate"}, "Frigate"),
-							]),
-							ship.hasOwnProperty("systems") ? ship.systems.map(function (system) {
-								return m(SystemComponent, {system: system})
-							}) : null
-							]),
-						]),
-						shipCatapults(ship).map(function(system) {
-								return m("div", "Mech company")
-						})
-				]
+							m("div", {style: "display: flex; width:900px"}, [
+								m("select", {value: ship.class, oninput: function (e) { changeClass(ship, e.target.value); } }, [
+									m("option",{value: "capital"}, "Capital"),
+									m("option",{value: "frigate"}, "Frigate"),
+								]),
+								ship.hasOwnProperty("systems") ? ship.systems.map(function (system) {
+									return m(SystemComponent, {system: system})
+								}) : null
+							]),							,
+							shipCatapults(ship).map(function(system) {
+									return m("div", "Mech company")
+							})
+						])
 			}
 		}
 	}
 
 	function FleetComponent () {
+
+		function remove(fleet, ship) {
+			var position = fleet.ships.find(function (other){
+				other == ship
+			}) 
+			fleet.ships.splice(position, 1)
+		}
+
+		function add(fleet) {
+			fleet.ships.push({})
+		}
+
 		return {	
 			oninit: function(vnode) {
 				var fleet = vnode.attrs.fleet;
@@ -260,8 +271,12 @@
 				return m("div",[
 							m("h3", fleet.name),
 							fleet.ships.map(function (ship){
-								return m(ShipComponent, {ship: ship})
-							})
+								return m("div",{style: "display: flex;margin-bottom: 10px"},[
+								   		m(ShipComponent, {ship: ship}),
+								   		m("button",{onclick: function(){remove(fleet, ship)}}, "Remove")
+							   		]);
+							}),
+							m("button",{onclick: function(){add(fleet)}}, "Add ship")
 						]
 					)
 			}
