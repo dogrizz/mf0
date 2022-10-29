@@ -13,7 +13,12 @@
 		players.forEach(function (player){
 			player.ppa = 5;
 		})
-			
+		if (syncShips) {
+			players.forEach(function (player){
+				player.tas = player.ships.length + countMechCompanies(player.ships);
+				player.systems = countSystems(player.ships)
+			})	
+		}	
 		var playersSorted = [...players].sort(function (a,b){
 			return b.tas - a.tas
 		});
@@ -40,6 +45,30 @@
 				player.ppa = player.ppa + 1;
 			}
 		})
+	}
+
+	function countMechCompanies(ships) {
+		var companies = 0;
+		ships.forEach(function (ship){
+			ship.systems.forEach(function (system) {
+				if(system.class === 'catapult'){
+					companies = companies + 1;
+				}
+			})
+		})
+		return companies;
+	}
+
+	function countSystems(ships) {
+		var systems = 0;
+		ships.forEach(function (ship){
+			ship.systems.forEach(function (system) {
+				if(system.class != null && system.class !== ''){
+					systems = systems + 1;
+				}
+			})
+		})
+		return systems;
 	}
 
 	function PlayerComponent () {
@@ -83,6 +112,10 @@
 
 		function changeClass(system, newClass) {
 			system.class = newClass;
+			calculatePPA()
+			if(system.class === "attack") {
+				changeAttackType(system, "p")
+			}
 		}
 
 		function changeAttackType(system, newType) {
@@ -208,7 +241,7 @@
 				atts.forEach(function (att) {
 					var val = att[1]
 					if(val){
-						var dice = val <= 3 ? val : "2d8"
+						var dice = val <= 3 ? val : "2+d8"
 						diceDescription=`${diceDescription}R${att[0]}${dice}`
 					}
 				})
@@ -218,6 +251,10 @@
 		}
 
 		return {
+			oninit: function(vnode) {
+				var ship = vnode.attrs.ship;
+				changeClass(ship, "frigate")
+			},
 			view: function(vnode) {
 				var ship = vnode.attrs.ship
 
@@ -246,22 +283,22 @@
 	function FleetComponent () {
 
 		function remove(fleet, ship) {
-			var position = fleet.ships.find(function (other){
-				other == ship
-			}) 
+			var position = fleet.ships.indexOf(ship)
 			fleet.ships.splice(position, 1)
+			calculatePPA()
 		}
 
 		function add(fleet) {
 			fleet.ships.push({})
+			calculatePPA()
 		}
 
 		return {	
 			oninit: function(vnode) {
 				var fleet = vnode.attrs.fleet;
-				if(!fleet.hasOwnProperty("ships")){
+				if(!fleet.hasOwnProperty("ships")) {
 					fleet.ships = []
-					for (var i=0;i<fleet.tas;i++){
+					for (var i=0; i<fleet.tas; i++) {
 						fleet.ships.push({})
 					}
 				}
@@ -273,10 +310,10 @@
 							fleet.ships.map(function (ship){
 								return m("div",{style: "display: flex;margin-bottom: 10px"},[
 								   		m(ShipComponent, {ship: ship}),
-								   		m("button",{onclick: function(){remove(fleet, ship)}}, "Remove")
+								   		m("button",{onclick: function() { remove(fleet, ship) }}, "Remove")
 							   		]);
 							}),
-							m("button",{onclick: function(){add(fleet)}}, "Add ship")
+							m("button",{onclick: function() { add(fleet) }}, "Add ship")
 						]
 					)
 			}
@@ -286,17 +323,18 @@
 	function ShipTrackerComponent () {
 
 		function setShips (newSyncShips) {
-				syncShips = newSyncShips;
+			syncShips = newSyncShips;
+			calculatePPA()
 		}	
 
 		return {	
 			view: function() {
 				return m("div",[
 							m("h2", "Fleet builder"),
-			            	// "Sync PPA calculations with ship builder",
-			            	// m("input", {
-			             //    	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", value: syncShips
-			           		// }), 
+			            	"Sync PPA calculations with ship builder",
+			            	 m("input", {
+			                 	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", value: syncShips
+			           		 }), 
 			           		players.map(function (player){
 			           			return m(FleetComponent, {fleet: player})
 			           		})
@@ -347,8 +385,7 @@
 			           	]),
 			           	trackShips ?
 			           		m(ShipTrackerComponent) : null
-	           		]),
-	           	m("button", {onclick: function() {console.log(players)}}, "Debug")		 
+	           		]) 
 	        ])
 	    }
 	}
