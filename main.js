@@ -507,13 +507,7 @@
             return m(PlayerComponent, { player: player })
           }),
         ]),
-        m(
-          'button',
-          {
-            onclick: add,
-          },
-          'Add player',
-        ),
+        m('button', { onclick: add }, 'Add player'),
         m('div', { style: 'display: flex;flex-direction: column;' }, [
           m('span', [
             'Track ships',
