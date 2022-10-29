@@ -8,6 +8,7 @@
     	"capital": 4,
     	"frigate": 3
     }
+	const LOCAL_STORAGE_KEY = "mf0-tools";
 
 	function calculatePPA() {
 		players.forEach(function (player){
@@ -45,6 +46,7 @@
 				player.ppa = player.ppa + 1;
 			}
 		})
+		localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ players: players, track: trackShips, sync: syncShips }));
 	}
 
 	function countMechCompanies(ships) {
@@ -91,11 +93,20 @@
 			calculatePPA()
 		}
 
+		function remove(player) {
+			var position = players.indexOf(player)
+			players.splice(position, 1)
+			calculatePPA()
+		}
+
 		return {	
 			view: function(vnode) {
 				var player = vnode.attrs.player;
 				return m("div", {style: "display: flex; flex-direction: column; margin-left: 5px;"},
-						m("input", {value: player.name ,oninput: function (e) { changeName(player, e.target.value); } }),
+						m("div", {style: "flex-drection: row;"},
+							m("input", {value: player.name, oninput: function (e) { changeName(player, e.target.value); } }),
+							m("button", { onclick: function () {remove(player)} }, "x" )
+						),
 						m("input", {type: "number", min: 0, value: player.hva, oninput: function (e) { changeHva(player, e.target.value); } }),
 						m("input", {type: "number", min: 0, disabled: syncShips, value: player.tas, oninput: function (e) { changeTas(player, e.target.value); } }),
 						m("input", {type: "number", min: 0, disabled: syncShips, value: player.systems, oninput: function (e) { changeSystems(player, e.target.value); } }),
@@ -289,7 +300,7 @@
 		}
 
 		function add(fleet) {
-			fleet.ships.push({})
+			fleet.ships.push({systems: []})
 			calculatePPA()
 		}
 
@@ -333,7 +344,7 @@
 							m("h2", "Fleet builder"),
 			            	"Sync PPA calculations with ship builder",
 			            	 m("input", {
-			                 	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", value: syncShips
+			                 	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", checked: syncShips
 			           		 }), 
 			           		players.map(function (player){
 			           			return m(FleetComponent, {fleet: player})
@@ -344,10 +355,20 @@
 	}
 
 	var main = {
+		oninit: function() {
+			let oldData = localStorage.getItem(LOCAL_STORAGE_KEY);
+	        if(oldData !== null) {
+	        	data = JSON.parse(oldData);
+	        	players = data.players;
+	        	syncShips = data.sync;
+	        	trackShips = data.track;
+	        	m.redraw()
+	        }
+		},
 	    view: function() {
 
     		function add () {
-				players.push({name: "Player", hva: 2, tas: 5, systems:10, ppa: 5});
+				players.push({name: "Player", hva: 2, tas: 5, systems:10, ppa: 5, ships:[]});
 				calculatePPA();
 			}
 
@@ -380,7 +401,7 @@
 			            m("span",[
 			            	"Track ships",
 			            	m("input", {
-			                	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", value: trackShips
+			                	onclick: function (e) {setShips(e.target.checked)}, type: "checkbox", checked: trackShips
 			           		}), 
 			           	]),
 			           	trackShips ?
