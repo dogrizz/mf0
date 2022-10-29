@@ -335,6 +335,12 @@
       return diceDescription
     }
 
+    function remove(fleet, ship) {
+      var position = fleet.ships.indexOf(ship)
+      fleet.ships.splice(position, 1)
+      calculatePPA()
+    }
+
     return {
       oninit: function (vnode) {
         var ship = vnode.attrs.ship
@@ -342,6 +348,7 @@
       },
       view: function (vnode) {
         var ship = vnode.attrs.ship
+        var fleet = vnode.attrs.fleet
 
         return m('div', { style: 'display: flex;flex-direction: column;' }, [
           m('div', [
@@ -351,6 +358,16 @@
                 changeName(ship, e.target.value)
               },
             }),
+            m(
+              'button',
+              {
+                onclick: function () {
+                  remove(fleet, ship)
+                },
+                style: 'margin: 0px 10px 0px 5px',
+              },
+              'x',
+            ),
             m('span', dice(ship)),
           ]),
           m('div', { style: 'display: flex; width:900px' }, [
@@ -380,12 +397,6 @@
   }
 
   function FleetComponent() {
-    function remove(fleet, ship) {
-      var position = fleet.ships.indexOf(ship)
-      fleet.ships.splice(position, 1)
-      calculatePPA()
-    }
-
     function add(fleet) {
       fleet.ships.push({ systems: [] })
       calculatePPA()
@@ -406,18 +417,7 @@
         return m('div', [
           m('h3', fleet.name),
           fleet.ships.map(function (ship) {
-            return m('div', { style: 'display: flex;margin-bottom: 10px' }, [
-              m(ShipComponent, { ship: ship }),
-              m(
-                'button',
-                {
-                  onclick: function () {
-                    remove(fleet, ship)
-                  },
-                },
-                'Remove',
-              ),
-            ])
+            return m('div', { style: 'margin-bottom: 10px' }, [m(ShipComponent, { ship: ship, fleet: fleet })])
           }),
           m(
             'button',
