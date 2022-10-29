@@ -46,10 +46,7 @@
         player.ppa = player.ppa + 1
       }
     })
-    localStorage.setItem(
-      LOCAL_STORAGE_KEY,
-      JSON.stringify({ players: players, track: trackShips, sync: syncShips }),
-    )
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ players: players, track: trackShips, sync: syncShips }))
   }
 
   function countMechCompanies(ships) {
@@ -271,9 +268,7 @@
       if (ship.class !== newClass) {
         ship.class = newClass
         ship.systems = []
-        var systems = MAX_SYSTEMS.hasOwnProperty(newClass)
-          ? MAX_SYSTEMS[newClass]
-          : 0
+        var systems = MAX_SYSTEMS.hasOwnProperty(newClass) ? MAX_SYSTEMS[newClass] : 0
         for (var i = 0; i < systems; i++) {
           ship.systems.push({ class: '' })
         }
@@ -367,10 +362,7 @@
                   changeClass(ship, e.target.value)
                 },
               },
-              [
-                m('option', { value: 'capital' }, 'Capital'),
-                m('option', { value: 'frigate' }, 'Frigate'),
-              ],
+              [m('option', { value: 'capital' }, 'Capital'), m('option', { value: 'frigate' }, 'Frigate')],
             ),
             ship.hasOwnProperty('systems')
               ? ship.systems.map(function (system) {
@@ -502,8 +494,7 @@
           m(
             'div',
             {
-              style:
-                'display: flex; flex-direction: column; justify-content: space-between;size: 100%;margin-right: 5px;',
+              style: 'display: flex; flex-direction: column; justify-content: space-between;size: 100%;margin-right: 5px;',
             },
             m('span', 'Fleet id'),
             m('span', 'HVA'),
