@@ -20,6 +20,23 @@
       </div>
     </div>
     <button ng-click="teamSetup.addPlayer()" style="margin-top: 10px;">Add player</button>
+    <div style="display:flex; flex-direction: column;">
+      <div style="flex-direction: row;">
+        <input type="checkbox" ng-model="teamSetup.showShips" name='ships'>
+        <label for='ships'>Track ships</label>
+      </div>
+      <div ng-repeat="fleet in teamSetup.players track by fleet.uuid" ng-if="teamSetup.showShips">
+        <h4>{{ fleet.name }}</h4>
+        <div ng-repeat="ship in fleet.ships track by ship.uuid" style="display: flex; flex-direction: row;">
+          <label for='type'>Type:</label>
+          <select  name="type">
+            <option value="capital">Capital</option>
+            <option value="frigate">Frigate</option>
+          </select>
+        </div>
+        <button ng-click="teamSetup.addShip(fleet)">Add ship</button>
+      </div>
+    <div>
   </div>
 </body>
 </html>

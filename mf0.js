@@ -9,6 +9,7 @@ angular.module('mf0App', [])
                 teamSetup.players = getNewPlayersList();
             }
             teamSetup.players = JSON.parse(oldPlayers);
+            teamSetup.showShips = false
         }
 
         function addPlayer() {
@@ -19,7 +20,8 @@ angular.module('mf0App', [])
                 systems: 16,
                 st: 3,
                 score: 5,
-                role: "Offense"
+                role: "Offense",
+                ships: []
             })
             recalculate()
         }
@@ -73,7 +75,6 @@ angular.module('mf0App', [])
             addPlayer();
         }
 
-
         function getUUID() {
             return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -89,9 +90,18 @@ angular.module('mf0App', [])
             persistToLocalStorage();
         }
 
+        function addShip(player) {
+            console.log("Add ship")
+            player.ships.push({
+                uuid: getUUID(),
+                type: "capital",
+                systems: []
+            })
+        }
+
         teamSetup.recalculate = recalculate;
         teamSetup.addPlayer = addPlayer;
         teamSetup.removePlayer = removePlayer;
-
+        teamSetup.addShip = addShip;
     });
 
