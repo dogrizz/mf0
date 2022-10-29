@@ -1,109 +1,109 @@
-(function () {
-  var root = document.body;
+;(function () {
+  var root = document.body
 
-  var players = [];
-  var trackShips = false;
-  var syncShips = false;
+  var players = []
+  var trackShips = false
+  var syncShips = false
   var MAX_SYSTEMS = {
     capital: 4,
     frigate: 3,
-  };
-  const LOCAL_STORAGE_KEY = 'mf0-tools';
+  }
+  const LOCAL_STORAGE_KEY = 'mf0-tools'
 
   function calculatePPA() {
     players.forEach(function (player) {
-      player.ppa = 5;
-    });
+      player.ppa = 5
+    })
     if (syncShips) {
       players.forEach(function (player) {
-        player.tas = player.ships.length + countMechCompanies(player.ships);
-        player.systems = countSystems(player.ships);
-      });
+        player.tas = player.ships.length + countMechCompanies(player.ships)
+        player.systems = countSystems(player.ships)
+      })
     }
     var playersSorted = [...players].sort(function (a, b) {
-      return b.tas - a.tas;
-    });
-    var maxTas = parseInt(playersSorted[0].tas);
-    var minTas = parseInt(playersSorted[playersSorted.length - 1].tas);
+      return b.tas - a.tas
+    })
+    var maxTas = parseInt(playersSorted[0].tas)
+    var minTas = parseInt(playersSorted[playersSorted.length - 1].tas)
 
     playersSorted.sort(function (a, b) {
-      return b.systems - a.systems;
-    });
-    var maxSystems = parseInt(playersSorted[0].systems);
-    var minSystems = parseInt(playersSorted[playersSorted.length - 1].systems);
+      return b.systems - a.systems
+    })
+    var maxSystems = parseInt(playersSorted[0].systems)
+    var minSystems = parseInt(playersSorted[playersSorted.length - 1].systems)
 
     players.forEach(function (player) {
       if (parseInt(player.tas) == maxTas) {
-        player.ppa = player.ppa - 1;
+        player.ppa = player.ppa - 1
       }
       if (parseInt(player.tas) == minTas) {
-        player.ppa = player.ppa + 1;
+        player.ppa = player.ppa + 1
       }
       if (parseInt(player.systems) == maxSystems) {
-        player.ppa = player.ppa - 1;
+        player.ppa = player.ppa - 1
       }
       if (parseInt(player.systems) == minSystems) {
-        player.ppa = player.ppa + 1;
+        player.ppa = player.ppa + 1
       }
-    });
+    })
     localStorage.setItem(
       LOCAL_STORAGE_KEY,
       JSON.stringify({ players: players, track: trackShips, sync: syncShips }),
-    );
+    )
   }
 
   function countMechCompanies(ships) {
-    var companies = 0;
+    var companies = 0
     ships.forEach(function (ship) {
       ship.systems.forEach(function (system) {
         if (system.class === 'catapult') {
-          companies = companies + 1;
+          companies = companies + 1
         }
-      });
-    });
-    return companies;
+      })
+    })
+    return companies
   }
 
   function countSystems(ships) {
-    var systems = 0;
+    var systems = 0
     ships.forEach(function (ship) {
       ship.systems.forEach(function (system) {
         if (system.class != null && system.class !== '') {
-          systems = systems + 1;
+          systems = systems + 1
         }
-      });
-    });
-    return systems;
+      })
+    })
+    return systems
   }
 
   function PlayerComponent() {
     function changeName(player, newName) {
-      player.name = newName;
+      player.name = newName
     }
     function changeHva(player, newHva) {
-      player.hva = parseInt(newHva);
-      calculatePPA();
+      player.hva = parseInt(newHva)
+      calculatePPA()
     }
 
     function changeTas(player, newTas) {
-      player.tas = parseInt(newTas);
-      calculatePPA();
+      player.tas = parseInt(newTas)
+      calculatePPA()
     }
 
     function changeSystems(player, newSystems) {
-      player.systems = parseInt(newSystems);
-      calculatePPA();
+      player.systems = parseInt(newSystems)
+      calculatePPA()
     }
 
     function remove(player) {
-      var position = players.indexOf(player);
-      players.splice(position, 1);
-      calculatePPA();
+      var position = players.indexOf(player)
+      players.splice(position, 1)
+      calculatePPA()
     }
 
     return {
       view: function (vnode) {
-        var player = vnode.attrs.player;
+        var player = vnode.attrs.player
         return m(
           'div',
           { style: 'display: flex; flex-direction: column; margin-left: 5px;' },
@@ -113,14 +113,14 @@
             m('input', {
               value: player.name,
               oninput: function (e) {
-                changeName(player, e.target.value);
+                changeName(player, e.target.value)
               },
             }),
             m(
               'button',
               {
                 onclick: function () {
-                  remove(player);
+                  remove(player)
                 },
               },
               'x',
@@ -131,7 +131,7 @@
             min: 0,
             value: player.hva,
             oninput: function (e) {
-              changeHva(player, e.target.value);
+              changeHva(player, e.target.value)
             },
           }),
           m('input', {
@@ -140,7 +140,7 @@
             disabled: syncShips,
             value: player.tas,
             oninput: function (e) {
-              changeTas(player, e.target.value);
+              changeTas(player, e.target.value)
             },
           }),
           m('input', {
@@ -149,52 +149,52 @@
             disabled: syncShips,
             value: player.systems,
             oninput: function (e) {
-              changeSystems(player, e.target.value);
+              changeSystems(player, e.target.value)
             },
           }),
           m('span', player.ppa),
           m('span', player.ppa * (player.hva + player.tas)),
-        );
+        )
       },
-    };
+    }
   }
 
   function SystemComponent() {
-    var secondSystem = false;
+    var secondSystem = false
 
     function changeClass(system, newClass) {
-      system.class = newClass;
-      calculatePPA();
+      system.class = newClass
+      calculatePPA()
       if (system.class === 'attack') {
-        changeAttackType(system, 'p');
+        changeAttackType(system, 'p')
       }
     }
 
     function changeAttackType(system, newType) {
-      system.attackType = newType;
+      system.attackType = newType
     }
 
     function changeAttackType2(system, newType) {
-      system.attackType2 = newType;
+      system.attackType2 = newType
     }
 
     function flipSecondSystem(system) {
-      secondSystem = !secondSystem;
+      secondSystem = !secondSystem
       if (!secondSystem) {
-        delete system.attackType2;
+        delete system.attackType2
       }
     }
 
     return {
       view: function (vnode) {
-        var system = vnode.attrs.system;
+        var system = vnode.attrs.system
         return [
           m(
             'select',
             {
               value: system.class,
               oninput: function (e) {
-                changeClass(system, e.target.value);
+                changeClass(system, e.target.value)
               },
             },
             [
@@ -212,7 +212,7 @@
                   {
                     value: system.attackType,
                     oninput: function (e) {
-                      changeAttackType(system, e.target.value);
+                      changeAttackType(system, e.target.value)
                     },
                   },
                   [
@@ -227,7 +227,7 @@
                       {
                         value: system.attackType2,
                         oninput: function (e) {
-                          changeAttackType2(system, e.target.value);
+                          changeAttackType2(system, e.target.value)
                         },
                       },
                       [
@@ -241,119 +241,119 @@
                   'button',
                   {
                     onclick: function () {
-                      flipSecondSystem(system);
+                      flipSecondSystem(system)
                     },
                   },
                   secondSystem ? '-' : '+',
                 ),
               ]
             : null,
-        ];
+        ]
       },
-    };
+    }
   }
 
   function ShipComponent() {
     function changeName(ship, newName) {
-      ship.name = newName;
+      ship.name = newName
     }
 
     function shipCatapults(ship) {
       if (ship.hasOwnProperty('systems')) {
         return ship.systems.filter(function (system) {
-          return system.class === 'catapult';
-        });
+          return system.class === 'catapult'
+        })
       }
-      return [];
+      return []
     }
 
     function changeClass(ship, newClass) {
       if (ship.class !== newClass) {
-        ship.class = newClass;
-        ship.systems = [];
+        ship.class = newClass
+        ship.systems = []
         var systems = MAX_SYSTEMS.hasOwnProperty(newClass)
           ? MAX_SYSTEMS[newClass]
-          : 0;
+          : 0
         for (var i = 0; i < systems; i++) {
-          ship.systems.push({ class: '' });
+          ship.systems.push({ class: '' })
         }
       }
     }
 
     function dice(ship) {
-      var diceDescription = '2W';
+      var diceDescription = '2W'
       if (ship.hasOwnProperty('class') && ship.class === 'frigate') {
-        diceDescription += '1G';
+        diceDescription += '1G'
       }
       if (ship.hasOwnProperty('systems')) {
         var catapults = ship.systems.filter(function (system) {
-          return system.class === 'catapult';
-        }).length;
+          return system.class === 'catapult'
+        }).length
         if (catapults == 1) {
-          diceDescription += '1K';
+          diceDescription += '1K'
         }
         if (catapults > 1) {
-          diceDescription += '3K';
+          diceDescription += '3K'
         }
 
         var defence = ship.systems.filter(function (system) {
-          return system.class === 'defence';
-        }).length;
+          return system.class === 'defence'
+        }).length
         if (defence) {
-          diceDescription = `${diceDescription}${defence}B`;
+          diceDescription = `${diceDescription}${defence}B`
         }
 
         var sensors = ship.systems.filter(function (system) {
-          return system.class === 'sensor';
-        }).length;
+          return system.class === 'sensor'
+        }).length
         if (sensors) {
-          diceDescription = `${diceDescription}${sensors}Y`;
+          diceDescription = `${diceDescription}${sensors}Y`
         }
 
         var attack = ship.systems.filter(function (system) {
-          return system.class === 'attack';
-        });
+          return system.class === 'attack'
+        })
         var attacks = {
           p: 0,
           a: 0,
           s: 0,
-        };
+        }
         attack.forEach(function (att) {
           if (att.hasOwnProperty('attackType2')) {
-            attacks[att.attackType] += 1;
-            attacks[att.attackType2] += 1;
+            attacks[att.attackType] += 1
+            attacks[att.attackType2] += 1
           } else {
-            attacks[att.attackType] += 2;
+            attacks[att.attackType] += 2
           }
-        });
+        })
 
-        var atts = Object.entries(attacks);
+        var atts = Object.entries(attacks)
         atts.forEach(function (att) {
-          var val = att[1];
+          var val = att[1]
           if (val) {
-            var dice = val <= 3 ? val : '2+d8';
-            diceDescription = `${diceDescription}R${att[0]}${dice}`;
+            var dice = val <= 3 ? val : '2+d8'
+            diceDescription = `${diceDescription}R${att[0]}${dice}`
           }
-        });
+        })
       }
 
-      return diceDescription;
+      return diceDescription
     }
 
     return {
       oninit: function (vnode) {
-        var ship = vnode.attrs.ship;
-        changeClass(ship, 'frigate');
+        var ship = vnode.attrs.ship
+        changeClass(ship, 'frigate')
       },
       view: function (vnode) {
-        var ship = vnode.attrs.ship;
+        var ship = vnode.attrs.ship
 
         return m('div', { style: 'display: flex;flex-direction: column;' }, [
           m('div', [
             m('input', {
               value: ship.name,
               oninput: function (e) {
-                changeName(ship, e.target.value);
+                changeName(ship, e.target.value)
               },
             }),
             m('span', dice(ship)),
@@ -364,7 +364,7 @@
               {
                 value: ship.class,
                 oninput: function (e) {
-                  changeClass(ship, e.target.value);
+                  changeClass(ship, e.target.value)
                 },
               },
               [
@@ -374,43 +374,43 @@
             ),
             ship.hasOwnProperty('systems')
               ? ship.systems.map(function (system) {
-                  return m(SystemComponent, { system: system });
+                  return m(SystemComponent, { system: system })
                 })
               : null,
           ]),
           ,
           shipCatapults(ship).map(function (system) {
-            return m('div', 'Mech company');
+            return m('div', 'Mech company')
           }),
-        ]);
+        ])
       },
-    };
+    }
   }
 
   function FleetComponent() {
     function remove(fleet, ship) {
-      var position = fleet.ships.indexOf(ship);
-      fleet.ships.splice(position, 1);
-      calculatePPA();
+      var position = fleet.ships.indexOf(ship)
+      fleet.ships.splice(position, 1)
+      calculatePPA()
     }
 
     function add(fleet) {
-      fleet.ships.push({ systems: [] });
-      calculatePPA();
+      fleet.ships.push({ systems: [] })
+      calculatePPA()
     }
 
     return {
       oninit: function (vnode) {
-        var fleet = vnode.attrs.fleet;
+        var fleet = vnode.attrs.fleet
         if (!fleet.hasOwnProperty('ships')) {
-          fleet.ships = [];
+          fleet.ships = []
           for (var i = 0; i < fleet.tas; i++) {
-            fleet.ships.push({});
+            fleet.ships.push({})
           }
         }
       },
       view: function (vnode) {
-        var fleet = vnode.attrs.fleet;
+        var fleet = vnode.attrs.fleet
         return m('div', [
           m('h3', fleet.name),
           fleet.ships.map(function (ship) {
@@ -420,31 +420,31 @@
                 'button',
                 {
                   onclick: function () {
-                    remove(fleet, ship);
+                    remove(fleet, ship)
                   },
                 },
                 'Remove',
               ),
-            ]);
+            ])
           }),
           m(
             'button',
             {
               onclick: function () {
-                add(fleet);
+                add(fleet)
               },
             },
             'Add ship',
           ),
-        ]);
+        ])
       },
-    };
+    }
   }
 
   function ShipTrackerComponent() {
     function setShips(newSyncShips) {
-      syncShips = newSyncShips;
-      calculatePPA();
+      syncShips = newSyncShips
+      calculatePPA()
     }
 
     return {
@@ -454,28 +454,28 @@
           'Sync PPA calculations with ship builder',
           m('input', {
             onclick: function (e) {
-              setShips(e.target.checked);
+              setShips(e.target.checked)
             },
             type: 'checkbox',
             checked: syncShips,
           }),
           players.map(function (player) {
-            return m(FleetComponent, { fleet: player });
+            return m(FleetComponent, { fleet: player })
           }),
-        ]);
+        ])
       },
-    };
+    }
   }
 
   var main = {
     oninit: function () {
-      let oldData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      let oldData = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (oldData !== null) {
-        data = JSON.parse(oldData);
-        players = data.players;
-        syncShips = data.sync;
-        trackShips = data.track;
-        m.redraw();
+        data = JSON.parse(oldData)
+        players = data.players
+        syncShips = data.sync
+        trackShips = data.track
+        m.redraw()
       }
     },
     view: function () {
@@ -487,12 +487,12 @@
           systems: 10,
           ppa: 5,
           ships: [],
-        });
-        calculatePPA();
+        })
+        calculatePPA()
       }
 
       function setShips(newTrackShips) {
-        trackShips = newTrackShips;
+        trackShips = newTrackShips
       }
 
       return m('main', [
@@ -513,7 +513,7 @@
             m('span', 'Total'),
           ),
           players.map(function (player) {
-            return m(PlayerComponent, { player: player });
+            return m(PlayerComponent, { player: player })
           }),
         ]),
         m(
@@ -528,7 +528,7 @@
             'Track ships',
             m('input', {
               onclick: function (e) {
-                setShips(e.target.checked);
+                setShips(e.target.checked)
               },
               type: 'checkbox',
               checked: trackShips,
@@ -536,9 +536,9 @@
           ]),
           trackShips ? m(ShipTrackerComponent) : null,
         ]),
-      ]);
+      ])
     },
-  };
+  }
 
-  m.mount(root, main);
-})();
+  m.mount(root, main)
+})()
