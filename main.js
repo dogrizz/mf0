@@ -46,6 +46,10 @@
         player.ppa = player.ppa + 1
       }
     })
+    saveState()
+  }
+
+  function saveState() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ players: players, track: trackShips, sync: syncShips }))
   }
 
@@ -78,18 +82,20 @@
 
     function changeClass(system, newClass) {
       system.class = newClass
-      calculatePPA()
       if (system.class === 'attack') {
         changeAttackType(system, 'p')
       }
+      calculatePPA()
     }
 
     function changeAttackType(system, newType) {
       system.attackType = newType
+      saveState()
     }
 
     function changeAttackType2(system, newType) {
       system.attackType2 = newType
+      saveState()
     }
 
     function flipSecondSystem(system) {
@@ -97,11 +103,17 @@
       if (!secondSystem) {
         delete system.attackType2
       }
+      saveState()
     }
 
     return {
       view: function (vnode) {
         var system = vnode.attrs.system
+        var weapons = [
+          m('option', { value: 'p' }, 'Point defence'),
+          m('option', { value: 'a' }, 'Assault'),
+          m('option', { value: 's' }, 'Support'),
+        ]
         return [
           m(
             'select',
@@ -129,11 +141,7 @@
                       changeAttackType(system, e.target.value)
                     },
                   },
-                  [
-                    m('option', { value: 'p' }, 'Point defence'),
-                    m('option', { value: 'a' }, 'Assault'),
-                    m('option', { value: 's' }, 'Support'),
-                  ],
+                  weapons,
                 ),
                 secondSystem
                   ? m(
@@ -144,11 +152,7 @@
                           changeAttackType2(system, e.target.value)
                         },
                       },
-                      [
-                        m('option', { value: 'p' }, 'Point defence'),
-                        m('option', { value: 'a' }, 'Assault'),
-                        m('option', { value: 's' }, 'Support'),
-                      ],
+                      weapons,
                     )
                   : null,
                 m(
@@ -167,11 +171,7 @@
     }
   }
 
-  function ShipComponent() {
-    function changeName(ship, newName) {
-      ship.name = newName
-    }
-
+  function MechCompanies() {
     function shipCatapults(ship) {
       if (ship.hasOwnProperty('systems')) {
         return ship.systems.filter(function (system) {
@@ -179,6 +179,52 @@
         })
       }
       return []
+    }
+
+    function setAce(hasAce, ship, fleet) {
+      ship.hasAce = hasAce
+      fleet.aceSelected = hasAce
+      saveState()
+    }
+
+    return {
+      view: function (vnode) {
+        var ship = vnode.attrs.ship
+        var fleet = vnode.attrs.fleet
+        var catapults = shipCatapults(ship)
+
+        return [
+          catapults.length > 0
+            ? m('div', { class: 'row', style: 'gap: 10px' }, [
+                m(
+                  'div',
+                  { class: 'column' },
+                  catapults.map(function (system) {
+                    return m('div', 'Mech company')
+                  }),
+                ),
+                m(
+                  'label',
+                  'Has ace',
+                  m('input', {
+                    type: 'checkbox',
+                    disabled: fleet.aceSelected && !ship.hasAce,
+                    checked: ship.hasAce,
+                    onclick: function (e) {
+                      setAce(e.target.checked, ship, fleet)
+                    },
+                  }),
+                ),
+              ])
+            : null,
+        ]
+      },
+    }
+  }
+
+  function ShipComponent() {
+    function changeName(ship, newName) {
+      ship.name = newName
     }
 
     function changeClass(ship, newClass) {
@@ -189,6 +235,7 @@
         for (var i = 0; i < systems; i++) {
           ship.systems.push({ class: '' })
         }
+        saveState()
       }
     }
 
@@ -267,7 +314,7 @@
         var ship = vnode.attrs.ship
         var fleet = vnode.attrs.fleet
 
-        return m('div', { style: 'display: flex;flex-direction: column;' }, [
+        return m('div', { class: 'column' }, [
           m('div', [
             m('input', {
               value: ship.name,
@@ -287,7 +334,7 @@
             ),
             m('span', dice(ship)),
           ]),
-          m('div', { style: 'display: flex; width:100%' }, [
+          m('div', { class: 'row' }, [
             m(
               'select',
               {
@@ -304,10 +351,7 @@
                 })
               : null,
           ]),
-          ,
-          shipCatapults(ship).map(function (system) {
-            return m('div', 'Mech company')
-          }),
+          m(MechCompanies, { ship: ship, fleet: fleet }),
         ])
       },
     }
@@ -358,7 +402,7 @@
 
     return {
       view: function () {
-        return m('div', {style: 'padding: 0 18px;'},[
+        return m('div', { style: 'padding: 0 18px;' }, [
           m(
             'label',
             'Sync PPA calculations with ship builder',
@@ -408,10 +452,11 @@
         var player = vnode.attrs.player
         return m(
           'div',
-          { style: 'display: flex; flex-direction: column; justify-content: space-between; margin-left: 5px;' },
+
+          { class: 'column-justified' },
           m(
             'div',
-            { style: 'flex-drection: row;' },
+            { class: 'row' },
             m('input', {
               value: player.name,
               oninput: function (e) {
@@ -489,14 +534,12 @@
         trackShips = newTrackShips
       }
 
-      return m('main', { style: 'margin: auto; width: 900px' }, [
-        m('h1', 'MF0 Intercept Orbit Points per asset calculator'),
-        m('div', { style: 'display: flex;' }, [
+      return m('main', { class: 'main' }, [
+        m('h1', 'MF0 Intercept Orbit points per asset calculator'),
+        m('div', { class: 'row' }, [
           m(
             'div',
-            {
-              style: 'display: flex; flex-direction: column; justify-content: space-between;size: 100%;margin-right: 5px;',
-            },
+            { class: 'column-justified' },
             m('span', 'Fleet id'),
             m('span', 'HVA'),
             m('span', 'TAS'),
@@ -512,11 +555,13 @@
         m(
           'div',
           {
-            style: 'display: flex;flex-direction: column;margin-top: 10px',
+            class: 'column',
+            style: 'margin-top: 10px',
           },
           [
             m(
-              'button',{
+              'button',
+              {
                 class: 'accordion ' + (trackShips ? 'active' : ''),
                 onclick: function (e) {
                   setShips(!trackShips)
