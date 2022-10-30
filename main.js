@@ -405,6 +405,7 @@
         return m('div', { style: 'padding: 0 18px;' }, [
           m(
             'label',
+            { style: 'float: right;margin-top: 5px' },
             'Sync PPA calculations with ship builder',
             m('input', {
               onclick: function (e) {
@@ -532,6 +533,9 @@
 
       function setShips(newTrackShips) {
         trackShips = newTrackShips
+        if (!trackShips) {
+          syncShips = false
+        }
       }
 
       return m('main', { class: 'main' }, [
