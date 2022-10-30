@@ -73,89 +73,6 @@
     return systems
   }
 
-  function PlayerComponent() {
-    function changeName(player, newName) {
-      player.name = newName
-    }
-    function changeHva(player, newHva) {
-      player.hva = parseInt(newHva)
-      calculatePPA()
-    }
-
-    function changeTas(player, newTas) {
-      player.tas = parseInt(newTas)
-      calculatePPA()
-    }
-
-    function changeSystems(player, newSystems) {
-      player.systems = parseInt(newSystems)
-      calculatePPA()
-    }
-
-    function remove(player) {
-      var position = players.indexOf(player)
-      players.splice(position, 1)
-      calculatePPA()
-    }
-
-    return {
-      view: function (vnode) {
-        var player = vnode.attrs.player
-        return m(
-          'div',
-          { style: 'display: flex; flex-direction: column; margin-left: 5px;' },
-          m(
-            'div',
-            { style: 'flex-drection: row;' },
-            m('input', {
-              value: player.name,
-              oninput: function (e) {
-                changeName(player, e.target.value)
-              },
-            }),
-            m(
-              'button',
-              {
-                onclick: function () {
-                  remove(player)
-                },
-              },
-              'x',
-            ),
-          ),
-          m('input', {
-            type: 'number',
-            min: 0,
-            value: player.hva,
-            oninput: function (e) {
-              changeHva(player, e.target.value)
-            },
-          }),
-          m('input', {
-            type: 'number',
-            min: 0,
-            disabled: syncShips,
-            value: player.tas,
-            oninput: function (e) {
-              changeTas(player, e.target.value)
-            },
-          }),
-          m('input', {
-            type: 'number',
-            min: 0,
-            disabled: syncShips,
-            value: player.systems,
-            oninput: function (e) {
-              changeSystems(player, e.target.value)
-            },
-          }),
-          m('span', player.ppa),
-          m('span', player.ppa * (player.hva + player.tas)),
-        )
-      },
-    }
-  }
-
   function SystemComponent() {
     var secondSystem = false
 
@@ -370,7 +287,7 @@
             ),
             m('span', dice(ship)),
           ]),
-          m('div', { style: 'display: flex; width:900px' }, [
+          m('div', { style: 'display: flex; width:100%' }, [
             m(
               'select',
               {
@@ -441,20 +358,105 @@
 
     return {
       view: function () {
-        return m('div', [
-          m('h2', 'Fleet builder'),
-          'Sync PPA calculations with ship builder',
-          m('input', {
-            onclick: function (e) {
-              setShips(e.target.checked)
-            },
-            type: 'checkbox',
-            checked: syncShips,
-          }),
+        return m('div', {style: 'padding: 0 18px;'},[
+          m(
+            'label',
+            'Sync PPA calculations with ship builder',
+            m('input', {
+              onclick: function (e) {
+                setShips(e.target.checked)
+              },
+              type: 'checkbox',
+              checked: syncShips,
+            }),
+          ),
           players.map(function (player) {
             return m(FleetComponent, { fleet: player })
           }),
         ])
+      },
+    }
+  }
+
+  function PlayerComponent() {
+    function changeName(player, newName) {
+      player.name = newName
+    }
+    function changeHva(player, newHva) {
+      player.hva = parseInt(newHva)
+      calculatePPA()
+    }
+
+    function changeTas(player, newTas) {
+      player.tas = parseInt(newTas)
+      calculatePPA()
+    }
+
+    function changeSystems(player, newSystems) {
+      player.systems = parseInt(newSystems)
+      calculatePPA()
+    }
+
+    function remove(player) {
+      var position = players.indexOf(player)
+      players.splice(position, 1)
+      calculatePPA()
+    }
+
+    return {
+      view: function (vnode) {
+        var player = vnode.attrs.player
+        return m(
+          'div',
+          { style: 'display: flex; flex-direction: column; justify-content: space-between; margin-left: 5px;' },
+          m(
+            'div',
+            { style: 'flex-drection: row;' },
+            m('input', {
+              value: player.name,
+              oninput: function (e) {
+                changeName(player, e.target.value)
+              },
+            }),
+            m(
+              'button',
+              {
+                onclick: function () {
+                  remove(player)
+                },
+              },
+              'x',
+            ),
+          ),
+          m('input', {
+            type: 'number',
+            min: 0,
+            value: player.hva,
+            oninput: function (e) {
+              changeHva(player, e.target.value)
+            },
+          }),
+          m('input', {
+            type: 'number',
+            min: 0,
+            disabled: syncShips,
+            value: player.tas,
+            oninput: function (e) {
+              changeTas(player, e.target.value)
+            },
+          }),
+          m('input', {
+            type: 'number',
+            min: 0,
+            disabled: syncShips,
+            value: player.systems,
+            oninput: function (e) {
+              changeSystems(player, e.target.value)
+            },
+          }),
+          m('span', player.ppa),
+          m('span', player.ppa * (player.hva + player.tas)),
+        )
       },
     }
   }
@@ -487,9 +489,8 @@
         trackShips = newTrackShips
       }
 
-      return m('main', [
-        m('h1', 'MF0 Intercept Orbit tools'),
-        m('h2', 'Points per asset calculator'),
+      return m('main', { style: 'margin: auto; width: 900px' }, [
+        m('h1', 'MF0 Intercept Orbit Points per asset calculator'),
         m('div', { style: 'display: flex;' }, [
           m(
             'div',
@@ -506,21 +507,26 @@
           players.map(function (player) {
             return m(PlayerComponent, { player: player })
           }),
+          m('button', { onclick: add }, 'Add player'),
         ]),
-        m('button', { onclick: add }, 'Add player'),
-        m('div', { style: 'display: flex;flex-direction: column;' }, [
-          m('span', [
-            'Track ships',
-            m('input', {
-              onclick: function (e) {
-                setShips(e.target.checked)
+        m(
+          'div',
+          {
+            style: 'display: flex;flex-direction: column;margin-top: 10px',
+          },
+          [
+            m(
+              'button',{
+                class: 'accordion ' + (trackShips ? 'active' : ''),
+                onclick: function (e) {
+                  setShips(!trackShips)
+                },
               },
-              type: 'checkbox',
-              checked: trackShips,
-            }),
-          ]),
-          trackShips ? m(ShipTrackerComponent) : null,
-        ]),
+              'Fleet builder',
+            ),
+            trackShips ? m(ShipTrackerComponent) : null,
+          ],
+        ),
       ])
     },
   }

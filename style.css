@@ -1,0 +1,19 @@
+.accordion {
+  font-size: 15px;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  background-color: #22313f;
+  color: white;
+}
+
+.accordion.active:after {
+  content: '-';
+}
+
+.accordion:after {
+  content: '+';
+  float: right;
+}
