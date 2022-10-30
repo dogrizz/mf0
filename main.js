@@ -535,6 +535,17 @@
       }
 
       return m('main', { class: 'main' }, [
+        m(
+          'a',
+          {
+            href: '#',
+            style: 'float: right;text-decoration: none;',
+            onclick: function () {
+              document.body.classList.toggle('dark-mode')
+            },
+          },
+          '🌓',
+        ),
         m('h1', 'MF0 Intercept Orbit points per asset calculator'),
         m('div', { class: 'row' }, [
           m(

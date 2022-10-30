@@ -3,6 +3,11 @@
   width: 900px;
 }
 
+.dark-mode {
+  color: white;
+  background-color: #22313f;
+}
+
 .accordion {
   font-size: 15px;
   border: none;
@@ -11,7 +16,12 @@
   text-align: left;
   outline: none;
   background-color: #22313f;
-  color: white;
+  color: #ebebeb;
+}
+
+.dark-mode .accordion {
+  background-color: #ebebeb;
+  color: #22313f;
 }
 
 .accordion.active:after {
