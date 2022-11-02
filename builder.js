@@ -398,7 +398,6 @@
         players = data.players
         syncShips = data.sync
         trackShips = data.track
-        m.redraw()
       }
     },
     view: function () {
@@ -454,9 +453,18 @@
           'div',
           {
             class: 'column',
-            style: 'margin-top: 10px',
+            style: 'margin-top: 10px; gap: 10px',
           },
           [
+            m(
+              'button',
+              {
+                onclick: function () {
+                  location.href = 'battle.html?'+BATTLE_ID_PARAM+'=' + storeBattle(players, trackShips, syncShips)
+                },
+              },
+              'Fight!',
+            ),
             m(
               'button',
               {

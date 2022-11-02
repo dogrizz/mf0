@@ -1,3 +1,6 @@
+const BATTLE_STORAGE_KEY = 'mf0-battles'
+const BATTLE_ID_PARAM = "battleId"
+
 function calculate() {
   players.forEach(function (player) {
     player.ppa = 5
@@ -118,4 +121,44 @@ function countSystems(ships) {
     })
   })
   return systems
+}
+
+function hash(str) {
+  return str.split('').reduce((prev, curr) => (Math.imul(31, prev) + curr.charCodeAt(0)) | 0, 0)
+}
+
+function storeBattle(roster, trackShips, syncShips) {
+  const oldData = localStorage.getItem(BATTLE_STORAGE_KEY)
+  let data = JSON.stringify({ roster: roster, track: trackShips, sync: syncShips })
+  const hashed = hash(data)
+  data = LZString.compress(data)
+  let battles = {}
+  if (oldData !== null) {
+    battles = JSON.parse(oldData)
+  }
+  if (battles[hashed]) {
+    battles[hashed].data = data
+  } else {
+    battles[hashed] = { data: data, date: Date.now() }
+  }
+  localStorage.setItem(BATTLE_STORAGE_KEY, JSON.stringify(battles))
+  return hashed
+}
+
+function readBattle(id) {
+  const _id = parseInt(id) 
+  const battles = localStorage.getItem(BATTLE_STORAGE_KEY)
+  const readBattles = JSON.parse(battles)
+  if (readBattles.hasOwnProperty(_id)) {
+    const decompressed = LZString.decompress(readBattles[_id].data)
+    const battle = JSON.parse(decompressed)
+    if (!battle.track || !battle.sync) {
+      battle.roster.forEach(function (player) {
+        player.ships = null
+      })
+      storeBattle(battle)
+    }
+    return battle
+  }
+  return null
 }
