@@ -11,15 +11,29 @@
   }
 
   function ShipComponent() {
+    let ship = ''
+    let fleet = ''
     function systemStateChange(system, newState) {
       system.disabled = newState
+      if(ship.systems.filter(system => !system.disabled).length === 0){
+        ship.destroyed = true
+        fleet.tas--
+        recalculate(fleet, battle.roster)
+      } else if (ship.destroyed) {
+        ship.destroyed = false
+        fleet.tas++
+        recalculate(fleet, battle.roster)
+      }
+      storeBattle(battle, battle.id)
     }
 
     return {
       view: function (vnode) {
-        const ship = vnode.attrs.ship
+        ship = vnode.attrs.ship
+        fleet = vnode.attrs.fleet
+
         return m('div', { class: 'column' }, [
-          m('h4', { class: ship.dead ? 'dead' : '' }, ship.name),
+          m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name),
           m('span', dice(ship)),
           ship.systems.map(function (system) {
             let systemText = system.class
@@ -53,7 +67,7 @@
         return [
           m('h3', fleet.name),
           m('div', { class: 'row', style: 'gap: 10px' }, [
-            fleet.ships.map((ship) => m(ShipComponent(), { ship: ship })),
+            fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet })),
             fleet.companies.map((company) => m(CompanyComponent(), { company: company })),
           ]),
         ]
