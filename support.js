@@ -181,6 +181,10 @@ function hash(str) {
   return str.split('').reduce((prev, curr) => (Math.imul(31, prev) + curr.charCodeAt(0)) | 0, 0)
 }
 
+function store(battle){
+  storeBattle(battle.roster, battle.track, battle.sync, battle.id)
+}
+
 function storeBattle(roster, trackShips, syncShips, id) {
   const oldData = localStorage.getItem(BATTLE_STORAGE_KEY)
   let data = JSON.stringify({ roster: roster, track: trackShips, sync: syncShips })
@@ -216,7 +220,7 @@ function readBattle(id) {
       battle.roster.forEach(function (player) {
         player.ships = null
       })
-      storeBattle(battle)
+      store(battle)
     } else {
       if (!alreadyAddedInternals(battle)) {
         battle.roster.forEach((player) =>
@@ -230,7 +234,7 @@ function readBattle(id) {
       }
       if (!alreadySetUpCompanies(battle)) {
         battle.roster.forEach((player) => buildCompanyData(player))
-        storeBattle(battle)
+        store(battle)
       }
     }
     battle.id = _id

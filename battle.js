@@ -5,6 +5,7 @@
   function CompanyComponent() {
     let company = ''
     let fleet = ''
+
     function systemStateChange(system, newState) {
       system.disabled = newState
       if (company.systems.filter((system) => !system.disabled).length === 0) {
@@ -16,7 +17,18 @@
         fleet.tas++
         recalculate(fleet, battle.roster)
       }
-      storeBattle(battle, battle.id)
+      store(battle)
+    }
+
+    function fuelChange(comp) {
+      comp.outOfFuel = !comp.outOfFuel
+      if(comp.outOfFuel){
+        fleet.tas--
+      }else{
+        fleet.tas++
+      }
+      recalculate(fleet, battle.roster)
+      store(battle)
     }
 
     return {
@@ -25,7 +37,23 @@
         fleet = vnode.attrs.fleet
 
         return m('div', { class: 'column' }, [
-          m('h4', { class: company.destroyed ? 'dead' : '' }, company.aceType ? `${company.aceType} ace` : 'Company'),
+          m('div', { class: 'row', style: 'gap: 5px' }, [
+            m(
+              'h4',
+              { class: company.destroyed || company.outOfFuel ? 'dead' : '' },
+              company.aceType ? `${company.aceType} ace` : 'Company',
+            ),
+            m(
+              'button',
+              {
+                title: 'Fuel state',
+                onclick: function () {
+                  fuelChange(company)
+                },
+              },
+              '⛽',
+            ),
+          ]),
           m('span', companyDice(company)),
           m('span', `origin: ${company.origin}`),
           company.systems.map(function (system) {
@@ -34,6 +62,7 @@
               m('input', {
                 type: 'checkbox',
                 checked: system.disabled,
+                disabled: company.outOfFuel,
                 onclick: function (e) {
                   systemStateChange(system, e.target.checked)
                 },
@@ -60,7 +89,7 @@
         fleet.tas++
         recalculate(fleet, battle.roster)
       }
-      storeBattle(battle, battle.id)
+      store(battle)
     }
 
     return {
@@ -125,13 +154,13 @@
     function changeHva(player, newHva) {
       player.hva = parseInt(newHva)
       recalculate(player, battle.roster)
-      storeBattle(battle, battle.id)
+      store(battle)
     }
 
     function changeTas(player, newTas) {
       player.tas = parseInt(newTas)
       recalculate(player, battle.roster)
-      storeBattle(battle, battle.id)
+      store(battle)
     }
 
     return {
