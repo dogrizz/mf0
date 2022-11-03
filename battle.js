@@ -46,15 +46,6 @@
               changeTas(player, e.target.value)
             },
           }),
-          m('input', {
-            type: 'number',
-            min: 0,
-            disabled: battle.sync,
-            value: player.systems,
-            oninput: function (e) {
-              changeSystems(player, e.target.value)
-            },
-          }),
           m('span', player.ppa),
           m('span', player.total),
           m('span', player.role),
@@ -91,8 +82,7 @@
             { class: 'column-justified' },
             m('span', 'Fleet id'),
             m('span', 'HVA'),
-            m('span', 'TAS'),
-            m('span', 'Systems'),
+            m('span', 'TAs'),
             m('span', 'PPA'),
             m('span', 'Total'),
             m('span', 'Role'),

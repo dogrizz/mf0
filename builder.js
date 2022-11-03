@@ -483,7 +483,7 @@
             { class: 'column-justified' },
             m('span', 'Fleet id'),
             m('span', 'HVA'),
-            m('span', 'TAS'),
+            m('span', 'TAs'),
             m('span', 'Systems'),
             m('span', 'PPA'),
             m('span', 'Total'),
