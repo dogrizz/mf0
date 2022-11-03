@@ -3,9 +3,45 @@
   let battle = {}
 
   function CompanyComponent() {
+    let company = ''
+    let fleet = ''
+    function systemStateChange(system, newState) {
+      system.disabled = newState
+      if (company.systems.filter((system) => !system.disabled).length === 0) {
+        company.destroyed = true
+        fleet.tas--
+        recalculate(fleet, battle.roster)
+      } else if (company.destroyed) {
+        company.destroyed = false
+        fleet.tas++
+        recalculate(fleet, battle.roster)
+      }
+      storeBattle(battle, battle.id)
+    }
+
     return {
       view: function (vnode) {
-        return m('span', 'asd')
+        company = vnode.attrs.company
+        fleet = vnode.attrs.fleet
+
+        return m('div', { class: 'column' }, [
+          m('h4', { class: company.destroyed ? 'dead' : '' }, company.aceType ? `${company.aceType} ace` : 'Company'),
+          m('span', companyDice(company)),
+          m('span', `origin: ${company.origin}`),
+          company.systems.map(function (system) {
+            return m(
+              'label',
+              m('input', {
+                type: 'checkbox',
+                checked: system.disabled,
+                onclick: function (e) {
+                  systemStateChange(system, e.target.checked)
+                },
+              }),
+              system.class,
+            )
+          }),
+        ])
       },
     }
   }
@@ -15,7 +51,7 @@
     let fleet = ''
     function systemStateChange(system, newState) {
       system.disabled = newState
-      if(ship.systems.filter(system => !system.disabled).length === 0){
+      if (ship.systems.filter((system) => !system.disabled).length === 0) {
         ship.destroyed = true
         fleet.tas--
         recalculate(fleet, battle.roster)
@@ -37,9 +73,9 @@
           m('span', dice(ship)),
           ship.systems.map(function (system) {
             let systemText = system.class
-            if(system.class === 'attack'){
+            if (system.class === 'attack') {
               systemText = `${systemText} ${system.attackType}`
-              if(system.attackType2){
+              if (system.attackType2) {
                 systemText = `${systemText}/${system.attackType2}`
               }
             }
@@ -68,7 +104,7 @@
           m('h3', fleet.name),
           m('div', { class: 'row', style: 'gap: 10px' }, [
             fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet })),
-            fleet.companies.map((company) => m(CompanyComponent(), { company: company })),
+            fleet.companies.map((company) => m(CompanyComponent(), { company: company, fleet: fleet })),
           ]),
         ]
       },

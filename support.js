@@ -40,7 +40,7 @@ function calculatePPA(players, syncShips) {
 }
 
 function dice(ship) {
-  if(ship.destroyed){
+  if (ship.destroyed) {
     return ''
   }
   let diceDescription = ''
@@ -109,6 +109,47 @@ function dice(ship) {
     })
   }
 
+  return diceDescription
+}
+
+function companyDice(company) {
+  if (company.destroyed) {
+    return ''
+  }
+  let diceDescription = ''
+  var internals = company.systems.filter(function (system) {
+    return system.class === 'systems' && !system.disabled
+  }).length
+  if (internals) {
+    diceDescription = `${diceDescription}${internals}W`
+  }
+  var attack = company.systems.filter(function (system) {
+    return system.class === 'weapon' && !system.disabled
+  }).length
+  if (attack) {
+    diceDescription = `${diceDescription}2Rd`
+  }
+  var defense = company.systems.filter(function (system) {
+    return system.class === 'defense' && !system.disabled
+  }).length
+  if (defense) {
+    diceDescription = `${diceDescription}${defense}B`
+  }
+  var comms = company.systems.filter(function (system) {
+    return system.class === 'comms' && !system.disabled
+  }).length
+  if (comms) {
+    diceDescription = `${diceDescription}${comms}Y`
+  }
+  var movement = company.systems.filter(function (system) {
+    return system.class === 'movement' && !system.disabled
+  }).length
+  if (movement) {
+    diceDescription = `${diceDescription}${movement}G`
+  }
+  if (company.aceType) {
+    diceDescription = `${diceDescription}+${company.aceType[0].toUpperCase()}d8`
+  }
   return diceDescription
 }
 
@@ -217,7 +258,14 @@ function buildCompanyData(player) {
       if (system.class === 'catapult') {
         const company = {
           origin: ship.name,
-          systems: [],
+          systems: [
+            { class: 'weapon' },
+            { class: 'defense' },
+            { class: 'comms' },
+            { class: 'movement' },
+            { class: 'systems' },
+            { class: 'systems' },
+          ],
         }
         player.companies.push(company)
       }

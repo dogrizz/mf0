@@ -52,10 +52,10 @@
 }
 
 .dead {
-  color:#aaa
+  color: #aaa;
 }
 
-.dark-mode .dead{
+.dark-mode .dead {
   color: #33423f;
 }
 

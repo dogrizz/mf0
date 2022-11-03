@@ -8,5 +8,6 @@ Check out rules at https://glyphpress.com/talk/mobile-frame-zero-002-intercept-o
 and http://mobileframezero.com/mfz/ for more information.
 
 Uses:
- - https://mithril.js.org
- - https://github.com/pieroxy/lz-string
+
+- https://mithril.js.org
+- https://github.com/pieroxy/lz-string

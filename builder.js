@@ -167,12 +167,15 @@
                     value: ship.aceType,
                     disabled: !ship.hasAce,
                     hidden: !ship.hasAce,
+                    oninput: function (e) {
+                      ship.aceType = e.target.value
+                    },
                   },
                   [
-                    m('option', { value: 'r' }, 'Red Ace'),
-                    m('option', { value: 'b' }, 'Blue Ace'),
-                    m('option', { value: 'g' }, 'Green Ace'),
-                    m('option', { value: 'y' }, 'Yellow Ace'),
+                    m('option', { value: 'red' }, 'Red Ace'),
+                    m('option', { value: 'blue' }, 'Blue Ace'),
+                    m('option', { value: 'green' }, 'Green Ace'),
+                    m('option', { value: 'yellow' }, 'Yellow Ace'),
                   ],
                 ),
               ])
