@@ -181,7 +181,7 @@ function hash(str) {
   return str.split('').reduce((prev, curr) => (Math.imul(31, prev) + curr.charCodeAt(0)) | 0, 0)
 }
 
-function store(battle){
+function store(battle) {
   storeBattle(battle.roster, battle.track, battle.sync, battle.id)
 }
 

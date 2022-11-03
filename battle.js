@@ -22,9 +22,9 @@
 
     function fuelChange(comp) {
       comp.outOfFuel = !comp.outOfFuel
-      if(comp.outOfFuel){
+      if (comp.outOfFuel) {
         fleet.tas--
-      }else{
+      } else {
         fleet.tas++
       }
       recalculate(fleet, battle.roster)
