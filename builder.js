@@ -10,8 +10,8 @@
   }
   const LOCAL_STORAGE_KEY = 'mf0-tools'
 
-  function calculatePPA() {
-    calculate(players, syncShips)
+  function recalculatePPA() {
+    calculatePPA(players, syncShips)
     saveState()
   }
 
@@ -27,7 +27,7 @@
       if (system.class === 'attack') {
         changeAttackType(system, 'p')
       }
-      calculatePPA()
+      recalculatePPA()
     }
 
     function changeAttackType(system, newType) {
@@ -188,7 +188,13 @@
       if(ship.hasAce){
         fleet.aceSelected = false
       }
-      calculatePPA()
+      recalculatePPA()
+    }
+
+    function duplicate(fleet, ship) {
+      var position = fleet.ships.indexOf(ship)
+      fleet.ships.splice(position, 0, copy(ship))
+      recalculatePPA()
     }
 
     return {
@@ -211,6 +217,18 @@
             m(
               'button',
               {
+                title: "Copy",
+                onclick: function () {
+                  duplicate(fleet, ship)
+                },
+                style: 'margin-left: 5px',
+              },
+              '📋',
+            ),
+            m(
+              'button',
+              {
+                title: 'Remove',
                 onclick: function () {
                   remove(fleet, ship)
                 },
@@ -246,7 +264,7 @@
   function FleetComponent() {
     function add(fleet) {
       fleet.ships.push({ systems: [] })
-      calculatePPA()
+      recalculatePPA()
     }
 
     return {
@@ -283,7 +301,7 @@
   function ShipTrackerComponent() {
     function setShips(newSyncShips) {
       syncShips = newSyncShips
-      calculatePPA()
+      recalculatePPA()
     }
 
     return {
@@ -315,23 +333,23 @@
     }
     function changeHva(player, newHva) {
       player.hva = parseInt(newHva)
-      calculatePPA()
+      recalculatePPA()
     }
 
     function changeTas(player, newTas) {
       player.tas = parseInt(newTas)
-      calculatePPA()
+      recalculatePPA()
     }
 
     function changeSystems(player, newSystems) {
       player.systems = parseInt(newSystems)
-      calculatePPA()
+      recalculatePPA()
     }
 
     function remove(player) {
       var position = players.indexOf(player)
       players.splice(position, 1)
-      calculatePPA()
+      recalculatePPA()
     }
 
     return {
@@ -353,6 +371,7 @@
             m(
               'button',
               {
+                title: 'Remove',
                 onclick: function () {
                   remove(player)
                 },
@@ -413,7 +432,7 @@
           ppa: 5,
           ships: [],
         })
-        calculatePPA()
+        recalculatePPA()
       }
 
       function setShips(newTrackShips) {

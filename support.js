@@ -1,7 +1,7 @@
 const BATTLE_STORAGE_KEY = 'mf0-battles'
 const BATTLE_ID_PARAM = "battleId"
 
-function calculate(players, syncShips) {
+function calculatePPA(players, syncShips) {
   players.forEach(function (player) {
     player.ppa = 5
   })
@@ -161,4 +161,8 @@ function readBattle(id) {
     return battle
   }
   return null
+}
+
+function copy(obj) {
+  return JSON.parse(JSON.stringify(obj))
 }
