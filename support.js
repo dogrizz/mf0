@@ -1,7 +1,7 @@
 const BATTLE_STORAGE_KEY = 'mf0-battles'
 const BATTLE_ID_PARAM = "battleId"
 
-function calculate() {
+function calculate(players, syncShips) {
   players.forEach(function (player) {
     player.ppa = 5
   })

@@ -11,7 +11,7 @@
   const LOCAL_STORAGE_KEY = 'mf0-tools'
 
   function calculatePPA() {
-    calculate()
+    calculate(players, syncShips)
     saveState()
   }
 
