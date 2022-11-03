@@ -2,6 +2,23 @@
   const root = document.body
   let battle = []
 
+  function FleetComponent() {
+    return {
+      view: function (vnode){
+        const fleet = vnode.attrs.fleet
+        return fleet.name
+      }
+    }
+  }
+
+  function ShipTrackerComponent() {
+    return {
+      view: function () {
+        return m('div', { class: 'column' }, [battle.roster.map((fleet) => m(FleetComponent(fleet)))])
+      },
+    }
+  }
+
   function PlayerComponent() {
     function changeHva(player, newHva) {
       player.hva = parseInt(newHva)
@@ -12,11 +29,6 @@
     function changeTas(player, newTas) {
       player.tas = parseInt(newTas)
       recalculate(player, battle.roster)
-      storeBattle(battle)
-    }
-
-    function changeSystems(player, newSystems) {
-      player.systems = parseInt(newSystems)
       storeBattle(battle)
     }
 
@@ -91,6 +103,7 @@
             return m(PlayerComponent, { player: player })
           }),
         ]),
+        battle.sync ? m(ShipTrackerComponent) : null,
       ])
     },
   }

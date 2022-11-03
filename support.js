@@ -179,10 +179,10 @@ function determineRole(players) {
   const playersNumber = players.length
   players.forEach((player) => (player.role = ''))
   players.forEach((player) => {
-    if (player.total === players[0].total) {
+    if (player.total === playersSorted[0].total) {
       player.role = 'Defender'
     }
-    if (player.total === players[playersNumber - 1].total) {
+    if (player.total === playersSorted[playersNumber - 1].total) {
       player.role = 'Primary attacker'
     }
   })
