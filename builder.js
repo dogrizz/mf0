@@ -185,7 +185,7 @@
     function remove(fleet, ship) {
       var position = fleet.ships.indexOf(ship)
       fleet.ships.splice(position, 1)
-      if(ship.hasAce){
+      if (ship.hasAce) {
         fleet.aceSelected = false
       }
       recalculatePPA()
@@ -217,7 +217,7 @@
             m(
               'button',
               {
-                title: "Copy",
+                title: 'Copy',
                 onclick: function () {
                   duplicate(fleet, ship)
                 },
@@ -482,7 +482,7 @@
               'button',
               {
                 onclick: function () {
-                  location.href = 'battle.html?'+BATTLE_ID_PARAM+'=' + storeBattle(players, trackShips, syncShips)
+                  location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
                 },
               },
               'Fight!',

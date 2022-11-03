@@ -1,5 +1,5 @@
 const BATTLE_STORAGE_KEY = 'mf0-battles'
-const BATTLE_ID_PARAM = "battleId"
+const BATTLE_ID_PARAM = 'battleId'
 
 function calculatePPA(players, syncShips) {
   players.forEach(function (player) {
@@ -146,7 +146,7 @@ function storeBattle(roster, trackShips, syncShips) {
 }
 
 function readBattle(id) {
-  const _id = parseInt(id) 
+  const _id = parseInt(id)
   const battles = localStorage.getItem(BATTLE_STORAGE_KEY)
   const readBattles = JSON.parse(battles)
   if (readBattles.hasOwnProperty(_id)) {
