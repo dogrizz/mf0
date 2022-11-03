@@ -185,6 +185,9 @@
     function remove(fleet, ship) {
       var position = fleet.ships.indexOf(ship)
       fleet.ships.splice(position, 1)
+      if(ship.hasAce){
+        fleet.aceSelected = false
+      }
       calculatePPA()
     }
 
