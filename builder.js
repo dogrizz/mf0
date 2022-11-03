@@ -194,6 +194,7 @@
     function duplicate(fleet, ship) {
       var position = fleet.ships.indexOf(ship)
       fleet.ships.splice(position, 0, copy(ship))
+      ship.hasAce = false
       recalculatePPA()
     }
 
