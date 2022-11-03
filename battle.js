@@ -1,20 +1,72 @@
 ;(function () {
   const root = document.body
-  let battle = []
+  let battle = {}
+
+  function CompanyComponent() {
+    return {
+      view: function (vnode) {
+        return m('span', 'asd')
+      },
+    }
+  }
+
+  function ShipComponent() {
+    function systemStateChange(system, newState) {
+      system.disabled = newState
+    }
+
+    return {
+      view: function (vnode) {
+        const ship = vnode.attrs.ship
+        return m('div', { class: 'column' }, [
+          m('h4', { class: ship.dead ? 'dead' : '' }, ship.name),
+          m('span', dice(ship)),
+          ship.systems.map(function (system) {
+            let systemText = system.class
+            if(system.class === 'attack'){
+              systemText = `${systemText} ${system.attackType}`
+              if(system.attackType2){
+                systemText = `${systemText}/${system.attackType2}`
+              }
+            }
+            return m(
+              'label',
+              m('input', {
+                type: 'checkbox',
+                checked: system.disabled,
+                onclick: function (e) {
+                  systemStateChange(system, e.target.checked)
+                },
+              }),
+              systemText,
+            )
+          }),
+        ])
+      },
+    }
+  }
 
   function FleetComponent() {
     return {
-      view: function (vnode){
+      view: function (vnode) {
         const fleet = vnode.attrs.fleet
-        return fleet.name
-      }
+        return [
+          m('h3', fleet.name),
+          m('div', { class: 'row', style: 'gap: 10px' }, [
+            fleet.ships.map((ship) => m(ShipComponent(), { ship: ship })),
+            fleet.companies.map((company) => m(CompanyComponent(), { company: company })),
+          ]),
+        ]
+      },
     }
   }
 
   function ShipTrackerComponent() {
     return {
       view: function () {
-        return m('div', { class: 'column' }, [battle.roster.map((fleet) => m(FleetComponent(fleet)))])
+        return m('div', { class: 'column', style: 'margin-top: 15px' }, [
+          battle.roster.map((fleet) => m(FleetComponent(), { fleet: fleet })),
+        ])
       },
     }
   }
@@ -23,13 +75,13 @@
     function changeHva(player, newHva) {
       player.hva = parseInt(newHva)
       recalculate(player, battle.roster)
-      storeBattle(battle)
+      storeBattle(battle, battle.id)
     }
 
     function changeTas(player, newTas) {
       player.tas = parseInt(newTas)
       recalculate(player, battle.roster)
-      storeBattle(battle)
+      storeBattle(battle, battle.id)
     }
 
     return {
@@ -88,22 +140,26 @@
           '🌓',
         ),
         m('h1', 'MF0 Intercept Orbit battle tracker'),
-        m('div', { class: 'row', style: 'gap: 10px' }, [
-          m(
-            'div',
-            { class: 'column-justified' },
-            m('span', 'Fleet id'),
-            m('span', 'HVA'),
-            m('span', 'TAs'),
-            m('span', 'PPA'),
-            m('span', 'Total'),
-            m('span', 'Role'),
-          ),
-          battle.roster.map(function (player) {
-            return m(PlayerComponent, { player: player })
-          }),
-        ]),
-        battle.sync ? m(ShipTrackerComponent) : null,
+        !battle
+          ? "Can't find your battle"
+          : [
+              m('div', { class: 'row', style: 'gap: 10px' }, [
+                m(
+                  'div',
+                  { class: 'column-justified' },
+                  m('span', 'Fleet id'),
+                  m('span', 'HVA'),
+                  m('span', 'TAs'),
+                  m('span', 'PPA'),
+                  m('span', 'Total'),
+                  m('span', 'Role'),
+                ),
+                battle.roster.map(function (player) {
+                  return m(PlayerComponent, { player: player })
+                }),
+              ]),
+              battle.sync ? m(ShipTrackerComponent) : null,
+            ],
       ])
     },
   }

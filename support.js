@@ -40,13 +40,26 @@ function calculatePPA(players, syncShips) {
 }
 
 function dice(ship) {
-  var diceDescription = '2W'
+  if(ship.destroyed){
+    return ''
+  }
+  let diceDescription = ''
+  if (!hasInternals(ship)) {
+    diceDescription = '2W'
+  } else {
+    var internals = ship.systems.filter(function (system) {
+      return system.class === 'internal' && !system.disabled
+    }).length
+    if (internals) {
+      diceDescription = `${diceDescription}${internals}W`
+    }
+  }
   if (ship.hasOwnProperty('class') && ship.class === 'frigate') {
     diceDescription += '1G'
   }
   if (ship.hasOwnProperty('systems')) {
     var catapults = ship.systems.filter(function (system) {
-      return system.class === 'catapult'
+      return system.class === 'catapult' && !system.disabled
     }).length
     if (catapults == 1) {
       diceDescription += '1K'
@@ -56,21 +69,21 @@ function dice(ship) {
     }
 
     var defence = ship.systems.filter(function (system) {
-      return system.class === 'defence'
+      return system.class === 'defence' && !system.disabled
     }).length
     if (defence) {
       diceDescription = `${diceDescription}${defence}B`
     }
 
     var sensors = ship.systems.filter(function (system) {
-      return system.class === 'sensor'
+      return system.class === 'sensor' && !system.disabled
     }).length
     if (sensors) {
       diceDescription = `${diceDescription}${sensors}Y`
     }
 
     var attack = ship.systems.filter(function (system) {
-      return system.class === 'attack'
+      return system.class === 'attack' && !system.disabled
     })
     var attacks = {
       p: 0,
@@ -127,10 +140,13 @@ function hash(str) {
   return str.split('').reduce((prev, curr) => (Math.imul(31, prev) + curr.charCodeAt(0)) | 0, 0)
 }
 
-function storeBattle(roster, trackShips, syncShips) {
+function storeBattle(roster, trackShips, syncShips, id) {
   const oldData = localStorage.getItem(BATTLE_STORAGE_KEY)
   let data = JSON.stringify({ roster: roster, track: trackShips, sync: syncShips })
-  const hashed = hash(data)
+  let hashed = hash(data)
+  if (id) {
+    hashed = id
+  }
   data = LZString.compress(data)
   let battles = {}
   if (oldData !== null) {
@@ -148,6 +164,9 @@ function storeBattle(roster, trackShips, syncShips) {
 function readBattle(id) {
   const _id = parseInt(id)
   const battles = localStorage.getItem(BATTLE_STORAGE_KEY)
+  if (battles === null) {
+    return null
+  }
   const readBattles = JSON.parse(battles)
   if (readBattles.hasOwnProperty(_id)) {
     const decompressed = LZString.decompress(readBattles[_id].data)
@@ -157,10 +176,56 @@ function readBattle(id) {
         player.ships = null
       })
       storeBattle(battle)
+    } else {
+      if (!alreadyAddedInternals(battle)) {
+        battle.roster.forEach((player) =>
+          player.ships.forEach((ship) => {
+            ship.systems.push({ class: 'internal' })
+            ship.systems.push({ class: 'internal' })
+            ship.systems = ship.systems.filter((system) => system.class)
+            ship.systems = [...ship.systems].sort()
+          }),
+        )
+      }
+      if (!alreadySetUpCompanies(battle)) {
+        battle.roster.forEach((player) => buildCompanyData(player))
+        storeBattle(battle)
+      }
     }
+    battle.id = _id
     return battle
   }
   return null
+}
+
+function alreadyAddedInternals(battle) {
+  return battle.roster.some((player) => player.ships.some((ship) => hasInternals(ship)))
+}
+
+function hasInternals(ship) {
+  return ship.systems.some((system) => system.class === 'internal')
+}
+
+function alreadySetUpCompanies(battle) {
+  return battle.roster.some((player) => player.hasOwnProperty('companies'))
+}
+
+function buildCompanyData(player) {
+  player.companies = []
+  player.ships.forEach(function (ship) {
+    ship.systems.forEach(function (system) {
+      if (system.class === 'catapult') {
+        const company = {
+          origin: ship.name,
+          systems: [],
+        }
+        player.companies.push(company)
+      }
+    })
+    if (ship.hasAce) {
+      player.companies[player.companies.length - 1].aceType = ship.aceType
+    }
+  })
 }
 
 function copy(obj) {

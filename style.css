@@ -50,3 +50,20 @@
   justify-content: space-between;
   margin-left: 5px;
 }
+
+.dead {
+  color:#aaa
+}
+
+.dark-mode .dead{
+  color: #33423f;
+}
+
+h3 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+h4 {
+  margin: 0px;
+}
