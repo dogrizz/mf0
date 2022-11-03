@@ -126,6 +126,9 @@
     function setAce(hasAce, ship, fleet) {
       ship.hasAce = hasAce
       fleet.aceSelected = hasAce
+      if (!hasAce) {
+        delete ship.aceType
+      }
       saveState()
     }
 
@@ -148,7 +151,7 @@
                 m(
                   'label',
                   { hidden: fleet.aceSelected && !ship.hasAce },
-                  'Is ace',
+                  'Has ace',
                   m('input', {
                     type: 'checkbox',
                     disabled: fleet.aceSelected && !ship.hasAce,
@@ -157,6 +160,20 @@
                       setAce(e.target.checked, ship, fleet)
                     },
                   }),
+                ),
+                m(
+                  'select',
+                  {
+                    value: ship.aceType,
+                    disabled: !ship.hasAce,
+                    hidden: !ship.hasAce,
+                  },
+                  [
+                    m('option', { value: 'r' }, 'Red Ace'),
+                    m('option', { value: 'b' }, 'Blue Ace'),
+                    m('option', { value: 'g' }, 'Green Ace'),
+                    m('option', { value: 'y' }, 'Yellow Ace'),
+                  ],
                 ),
               ])
             : null,
@@ -194,7 +211,10 @@
     function duplicate(fleet, ship) {
       var position = fleet.ships.indexOf(ship)
       fleet.ships.splice(position, 0, copy(ship))
-      ship.hasAce = false
+      if (ship.hasAce) {
+        ship.hasAce = false
+        delete ship.aceType
+      }
       recalculatePPA()
     }
 
