@@ -467,6 +467,7 @@
         m(
           'a',
           {
+            title: 'Dark/Light mode',
             href: '#',
             style: 'float: right;text-decoration: none;',
             onclick: function () {

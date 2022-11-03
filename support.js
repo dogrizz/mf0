@@ -166,3 +166,29 @@ function readBattle(id) {
 function copy(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+
+function recalculate(player, players) {
+  player.total = player.ppa * (player.hva + player.tas)
+  determineRole(players)
+}
+
+function determineRole(players) {
+  const playersSorted = [...players].sort(function (a, b) {
+    return b.total - a.total
+  })
+  const playersNumber = players.length
+  players.forEach((player) => (player.role = ''))
+  players.forEach((player) => {
+    if (player.total === players[0].total) {
+      player.role = 'Defender'
+    }
+    if (player.total === players[playersNumber - 1].total) {
+      player.role = 'Primary attacker'
+    }
+  })
+  players.forEach((player) => {
+    if (player.role === '') {
+      player.role = 'Secondary attacker'
+    }
+  })
+}
