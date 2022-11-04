@@ -113,7 +113,7 @@
         ship = vnode.attrs.ship
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: ship.owner !== fleet.name ? 'column captured' : 'column' }, [
+        return m('div', { class: ship.owner !== fleet.id ? 'column captured' : 'column' }, [
           m('div', { class: 'row', style: 'gap: 5px' }, [
             m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name || 'noname' ),
             m(

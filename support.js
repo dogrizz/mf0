@@ -223,14 +223,16 @@ function readBattle(id) {
       store(battle)
     } else {
       if (!alreadyAddedInternals(battle)) {
-        battle.roster.forEach((player) =>
+        battle.roster.forEach((player) =>{
+          player.id = self.crypto.randomUUID()
           player.ships.forEach((ship) => {
-            ship.owner = player.name
+            ship.owner = player.id
             ship.systems.push({ class: 'internal' })
             ship.systems.push({ class: 'internal' })
             ship.systems = ship.systems.filter((system) => system.class)
             ship.systems = [...ship.systems].sort()
-          }),
+          })
+        }
         )
       }
       if (!alreadySetUpCompanies(battle)) {
