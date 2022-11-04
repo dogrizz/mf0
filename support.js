@@ -206,7 +206,7 @@ function storeBattle(roster, trackShips, syncShips, id) {
   return hashed
 }
 
-function readBattles(){
+function readBattles() {
   const battles = localStorage.getItem(BATTLE_STORAGE_KEY)
   if (battles === null) {
     return null
@@ -220,6 +220,9 @@ function readBattle(id) {
   if (battles.hasOwnProperty(_id)) {
     const decompressed = LZString.decompress(battles[_id].data)
     const battle = JSON.parse(decompressed)
+    if (!battle.hasOwnProperty('id')) {
+      battle.id = _id
+    }
     if (!battle.track || !battle.sync) {
       battle.roster.forEach(function (player) {
         player.ships = null
@@ -227,7 +230,7 @@ function readBattle(id) {
       store(battle)
     } else {
       if (!alreadyAddedInternals(battle)) {
-        battle.roster.forEach((player) =>{
+        battle.roster.forEach((player) => {
           player.id = self.crypto.randomUUID()
           player.ships.forEach((ship) => {
             ship.owner = player.id
@@ -237,15 +240,14 @@ function readBattle(id) {
             ship.systems = ship.systems.filter((system) => system.class)
             ship.systems = [...ship.systems].sort()
           })
-        }
-        )
+        })
       }
       if (!alreadySetUpCompanies(battle)) {
         battle.roster.forEach((player) => buildCompanyData(player))
         store(battle)
       }
     }
-    battle.id = _id
+
     return battle
   }
   return null
