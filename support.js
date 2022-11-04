@@ -113,7 +113,7 @@ function dice(ship) {
 }
 
 function companyDice(company) {
-  if (company.destroyed) {
+  if (company.destroyed || company.outOfFuel) {
     return ''
   }
   let diceDescription = ''
@@ -227,6 +227,7 @@ function readBattle(id) {
           player.id = self.crypto.randomUUID()
           player.ships.forEach((ship) => {
             ship.owner = player.id
+            ship.id = self.crypto.randomUUID()
             ship.systems.push({ class: 'internal' })
             ship.systems.push({ class: 'internal' })
             ship.systems = ship.systems.filter((system) => system.class)

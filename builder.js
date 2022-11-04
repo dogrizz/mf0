@@ -74,7 +74,7 @@
             ],
           ),
           system.class === 'attack'
-            ? [
+            ? m("div", [
                 m(
                   'select',
                   {
@@ -106,7 +106,7 @@
                   },
                   secondSystem ? '-' : '+',
                 ),
-              ]
+              ])
             : null,
         ]
       },
@@ -260,11 +260,11 @@
                 },
                 style: 'margin: 0px 10px 0px 5px',
               },
-              'x',
+              '×',
             ),
             m('span', dice(ship)),
           ]),
-          m('div', { class: 'row' }, [
+          m('div', { class: 'row' , style: "gap: 5px"}, [
             m(
               'select',
               {
@@ -402,7 +402,7 @@
                   remove(player)
                 },
               },
-              'x',
+              '×',
             ),
           ),
           m('input', {

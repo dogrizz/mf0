@@ -78,6 +78,7 @@
   function ShipComponent() {
     let ship = ''
     let fleet = ''
+
     function systemStateChange(system, newState) {
       system.disabled = newState
       if (ship.systems.filter((system) => !system.disabled).length === 0) {
@@ -94,10 +95,9 @@
 
     function startTransfer(ship) {
       if (battle.roster.length === 2) {
-        transfer(
-          ship,
-          battle.roster.filter((f) => f != fleet)[0],
-        )
+        transfer(ship, battle.roster.filter((f) => f != fleet)[0])
+      } else {
+        ship.showPopup = true
       }
     }
 
@@ -116,7 +116,7 @@
 
         return m('div', { class: ship.owner !== fleet.id ? 'column captured' : 'column' }, [
           m('div', { class: 'row', style: 'gap: 5px' }, [
-            m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name || 'noname' ),
+            m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name || 'noname'),
             m(
               'button',
               {
@@ -126,6 +126,41 @@
                 },
               },
               '⇌',
+            ),
+            m(
+              'div',
+              { class: ship.showPopup ? 'overlay overlay-show' : 'overlay' },
+              m('div', { class: 'column popup' , style: "gap: 10px"}, [
+                m(
+                  'div',{class: "row", style:"justify-content: space-between;margin-bottom: 10px"},[
+                    m('h3', `Transfer ship ${ship.name} to:`),
+                    m(
+                      'button',
+                      {
+                        style: 'float: right',
+                        onclick: function () {
+                          ship.showPopup = false
+                        },
+                      },
+                      '×',
+                    )
+                  ],
+                ),
+                battle.roster
+                  .filter((f) => f !== fleet)
+                  .map((player) =>
+                    m(
+                      'button',
+                      {
+                        onclick: function () {
+                          ship.showPopup = false
+                          transfer(ship, player)
+                        },
+                      },
+                      player.name,
+                    ),
+                  ),
+              ]),
             ),
           ]),
           m('span', dice(ship)),
@@ -158,13 +193,13 @@
     return {
       view: function (vnode) {
         const fleet = vnode.attrs.fleet
-        return [
+        return m("div", [
           m('h3', fleet.name),
-          m('div', { class: 'row', style: 'gap: 10px' }, [
+          m('div', { class: 'row', style: 'gap: 15px' }, [
             fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet })),
             fleet.companies.map((company) => m(CompanyComponent(), { company: company, fleet: fleet })),
           ]),
-        ]
+        ])
       },
     }
   }
@@ -172,7 +207,7 @@
   function ShipTrackerComponent() {
     return {
       view: function () {
-        return m('div', { class: 'column', style: 'margin-top: 15px' }, [
+        return m('div', { class: 'column', style: 'margin-top: 15px; gap: 15px' }, [
           battle.roster.map((fleet) => m(FleetComponent(), { fleet: fleet })),
         ])
       },

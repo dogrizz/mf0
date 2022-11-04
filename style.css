@@ -75,3 +75,34 @@ h3 {
 h4 {
   margin: 0px;
 }
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+  background-color: #ebebeb;
+}
+
+.dark-mode .popup{
+  background-color: #22313f;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 1;
+}
+
+.overlay-show{
+  opacity: 1;
+  visibility: visible;
+}
