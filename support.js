@@ -206,15 +206,19 @@ function storeBattle(roster, trackShips, syncShips, id) {
   return hashed
 }
 
-function readBattle(id) {
-  const _id = parseInt(id)
+function readBattles(){
   const battles = localStorage.getItem(BATTLE_STORAGE_KEY)
   if (battles === null) {
     return null
   }
-  const readBattles = JSON.parse(battles)
-  if (readBattles.hasOwnProperty(_id)) {
-    const decompressed = LZString.decompress(readBattles[_id].data)
+  return JSON.parse(battles)
+}
+
+function readBattle(id) {
+  const _id = parseInt(id)
+  const battles = readBattles()
+  if (battles.hasOwnProperty(_id)) {
+    const decompressed = LZString.decompress(battles[_id].data)
     const battle = JSON.parse(decompressed)
     if (!battle.track || !battle.sync) {
       battle.roster.forEach(function (player) {
