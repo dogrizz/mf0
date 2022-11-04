@@ -106,6 +106,7 @@
       targetFleet.tas++
       fleet.ships.splice(fleet.ships.indexOf(ship), 1)
       targetFleet.ships.push(ship)
+      store(battle)
     }
 
     return {
