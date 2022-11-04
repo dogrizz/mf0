@@ -96,7 +96,7 @@
       if (battle.roster.length === 2) {
         transfer(
           ship,
-          battle.roster.filter((f) => f != fleet),
+          battle.roster.filter((f) => f != fleet)[0],
         )
       }
     }
