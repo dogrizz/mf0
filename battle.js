@@ -121,6 +121,7 @@
               'button',
               {
                 title: 'Transfer',
+                hidden: ship.destroyed,
                 onclick: function () {
                   startTransfer(ship)
                 },
