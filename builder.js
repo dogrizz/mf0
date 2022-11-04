@@ -224,7 +224,9 @@
     return {
       oninit: function (vnode) {
         var ship = vnode.attrs.ship
-        changeClass(ship, 'frigate')
+        if (!ship.class) {
+          changeClass(ship, 'frigate')
+        }
       },
       view: function (vnode) {
         var ship = vnode.attrs.ship
