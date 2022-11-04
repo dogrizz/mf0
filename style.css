@@ -59,6 +59,14 @@
   color: #33423f;
 }
 
+.captured {
+  background-color: #ebebeb;
+}
+
+.dark-mode .captured {
+  background-color: #aaa;
+}
+
 h3 {
   margin-top: 5px;
   margin-bottom: 5px;

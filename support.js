@@ -225,7 +225,7 @@ function readBattle(id) {
       if (!alreadyAddedInternals(battle)) {
         battle.roster.forEach((player) =>
           player.ships.forEach((ship) => {
-            ship.sourceFleet = player.name
+            ship.owner = player.name
             ship.systems.push({ class: 'internal' })
             ship.systems.push({ class: 'internal' })
             ship.systems = ship.systems.filter((system) => system.class)
