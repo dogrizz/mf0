@@ -49,7 +49,7 @@
     }
 
     return {
-      oninit: function(vnode){
+      oninit: function (vnode) {
         var system = vnode.attrs.system
         secondSystem = system.attackType2
       },
@@ -78,7 +78,7 @@
             ],
           ),
           system.class === 'attack'
-            ? m("div", [
+            ? m('div', [
                 m(
                   'select',
                   {
@@ -173,6 +173,7 @@
                     hidden: !ship.hasAce,
                     oninput: function (e) {
                       ship.aceType = e.target.value
+                      saveState()
                     },
                   },
                   [
@@ -268,7 +269,7 @@
             ),
             m('span', dice(ship)),
           ]),
-          m('div', { class: 'row' , style: "gap: 5px"}, [
+          m('div', { class: 'row', style: 'gap: 5px' }, [
             m(
               'select',
               {
@@ -340,7 +341,7 @@
           m(
             'label',
             { style: 'float: right;margin-top: 5px' },
-            'Sync PPA calculations with ship builder',
+            'Sync PPA calculations with fleet builder',
             m('input', {
               onclick: function (e) {
                 setShips(e.target.checked)
