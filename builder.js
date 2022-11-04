@@ -49,6 +49,10 @@
     }
 
     return {
+      oninit: function(vnode){
+        var system = vnode.attrs.system
+        secondSystem = system.attackType2
+      },
       view: function (vnode) {
         var system = vnode.attrs.system
         var weapons = [
