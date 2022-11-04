@@ -21,7 +21,7 @@
         ),
         m('h1', 'MF0 Intercept Orbit battles'),
         m('div', { class: 'column', style:"gap: 10px"}, [
-          !battles
+          (!battles || Object.entries(battles).length === 0)
             ? [
                 m('span', 'No battles yet. Grab your bricks, dice and get to it!'),
                 m('a', { href: 'index.html' }, 'Go to Fleet builder / PPA calculator'),
