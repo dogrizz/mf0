@@ -36,7 +36,7 @@
         company = vnode.attrs.company
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'column' }, [
+        return m('div', { class: 'column tas' }, [
           m('div', { class: 'row', style: 'gap: 5px' }, [
             m(
               'h4',
@@ -114,7 +114,7 @@
         ship = vnode.attrs.ship
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: ship.owner !== fleet.id ? 'column captured' : 'column' }, [
+        return m('div', { class: ship.owner !== fleet.id ? 'column tas captured' : 'column tas' }, [
           m('div', { class: 'row', style: 'gap: 5px' }, [
             m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name || 'noname'),
             m(
@@ -130,22 +130,20 @@
             m(
               'div',
               { class: ship.showPopup ? 'overlay overlay-show' : 'overlay' },
-              m('div', { class: 'column popup' , style: "gap: 10px"}, [
-                m(
-                  'div',{class: "row", style:"justify-content: space-between;margin-bottom: 10px"},[
-                    m('h3', `Transfer ship ${ship.name} to:`),
-                    m(
-                      'button',
-                      {
-                        style: 'float: right',
-                        onclick: function () {
-                          ship.showPopup = false
-                        },
+              m('div', { class: 'column popup', style: 'gap: 10px' }, [
+                m('div', { class: 'row', style: 'justify-content: space-between;margin-bottom: 10px' }, [
+                  m('h3', `Transfer ship ${ship.name} to:`),
+                  m(
+                    'button',
+                    {
+                      style: 'float: right',
+                      onclick: function () {
+                        ship.showPopup = false
                       },
-                      '×',
-                    )
-                  ],
-                ),
+                    },
+                    '×',
+                  ),
+                ]),
                 battle.roster
                   .filter((f) => f !== fleet)
                   .map((player) =>
@@ -193,10 +191,10 @@
     return {
       view: function (vnode) {
         const fleet = vnode.attrs.fleet
-        return m("div", [
+        return m('div', {class: "column",style:"gap: 10px"}, [
           m('h3', fleet.name),
+          m('div', { class: 'row', style: 'gap: 15px' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
           m('div', { class: 'row', style: 'gap: 15px' }, [
-            fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet })),
             fleet.companies.map((company) => m(CompanyComponent(), { company: company, fleet: fleet })),
           ]),
         ])

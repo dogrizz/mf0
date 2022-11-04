@@ -106,3 +106,9 @@ h4 {
   opacity: 1;
   visibility: visible;
 }
+
+.tas {
+  width: 120px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
