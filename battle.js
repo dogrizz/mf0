@@ -92,13 +92,41 @@
       store(battle)
     }
 
+    function startTransfer(ship) {
+      if (battle.roster.length === 2) {
+        transfer(
+          ship,
+          battle.roster.filter((f) => f != fleet),
+        )
+      }
+    }
+
+    function transfer(ship, targetFleet) {
+      fleet.tas--
+      targetFleet.tas++
+      fleet.slice(fleet.ships.indexOf(ship), 1)
+      targetFleet.ships.push(ship)
+    }
+
     return {
       view: function (vnode) {
         ship = vnode.attrs.ship
         fleet = vnode.attrs.fleet
 
         return m('div', { class: 'column' }, [
-          m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name),
+          m('div', { class: 'row', style: 'gap: 5px' }, [
+            m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name),
+            m(
+              'button',
+              {
+                title: 'Transfer',
+                onclick: function () {
+                  startTransfer(ship)
+                },
+              },
+              '⇌',
+            ),
+          ]),
           m('span', dice(ship)),
           ship.systems.map(function (system) {
             let systemText = system.class
