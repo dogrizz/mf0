@@ -104,7 +104,7 @@
     function transfer(ship, targetFleet) {
       fleet.tas--
       targetFleet.tas++
-      fleet.ships.slice(fleet.ships.indexOf(ship), 1)
+      fleet.ships.splice(fleet.ships.indexOf(ship), 1)
       targetFleet.ships.push(ship)
     }
 
@@ -115,7 +115,7 @@
 
         return m('div', { class: ship.owner !== fleet.name ? 'column captured' : 'column' }, [
           m('div', { class: 'row', style: 'gap: 5px' }, [
-            m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name),
+            m('h4', { class: ship.destroyed ? 'dead' : '' }, ship.name || 'noname' ),
             m(
               'button',
               {
