@@ -522,6 +522,7 @@
             m(
               'button',
               {
+                disabled: players.length === 0,
                 onclick: function () {
                   location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
                 },
