@@ -486,6 +486,15 @@
           },
           '🌓',
         ),
+        m(
+          'a',
+          {
+            title: 'Browse running battles',
+            href: 'battles.html',
+            style: 'float: right;margin-right: 15px;text-decoration: none;',
+          },
+          '🕮',
+        ),
         m('h1', 'MF0 Intercept Orbit points per asset calculator'),
         m('div', { class: 'row' }, [
           m(

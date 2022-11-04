@@ -192,7 +192,7 @@
     return {
       view: function (vnode) {
         const fleet = vnode.attrs.fleet
-        return m('div', {class: "column",style:"gap: 10px"}, [
+        return m('div', { class: 'column', style: 'gap: 10px' }, [
           m('h3', fleet.name),
           m('div', { class: 'row', style: 'gap: 15px' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
           m('div', { class: 'row', style: 'gap: 15px' }, [
@@ -280,6 +280,15 @@
             },
           },
           '🌓',
+        ),
+        m(
+          'a',
+          {
+            title: 'Browse other battles',
+            href: 'battles.html',
+            style: 'float: right;margin-right: 15px;text-decoration: none;',
+          },
+          '🕮',
         ),
         m('h1', 'MF0 Intercept Orbit battle tracker'),
         !battle
