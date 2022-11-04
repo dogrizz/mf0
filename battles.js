@@ -30,7 +30,7 @@
                 const date = new Date(entry[1].date)
                 const id = entry[0]
                 return m('div', { class: 'row', style: 'gap: 10px' }, [
-                  m('span', `Battle from ${date}`),
+                  m('span', `Battle from ${date.toLocaleString()}`),
                   m('a', { href: `battle.html?${BATTLE_ID_PARAM}=${id}` }, 'Resume'),
                   m(
                     'button',
