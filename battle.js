@@ -104,7 +104,7 @@
     function transfer(ship, targetFleet) {
       fleet.tas--
       targetFleet.tas++
-      fleet.slice(fleet.ships.indexOf(ship), 1)
+      fleet.ships.slice(fleet.ships.indexOf(ship), 1)
       targetFleet.ships.push(ship)
     }
 
