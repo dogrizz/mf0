@@ -89,22 +89,26 @@ function dice(ship) {
       return system.class === 'attack' && !system.disabled
     })
     var attacks = {
-      p: 0,
-      a: 0,
-      s: 0,
+      p: [],
+      a: [],
+      s: [],
     }
     attack.forEach(function (att) {
       if (att.hasOwnProperty('attackType2')) {
-        attacks[att.attackType] += 1
-        attacks[att.attackType2] += 1
+        attacks[att.attackType].push({ val: 1 })
+        attacks[att.attackType2].push({ val: 1 })
       } else {
-        attacks[att.attackType] += 2
+        attacks[att.attackType].push({ val: 2 })
       }
     })
 
     var atts = Object.entries(attacks)
     atts.forEach(function (att) {
       var val = att[1]
+        .sort()
+        .slice(0, 2)
+        .map((att) => att.val)
+        .reduce((a, b) => a + b, 0)
       if (val) {
         var dice = val <= 3 ? val : '2+d8'
         diceDescription = `${diceDescription}R${att[0]}${dice}`

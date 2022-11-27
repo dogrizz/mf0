@@ -457,7 +457,7 @@
       function add() {
         players.push({
           name: 'Player',
-          hva: 2,
+          hva: 3,
           tas: 5,
           systems: 10,
           ppa: 5,
@@ -474,7 +474,27 @@
       }
 
       return m('main', { class: 'main' }, [
-        m(OptionsComponent, {}),
+        m(
+          'a',
+          {
+            title: 'Dark/Light mode',
+            href: '#',
+            style: 'float: right;text-decoration: none;',
+            onclick: function () {
+              document.body.classList.toggle('dark-mode')
+            },
+          },
+          '🌓',
+        ),
+        m(
+          'a',
+          {
+            title: 'Browse running battles',
+            href: 'battles.html',
+            style: 'float: right;margin-right: 15px;text-decoration: none;',
+          },
+          '🕮',
+        ),
         m('h1', 'MF0 Intercept Orbit points per asset calculator'),
         m('div', { class: 'row' }, [
           m(
