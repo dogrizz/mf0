@@ -473,76 +473,59 @@
         }
       }
 
-      return m('main', { class: 'main' }, [
-        m(
-          'a',
-          {
-            title: 'Dark/Light mode',
-            href: '#',
-            style: 'float: right;text-decoration: none;',
-            onclick: function () {
-              document.body.classList.toggle('dark-mode')
-            },
-          },
-          '🌓',
-        ),
-        m(
-          'a',
-          {
-            title: 'Browse running battles',
-            href: 'battles.html',
-            style: 'float: right;margin-right: 15px;text-decoration: none;',
-          },
-          '🕮',
-        ),
-        m('h1', 'MF0 Intercept Orbit points per asset calculator'),
-        m('div', { class: 'row' }, [
+      return [
+        m(OptionsComponent, {}),
+        m('main', { class: 'main column' }, [
+          m('h1', 'MF0 Intercept Orbit points per asset calculator'),
+          m('div', { class: 'row' }, [
+            m(
+              'div',
+              { class: 'column-justified' },
+              m('span', 'Fleet id'),
+              m('span', 'HVA'),
+              m('span', 'TAs'),
+              m('span', 'Systems'),
+              m('span', 'PPA'),
+              m('span', 'Total'),
+            ),
+            players.map(function (player) {
+              return m(PlayerComponent, { player: player })
+            }),
+            m('button', { onclick: add }, 'Add player'),
+          ]),
           m(
             'div',
-            { class: 'column-justified' },
-            m('span', 'Fleet id'),
-            m('span', 'HVA'),
-            m('span', 'TAs'),
-            m('span', 'Systems'),
-            m('span', 'PPA'),
-            m('span', 'Total'),
+            {
+              class: 'column',
+              style: 'margin-top: 10px; gap: 10px',
+            },
+            [
+              m(
+                'button',
+                {
+                  disabled: players.length === 0,
+                  onclick: function () {
+                    location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
+                  },
+                },
+                'Fight!',
+              ),
+              m(
+                'button',
+                {
+                  class: 'accordion ' + (trackShips ? 'active' : ''),
+                  onclick: function (e) {
+                    setShips(!trackShips)
+                  },
+                },
+                'Fleet builder',
+              ),
+              trackShips ? m(ShipTrackerComponent) : null,
+            ],
           ),
-          players.map(function (player) {
-            return m(PlayerComponent, { player: player })
-          }),
-          m('button', { onclick: add }, 'Add player'),
+          m(FooterComponent, {}),
         ]),
-        m(
-          'div',
-          {
-            class: 'column',
-            style: 'margin-top: 10px; gap: 10px',
-          },
-          [
-            m(
-              'button',
-              {
-                disabled: players.length === 0,
-                onclick: function () {
-                  location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
-                },
-              },
-              'Fight!',
-            ),
-            m(
-              'button',
-              {
-                class: 'accordion ' + (trackShips ? 'active' : ''),
-                onclick: function (e) {
-                  setShips(!trackShips)
-                },
-              },
-              'Fleet builder',
-            ),
-            trackShips ? m(ShipTrackerComponent) : null,
-          ],
-        ),
-      ])
+      ]
     },
   }
 

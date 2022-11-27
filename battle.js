@@ -268,30 +268,33 @@
       }
     },
     view: function () {
-      return m('main', { class: 'main' }, [
+      return [
         m(OptionsComponent, {}),
-        m('h1', 'MF0 Intercept Orbit battle tracker'),
-        !battle
-          ? "Can't find your battle"
-          : [
-              m('div', { class: 'row', style: 'gap: 10px' }, [
-                m(
-                  'div',
-                  { class: 'column-justified' },
-                  m('span', 'Fleet id'),
-                  m('span', 'HVA'),
-                  m('span', 'TAs'),
-                  m('span', 'PPA'),
-                  m('span', 'Total'),
-                  m('span', 'Role'),
-                ),
-                battle.roster.map(function (player) {
-                  return m(PlayerComponent, { player: player })
-                }),
-              ]),
-              battle.sync ? m(ShipTrackerComponent) : null,
-            ],
-      ])
+        m('main', { class: 'main column' }, [
+          m('h1', 'MF0 Intercept Orbit battle tracker'),
+          !battle
+            ? "Can't find your battle"
+            : [
+                m('div', { class: 'row', style: 'gap: 10px' }, [
+                  m(
+                    'div',
+                    { class: 'column-justified' },
+                    m('span', 'Fleet id'),
+                    m('span', 'HVA'),
+                    m('span', 'TAs'),
+                    m('span', 'PPA'),
+                    m('span', 'Total'),
+                    m('span', 'Role'),
+                  ),
+                  battle.roster.map(function (player) {
+                    return m(PlayerComponent, { player: player })
+                  }),
+                ]),
+                battle.sync ? m(ShipTrackerComponent) : null,
+              ],
+          m(FooterComponent, {}),
+        ]),
+      ]
     },
   }
   m.mount(root, main)
