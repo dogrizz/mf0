@@ -474,27 +474,7 @@
       }
 
       return m('main', { class: 'main' }, [
-        m(
-          'a',
-          {
-            title: 'Dark/Light mode',
-            href: '#',
-            style: 'float: right;text-decoration: none;',
-            onclick: function () {
-              document.body.classList.toggle('dark-mode')
-            },
-          },
-          '🌓',
-        ),
-        m(
-          'a',
-          {
-            title: 'Browse running battles',
-            href: 'battles.html',
-            style: 'float: right;margin-right: 15px;text-decoration: none;',
-          },
-          '🕮',
-        ),
+        m(OptionsComponent, {}),
         m('h1', 'MF0 Intercept Orbit points per asset calculator'),
         m('div', { class: 'row' }, [
           m(

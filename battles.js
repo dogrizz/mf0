@@ -7,18 +7,7 @@
     },
     view: function () {
       return m('main', { class: 'main' }, [
-        m(
-          'a',
-          {
-            title: 'Dark/Light mode',
-            href: '#',
-            style: 'float: right;text-decoration: none;',
-            onclick: function () {
-              document.body.classList.toggle('dark-mode')
-            },
-          },
-          '🌓',
-        ),
+        m(OptionsComponent, {hideBattleLink: true}),
         m('h1', 'MF0 Intercept Orbit battles'),
         m('div', { class: 'column', style:"gap: 10px"}, [
           (!battles || Object.entries(battles).length === 0)
