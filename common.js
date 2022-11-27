@@ -35,9 +35,9 @@ function FooterComponent() {
     view: function () {
       return m('footer', [
         m('span', 'Please '),
-        m('a', { href: 'https://www.patreon.com/Joshua' }, 'support MF0 creator'),
+        m('a', { target: '_blank', href: 'https://www.patreon.com/Joshua' }, 'support MF0 creator'),
         m('span', ' or '),
-        m('a', { href: 'https://glyphpress.com/talk/mobile-frame-zero-002-intercept-orbit-final-pdf' }, 'buy a rulebook'),
+        m('a', { target: '_blank', href: 'https://glyphpress.com/talk/mobile-frame-zero-002-intercept-orbit-final-pdf' }, 'buy a rulebook'),
         m('div', { class: 'disclaimer' }, [m('span', 'I am not the creator ;)')]),
       ])
     },
