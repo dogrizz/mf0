@@ -326,3 +326,35 @@ function determineRole(players) {
     }
   })
 }
+function randomShipName() {
+  return shipNames[Math.floor(Math.random() * shipNames.length)]
+}
+
+const shipNames = [
+  'Civilization',
+  'Victoria',
+  'Determination',
+  'Trafalgar',
+  'Cydonia',
+  'SS Patience',
+  'STS Firebrand',
+  'CS Titan',
+  'CS Badger',
+  'SSE The Kraken',
+  'Shirley',
+  'Commissioner',
+  'Lucky',
+  'Agememnon',
+  'Avenger',
+  'BS Hummingbird',
+  'HWSS Saber',
+  'BC Nightfall',
+  'HMS Jellyfish',
+  'BC Leviathan',
+  'Warspite',
+  'Lightning',
+  'Thunder',
+  'Venator',
+  'Enterprise',
+  'Galctica',
+]

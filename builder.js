@@ -230,6 +230,7 @@
       oninit: function (vnode) {
         var ship = vnode.attrs.ship
         if (!ship.class) {
+          ship.name = randomShipName()
           changeClass(ship, 'frigate')
         }
       },
