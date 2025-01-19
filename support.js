@@ -10,7 +10,7 @@ const ShipSystem = {
 }
 
 const AttackType = {
-  POINT_DEFENCE: 'p',
+  POINT_DEFENSE: 'p',
   ASSAULT: 'a',
   SUPPORT: 's',
 }
@@ -21,8 +21,8 @@ const ShipType = {
 }
 
 const MAX_SYSTEMS = {
-  CAPITAL: 4,
-  FRIGATE: 3,
+  [ShipType.CAPITAL]: 4,
+  [ShipType.FRIGATE]: 3,
 }
 
 const MechSystem = {
@@ -104,7 +104,7 @@ function dice(ship) {
     }
 
     var defence = ship.systems.filter(function (system) {
-      return system.class === ShipSystem.DEFENCE && !system.disabled
+      return system.class === ShipSystem.DEFENSE && !system.disabled
     }).length
     if (defence) {
       diceDescription = `${diceDescription}${defence}B`
@@ -157,7 +157,7 @@ function companyDice(company) {
   }
   let diceDescription = ''
   var internals = company.systems.filter(function (system) {
-    return system.class === 'systems' && !system.disabled
+    return system.class === MechSystem.SYSTEM && !system.disabled
   }).length
   if (internals) {
     diceDescription = `${diceDescription}${internals}W`

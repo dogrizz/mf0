@@ -21,7 +21,7 @@
     function changeClass(system, newClass) {
       system.class = newClass
       if (system.class === ShipSystem.ATTACK) {
-        changeAttackType(system, AttackType.POINT_DEFENCE)
+        changeAttackType(system, AttackType.POINT_DEFENSE)
       }
       recalculatePPA()
     }
@@ -52,7 +52,7 @@
       view: function (vnode) {
         var system = vnode.attrs.system
         var weapons = [
-          m('option', { value: AttackType.POINT_DEFENCE }, 'Point defence'),
+          m('option', { value: AttackType.POINT_DEFENSE }, 'Point defence'),
           m('option', { value: AttackType.ASSAULT }, 'Assault'),
           m('option', { value: AttackType.SUPPORT }, 'Support'),
         ]
@@ -68,7 +68,7 @@
             [
               m('option', { value: '' }, ''),
               m('option', { value: ShipSystem.ATTACK }, 'Attack'),
-              m('option', { value: ShipSystem.DEFENCE }, 'Defence'),
+              m('option', { value: ShipSystem.DEFENSE }, 'Defence'),
               m('option', { value: ShipSystem.SENSOR }, 'Sensors'),
               m('option', { value: ShipSystem.CATAPULT }, 'Catapult'),
             ],
