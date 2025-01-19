@@ -1,12 +1,11 @@
+* {
+  font-family: 'Sofia Sans', sans-serif;
+}
+
 .main {
   margin: auto;
   width: 900px;
   min-height: 100vh;
-}
-
-.dark-mode {
-  color: white;
-  background-color: #22313f;
 }
 
 .accordion {
@@ -18,11 +17,6 @@
   outline: none;
   background-color: #22313f;
   color: #ebebeb;
-}
-
-.dark-mode .accordion {
-  background-color: #ebebeb;
-  color: #22313f;
 }
 
 .accordion.active:after {
@@ -56,16 +50,8 @@
   color: #aaa;
 }
 
-.dark-mode .dead {
-  color: #33423f;
-}
-
 .captured {
   background-color: #ebebeb;
-}
-
-.dark-mode .captured {
-  background-color: #aaa;
 }
 
 h3 {
@@ -85,10 +71,6 @@ h4 {
   position: relative;
   transition: all 5s ease-in-out;
   background-color: #ebebeb;
-}
-
-.dark-mode .popup {
-  background-color: #22313f;
 }
 
 .overlay {
@@ -125,3 +107,7 @@ footer {
 footer .disclaimer {
   font-size: smaller;
 }
+
+#button { background-color: #2196F3; /* Blue */ border: none; color: white; padding: 5px 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 4px; /* Rounded corners */ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */ transition: background-color 0.3s; /* Smooth transition */ } 
+#button:hover { background-color: #0D47A1; /* Darker blue */ }
+

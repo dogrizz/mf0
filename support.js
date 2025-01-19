@@ -1,6 +1,23 @@
 const BATTLE_STORAGE_KEY = 'mf0-battles'
 const BATTLE_ID_PARAM = 'battleId'
 
+/* Ship systems */
+const INTERNAL = 'internal'
+const ATTACK = 'attack'
+const DEFENCE = 'defence'
+const SENSOR = 'sensor'
+const CATAPULT = 'catapult'
+
+/* Types of attack systems */
+const POINT_DEFENCE = 'p'
+const ASSAULT = 'a'
+const SUPPORT = 's'
+
+const ShipType = {
+  FRIGATE: 'frigate',
+  CAPITAL: 'capital'
+}
+
 function calculatePPA(players, syncShips) {
   if (players.length === 0) {
     return
@@ -51,13 +68,13 @@ function dice(ship) {
     diceDescription = '2W'
   } else {
     var internals = ship.systems.filter(function (system) {
-      return system.class === 'internal' && !system.disabled
+      return system.class === INTERNAL && !system.disabled
     }).length
     if (internals) {
       diceDescription = `${diceDescription}${internals}W`
     }
   }
-  if (ship.hasOwnProperty('class') && ship.class === 'frigate') {
+  if (ship.hasOwnProperty('class') && ship.class === ShipType.FRIGATE) {
     diceDescription += '1G'
   }
   if (ship.hasOwnProperty('systems')) {

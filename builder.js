@@ -4,7 +4,7 @@
   var players = []
   var trackShips = false
   var syncShips = false
-  var MAX_SYSTEMS = {
+  const MAX_SYSTEMS = {
     capital: 4,
     frigate: 3,
   }
@@ -24,8 +24,8 @@
 
     function changeClass(system, newClass) {
       system.class = newClass
-      if (system.class === 'attack') {
-        changeAttackType(system, 'p')
+      if (system.class === ATTACK) {
+        changeAttackType(system, POINT_DEFENCE)
       }
       recalculatePPA()
     }
@@ -56,9 +56,9 @@
       view: function (vnode) {
         var system = vnode.attrs.system
         var weapons = [
-          m('option', { value: 'p' }, 'Point defence'),
-          m('option', { value: 'a' }, 'Assault'),
-          m('option', { value: 's' }, 'Support'),
+          m('option', { value: POINT_DEFENCE }, 'Point defence'),
+          m('option', { value: ASSAULT }, 'Assault'),
+          m('option', { value: SUPPORT }, 'Support'),
         ]
         return [
           m(
@@ -71,10 +71,10 @@
             },
             [
               m('option', { value: '' }, ''),
-              m('option', { value: 'attack' }, 'Attack'),
-              m('option', { value: 'defence' }, 'Defence'),
-              m('option', { value: 'sensor' }, 'Sensors'),
-              m('option', { value: 'catapult' }, 'Catapult'),
+              m('option', { value: ATTACK }, 'Attack'),
+              m('option', { value: DEFENCE }, 'Defence'),
+              m('option', { value: SENSOR }, 'Sensors'),
+              m('option', { value: CATAPULT }, 'Catapult'),
             ],
           ),
           system.class === 'attack'
@@ -121,7 +121,7 @@
     function shipCatapults(ship) {
       if (ship.hasOwnProperty('systems')) {
         return ship.systems.filter(function (system) {
-          return system.class === 'catapult'
+          return system.class === CATAPULT
         })
       }
       return []
@@ -241,6 +241,7 @@
         return m('div', { class: 'column' }, [
           m('div', [
             m('input', {
+              type: 'text',
               value: ship.name,
               oninput: function (e) {
                 changeName(ship, e.target.value)
@@ -481,7 +482,7 @@
           m('div', { class: 'row' }, [
             m(
               'div',
-              { class: 'column-justified' },
+              { class: 'column-justified', style: 'margin-right: 2px;'},
               m('span', 'Fleet id'),
               m('span', 'HVA'),
               m('span', 'TAs'),
