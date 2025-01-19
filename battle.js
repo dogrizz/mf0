@@ -165,7 +165,7 @@
           m('span', dice(ship)),
           ship.systems.map(function (system) {
             let systemText = system.class
-            if (system.class === 'attack') {
+            if (system.class === ShipSystem.ATTACK) {
               systemText = `${systemText} ${system.attackType}`
               if (system.attackType2) {
                 systemText = `${systemText}/${system.attackType2}`
