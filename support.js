@@ -1,21 +1,36 @@
 const BATTLE_STORAGE_KEY = 'mf0-battles'
 const BATTLE_ID_PARAM = 'battleId'
 
-/* Ship systems */
-const INTERNAL = 'internal'
-const ATTACK = 'attack'
-const DEFENCE = 'defence'
-const SENSOR = 'sensor'
-const CATAPULT = 'catapult'
+const ShipSystem = {
+  INTERNAL: 'internal',
+  ATTACK: 'attack',
+  DEFENSE: 'defense',
+  SENSOR: 'sensor',
+  CATAPULT: 'catapult',
+}
 
-/* Types of attack systems */
-const POINT_DEFENCE = 'p'
-const ASSAULT = 'a'
-const SUPPORT = 's'
+const AttackType = {
+  POINT_DEFENCE: 'p',
+  ASSAULT: 'a',
+  SUPPORT: 's',
+}
 
 const ShipType = {
   FRIGATE: 'frigate',
-  CAPITAL: 'capital'
+  CAPITAL: 'capital',
+}
+
+const MAX_SYSTEMS = {
+  CAPITAL: 4,
+  FRIGATE: 3,
+}
+
+const MechSystem = {
+  SYSTEM: 'system',
+  WEAPON: 'weapon',
+  DEFENSE: 'defense',
+  COMMS: 'comm',
+  MOVEMENT: 'movement',
 }
 
 function calculatePPA(players, syncShips) {
@@ -68,7 +83,7 @@ function dice(ship) {
     diceDescription = '2W'
   } else {
     var internals = ship.systems.filter(function (system) {
-      return system.class === INTERNAL && !system.disabled
+      return system.class === ShipSystem.INTERNAL && !system.disabled
     }).length
     if (internals) {
       diceDescription = `${diceDescription}${internals}W`
@@ -79,7 +94,7 @@ function dice(ship) {
   }
   if (ship.hasOwnProperty('systems')) {
     var catapults = ship.systems.filter(function (system) {
-      return system.class === 'catapult' && !system.disabled
+      return system.class === ShipSystem.CATAPULT && !system.disabled
     }).length
     if (catapults == 1) {
       diceDescription += '1K'
@@ -89,21 +104,21 @@ function dice(ship) {
     }
 
     var defence = ship.systems.filter(function (system) {
-      return system.class === 'defence' && !system.disabled
+      return system.class === ShipSystem.DEFENCE && !system.disabled
     }).length
     if (defence) {
       diceDescription = `${diceDescription}${defence}B`
     }
 
     var sensors = ship.systems.filter(function (system) {
-      return system.class === 'sensor' && !system.disabled
+      return system.class === ShipSystem.SENSOR && !system.disabled
     }).length
     if (sensors) {
       diceDescription = `${diceDescription}${sensors}Y`
     }
 
     var attack = ship.systems.filter(function (system) {
-      return system.class === 'attack' && !system.disabled
+      return system.class === ShipSystem.ATTACK && !system.disabled
     })
     var attacks = {
       p: [],
@@ -148,25 +163,25 @@ function companyDice(company) {
     diceDescription = `${diceDescription}${internals}W`
   }
   var attack = company.systems.filter(function (system) {
-    return system.class === 'weapon' && !system.disabled
+    return system.class === MechSystem.WEAPON && !system.disabled
   }).length
   if (attack) {
     diceDescription = `${diceDescription}2Rd`
   }
   var defense = company.systems.filter(function (system) {
-    return system.class === 'defense' && !system.disabled
+    return system.class === MechSystem.DEFENSE && !system.disabled
   }).length
   if (defense) {
     diceDescription = `${diceDescription}${defense}B`
   }
   var comms = company.systems.filter(function (system) {
-    return system.class === 'comms' && !system.disabled
+    return system.class === MechSystem.COMMS && !system.disabled
   }).length
   if (comms) {
     diceDescription = `${diceDescription}${comms}Y`
   }
   var movement = company.systems.filter(function (system) {
-    return system.class === 'movement' && !system.disabled
+    return system.class === MechSystem.MOVEMENT && !system.disabled
   }).length
   if (movement) {
     diceDescription = `${diceDescription}${movement}G`
@@ -181,7 +196,7 @@ function countMechCompanies(ships) {
   var companies = 0
   ships.forEach(function (ship) {
     ship.systems.forEach(function (system) {
-      if (system.class === 'catapult') {
+      if (system.class === ShipSystem.CATAPULT) {
         companies = companies + 1
       }
     })
@@ -259,8 +274,8 @@ function readBattle(id) {
           player.ships.forEach((ship) => {
             ship.owner = player.id
             ship.id = self.crypto.randomUUID()
-            ship.systems.push({ class: 'internal' })
-            ship.systems.push({ class: 'internal' })
+            ship.systems.push({ class: ShipSystem.INTERNAL })
+            ship.systems.push({ class: ShipSystem.INTERNAL })
             ship.systems = ship.systems.filter((system) => system.class)
             ship.systems = [...ship.systems].sort()
           })
@@ -293,16 +308,16 @@ function buildCompanyData(player) {
   player.companies = []
   player.ships.forEach(function (ship) {
     ship.systems.forEach(function (system) {
-      if (system.class === 'catapult') {
+      if (system.class === ShipSystem.CATAPULT) {
         const company = {
           origin: ship.name,
           systems: [
-            { class: 'weapon' },
-            { class: 'defense' },
-            { class: 'comms' },
-            { class: 'movement' },
-            { class: 'systems' },
-            { class: 'systems' },
+            { class: MechSystem.WEAPON },
+            { class: MechSystem.DEFENSE },
+            { class: MechSystem.COMMS },
+            { class: MechSystem.MOVEMENT },
+            { class: MechSystem.SYSTEM },
+            { class: MechSystem.SYSTEM },
           ],
         }
         player.companies.push(company)

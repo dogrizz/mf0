@@ -4,10 +4,6 @@
   var players = []
   var trackShips = false
   var syncShips = false
-  const MAX_SYSTEMS = {
-    capital: 4,
-    frigate: 3,
-  }
   const LOCAL_STORAGE_KEY = 'mf0-tools'
 
   function recalculatePPA() {
@@ -24,8 +20,8 @@
 
     function changeClass(system, newClass) {
       system.class = newClass
-      if (system.class === ATTACK) {
-        changeAttackType(system, POINT_DEFENCE)
+      if (system.class === ShipSystem.ATTACK) {
+        changeAttackType(system, AttackType.POINT_DEFENCE)
       }
       recalculatePPA()
     }
@@ -56,9 +52,9 @@
       view: function (vnode) {
         var system = vnode.attrs.system
         var weapons = [
-          m('option', { value: POINT_DEFENCE }, 'Point defence'),
-          m('option', { value: ASSAULT }, 'Assault'),
-          m('option', { value: SUPPORT }, 'Support'),
+          m('option', { value: AttackType.POINT_DEFENCE }, 'Point defence'),
+          m('option', { value: AttackType.ASSAULT }, 'Assault'),
+          m('option', { value: AttackType.SUPPORT }, 'Support'),
         ]
         return [
           m(
@@ -71,13 +67,13 @@
             },
             [
               m('option', { value: '' }, ''),
-              m('option', { value: ATTACK }, 'Attack'),
-              m('option', { value: DEFENCE }, 'Defence'),
-              m('option', { value: SENSOR }, 'Sensors'),
-              m('option', { value: CATAPULT }, 'Catapult'),
+              m('option', { value: ShipSystem.ATTACK }, 'Attack'),
+              m('option', { value: ShipSystem.DEFENCE }, 'Defence'),
+              m('option', { value: ShipSystem.SENSOR }, 'Sensors'),
+              m('option', { value: ShipSystem.CATAPULT }, 'Catapult'),
             ],
           ),
-          system.class === 'attack'
+          system.class === ShipSystem.ATTACK
             ? m('div', [
                 m(
                   'select',
@@ -121,7 +117,7 @@
     function shipCatapults(ship) {
       if (ship.hasOwnProperty('systems')) {
         return ship.systems.filter(function (system) {
-          return system.class === CATAPULT
+          return system.class === ShipSystem.CATAPULT
         })
       }
       return []
@@ -148,7 +144,7 @@
                 m(
                   'div',
                   { class: 'column' },
-                  catapults.map(function (system) {
+                  catapults.map(function (_) {
                     return m('div', 'Mech company')
                   }),
                 ),
@@ -231,7 +227,7 @@
         var ship = vnode.attrs.ship
         if (!ship.class) {
           ship.name = randomShipName()
-          changeClass(ship, 'frigate')
+          changeClass(ship, ShipType.FRIGATE)
         }
       },
       view: function (vnode) {
@@ -280,7 +276,7 @@
                   changeClass(ship, e.target.value)
                 },
               },
-              [m('option', { value: 'capital' }, 'Capital'), m('option', { value: 'frigate' }, 'Frigate')],
+              [m('option', { value: ShipType.CAPITAL }, 'Capital'), m('option', { value: ShipType.FRIGATE }, 'Frigate')],
             ),
             ship.hasOwnProperty('systems')
               ? ship.systems.map(function (system) {
@@ -482,7 +478,7 @@
           m('div', { class: 'row' }, [
             m(
               'div',
-              { class: 'column-justified', style: 'margin-right: 2px;'},
+              { class: 'column-justified', style: 'margin-right: 2px;' },
               m('span', 'Fleet id'),
               m('span', 'HVA'),
               m('span', 'TAs'),
@@ -493,7 +489,7 @@
             players.map(function (player) {
               return m(PlayerComponent, { player: player })
             }),
-            m('button', { onclick: add }, 'Add player'),
+            m('button', { onclick: add, style: 'margin-left: 5px;' }, 'Add player'),
           ]),
           m(
             'div',
@@ -516,7 +512,7 @@
                 'button',
                 {
                   class: 'accordion ' + (trackShips ? 'active' : ''),
-                  onclick: function (e) {
+                  onclick: function (_) {
                     setShips(!trackShips)
                   },
                 },

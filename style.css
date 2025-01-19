@@ -108,6 +108,21 @@ footer .disclaimer {
   font-size: smaller;
 }
 
-#button { background-color: #2196F3; /* Blue */ border: none; color: white; padding: 5px 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 4px; /* Rounded corners */ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */ transition: background-color 0.3s; /* Smooth transition */ } 
-#button:hover { background-color: #0D47A1; /* Darker blue */ }
-
+#button {
+  background-color: #2196f3; /* Blue */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px; /* Rounded corners */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+#button:hover {
+  background-color: #0d47a1; /* Darker blue */
+}
