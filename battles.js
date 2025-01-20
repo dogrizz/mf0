@@ -20,7 +20,7 @@
                 const date = new Date(entry[1].date)
                 const id = entry[0]
                 return m('div', { class: 'col row align-items-center justify-content-start gap-2' }, [
-                  m('span', { class: 'col' }, `Battle from ${date.toLocaleString()}`),
+                  m('span', { class: 'col fs-5' }, `Battle from ${date.toLocaleString()}`),
                   m('a', { class: 'col btn btn-outline-success', href: `battle.html?${BATTLE_ID_PARAM}=${id}` }, 'Resume'),
                   m(
                     'button',
