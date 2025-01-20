@@ -1,4 +1,4 @@
-;(function () {
+; (function() {
   var root = document.body
 
   var players = []
@@ -45,23 +45,24 @@
     }
 
     return {
-      oninit: function (vnode) {
+      oninit: function(vnode) {
         var system = vnode.attrs.system
         secondSystem = system.attackType2
       },
-      view: function (vnode) {
+      view: function(vnode) {
         var system = vnode.attrs.system
         var weapons = [
           m('option', { value: AttackType.POINT_DEFENSE }, 'Point defence'),
           m('option', { value: AttackType.ASSAULT }, 'Assault'),
           m('option', { value: AttackType.SUPPORT }, 'Support'),
         ]
-        return [
+        return m('div', { class: 'col row' }, [
           m(
             'select',
             {
+              class: 'col form-control',
               value: system.class,
-              oninput: function (e) {
+              oninput: function(e) {
                 changeClass(system, e.target.value)
               },
             },
@@ -74,41 +75,44 @@
             ],
           ),
           system.class === ShipSystem.ATTACK
-            ? m('div', [
-                m(
+            ? m('div', { class: 'col row gap-0' }, [
+              m(
+                'select',
+                {
+                  class: 'col form-control',
+                  value: system.attackType,
+                  oninput: function(e) {
+                    changeAttackType(system, e.target.value)
+                  },
+                },
+                weapons,
+              ),
+              secondSystem
+                ? m(
                   'select',
                   {
-                    value: system.attackType,
-                    oninput: function (e) {
-                      changeAttackType(system, e.target.value)
+                    class: 'col form-control',
+                    value: system.attackType2,
+                    oninput: function(e) {
+                      changeAttackType2(system, e.target.value)
                     },
                   },
                   weapons,
-                ),
-                secondSystem
-                  ? m(
-                      'select',
-                      {
-                        value: system.attackType2,
-                        oninput: function (e) {
-                          changeAttackType2(system, e.target.value)
-                        },
-                      },
-                      weapons,
-                    )
-                  : null,
-                m(
-                  'button',
-                  {
-                    onclick: function () {
-                      flipSecondSystem(system)
-                    },
+                )
+                : null,
+              m(
+                'button',
+                {
+                  class: 'col-1 btn btn-sm ' + (secondSystem ? 'btn-outline-warning' : 'btn-outline-success'),
+                  onclick: function() {
+                    flipSecondSystem(system)
                   },
-                  secondSystem ? '-' : '+',
-                ),
-              ])
+                },
+                secondSystem ? '-' : '+',
+              ),
+            ])
             : null,
-        ]
+        ])
       },
     }
   }
@@ -116,7 +120,7 @@
   function MechCompanies() {
     function shipCatapults(ship) {
       if (ship.hasOwnProperty('systems')) {
-        return ship.systems.filter(function (system) {
+        return ship.systems.filter(function(system) {
           return system.class === ShipSystem.CATAPULT
         })
       }
@@ -133,41 +137,43 @@
     }
 
     return {
-      view: function (vnode) {
+      view: function(vnode) {
         var ship = vnode.attrs.ship
         var fleet = vnode.attrs.fleet
         var catapults = shipCatapults(ship)
 
         return [
           catapults.length > 0
-            ? m('div', { class: 'row', style: 'gap: 10px' }, [
-                m(
-                  'div',
-                  { class: 'column' },
-                  catapults.map(function (_) {
-                    return m('div', 'Mech company')
-                  }),
-                ),
-                m(
-                  'label',
-                  { hidden: fleet.aceSelected && !ship.hasAce },
-                  'Has ace',
-                  m('input', {
-                    type: 'checkbox',
-                    disabled: fleet.aceSelected && !ship.hasAce,
-                    checked: ship.hasAce,
-                    onclick: function (e) {
-                      setAce(e.target.checked, ship, fleet)
-                    },
-                  }),
-                ),
+            ? m('div', { class: 'col row m-0 p-1 gap-1 justify-content-start align-items-center row-cols-3' }, [
+              m(
+                'div',
+                { class: 'col-3' },
+                catapults.map(function(_) {
+                  return m('div', 'Mech company')
+                }),
+              ),
+              m(
+                'label',
+                { class: 'col-2', hidden: fleet.aceSelected && !ship.hasAce },
+                'Has ace ',
+                m('input', {
+                  type: 'checkbox',
+                  disabled: fleet.aceSelected && !ship.hasAce,
+                  checked: ship.hasAce,
+                  onclick: function(e) {
+                    setAce(e.target.checked, ship, fleet)
+                  },
+                }),
+              ),
+              m('div', { class: 'col' },
                 m(
                   'select',
                   {
+                    class: 'form-control',
                     value: ship.aceType,
                     disabled: !ship.hasAce,
                     hidden: !ship.hasAce,
-                    oninput: function (e) {
+                    oninput: function(e) {
                       ship.aceType = e.target.value
                       saveState()
                     },
@@ -178,8 +184,8 @@
                     m('option', { value: 'green' }, 'Green Ace'),
                     m('option', { value: 'yellow' }, 'Yellow Ace'),
                   ],
-                ),
-              ])
+                )),
+            ])
             : null,
         ]
       },
@@ -223,65 +229,83 @@
     }
 
     return {
-      oninit: function (vnode) {
+      oninit: function(vnode) {
         var ship = vnode.attrs.ship
         if (!ship.class) {
           ship.name = randomShipName()
           changeClass(ship, ShipType.FRIGATE)
         }
       },
-      view: function (vnode) {
+      view: function(vnode) {
         var ship = vnode.attrs.ship
         var fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'column' }, [
-          m('div', [
-            m('input', {
-              type: 'text',
-              value: ship.name,
-              oninput: function (e) {
-                changeName(ship, e.target.value)
-              },
-            }),
+        return m('div', { class: 'ship col border border-black rounded-3 p-2 bg-dark' }, [
+          m('div', { class: 'row row-gap-2 justify-content-start align-items-center' }, [
             m(
-              'button',
-              {
-                title: 'Copy',
-                onclick: function () {
-                  duplicate(fleet, ship)
+              'div',
+              { class: 'col-5' },
+              m('input', {
+                type: 'text',
+                class: 'form-control',
+                value: ship.name,
+                oninput: function(e) {
+                  changeName(ship, e.target.value)
                 },
-                style: 'margin-left: 5px',
-              },
-              '📋',
+              }),
             ),
             m(
-              'button',
-              {
-                title: 'Remove',
-                onclick: function () {
-                  remove(fleet, ship)
+              'div',
+              { class: 'col-1' },
+              m(
+                'button',
+                {
+                  class: 'btn btn-sm btn-outline-light',
+                  title: 'Copy',
+                  onclick: function() {
+                    duplicate(fleet, ship)
+                  },
                 },
-                style: 'margin: 0px 10px 0px 5px',
-              },
-              '×',
+                '📋',
+              ),
             ),
-            m('span', dice(ship)),
+            m(
+              'div',
+              { class: 'col-1' },
+              m(
+                'button',
+                {
+                  class: 'btn btn-sm btn-outline-danger',
+                  title: 'Remove',
+                  onclick: function() {
+                    remove(fleet, ship)
+                  },
+                },
+                '×',
+              ),
+            ),
+            m('span', { class: 'col-2' }, dice(ship)),
           ]),
-          m('div', { class: 'row', style: 'gap: 5px' }, [
+          m('div', { class: 'ship-systems row row-cols-1 p-2 justify-content-start gap-2' }, [
             m(
-              'select',
-              {
-                value: ship.class,
-                oninput: function (e) {
-                  changeClass(ship, e.target.value)
+              'div',
+              { class: 'col row mb-2' },
+              m(
+                'select',
+                {
+                  class: 'form-control',
+                  value: ship.class,
+                  oninput: function(e) {
+                    changeClass(ship, e.target.value)
+                  },
                 },
-              },
-              [m('option', { value: ShipType.CAPITAL }, 'Capital'), m('option', { value: ShipType.FRIGATE }, 'Frigate')],
+                [m('option', { value: ShipType.CAPITAL }, 'Capital'), m('option', { value: ShipType.FRIGATE }, 'Frigate')],
+              ),
             ),
             ship.hasOwnProperty('systems')
-              ? ship.systems.map(function (system) {
-                  return m(SystemComponent, { system: system })
-                })
+              ? ship.systems.map(function(system) {
+                return m(SystemComponent, { system: system })
+              })
               : null,
           ]),
           m(MechCompanies, { ship: ship, fleet: fleet }),
@@ -297,7 +321,7 @@
     }
 
     return {
-      oninit: function (vnode) {
+      oninit: function(vnode) {
         var fleet = vnode.attrs.fleet
         if (!fleet.hasOwnProperty('ships')) {
           fleet.ships = []
@@ -306,17 +330,20 @@
           }
         }
       },
-      view: function (vnode) {
+      view: function(vnode) {
         var fleet = vnode.attrs.fleet
-        return m('div', [
+        return m('div', { id: 'fleet-' + fleet.name, class: 'col border rounded-4 p-3 bg-dark-subtle' }, [
           m('h3', fleet.name),
-          fleet.ships.map(function (ship) {
-            return m('div', { style: 'margin-bottom: 10px' }, [m(ShipComponent, { ship: ship, fleet: fleet })])
-          }),
+          m('div', { class: 'ships-list row  row-cols-2' }, [
+            fleet.ships.map(function(ship) {
+              return m(ShipComponent, { ship: ship, fleet: fleet })
+            }),
+          ]),
           m(
             'button',
             {
-              onclick: function () {
+              class: 'mt-2 btn btn-outline-success',
+              onclick: function() {
                 add(fleet)
               },
             },
@@ -334,24 +361,31 @@
     }
 
     return {
-      view: function () {
-        return m('div', { style: 'padding: 0 18px;' }, [
+      view: function() {
+        return [
           m(
-            'label',
-            { style: 'float: right;margin-top: 5px' },
-            'Sync PPA calculations with fleet builder',
-            m('input', {
-              onclick: function (e) {
-                setShips(e.target.checked)
-              },
-              type: 'checkbox',
-              checked: syncShips,
+            'div', {class: 'form-check'},
+            m(
+              'label', {class: 'form-check-label'},
+              'Sync PPA calculations with fleet builder',
+              m('input', {
+                class: 'form-check-input',
+                onclick: function(e) {
+                  setShips(e.target.checked)
+                },
+                type: 'checkbox',
+                checked: syncShips,
+              }),
+            ),
+          ),
+          m(
+            'div',
+            { class: 'mt-3 row row-gap-1 row-cols-1' },
+            players.map(function(player) {
+              return m(FleetComponent, { fleet: player })
             }),
           ),
-          players.map(function (player) {
-            return m(FleetComponent, { fleet: player })
-          }),
-        ])
+        ]
       },
     }
   }
@@ -382,67 +416,79 @@
     }
 
     return {
-      view: function (vnode) {
+      view: function(vnode) {
         var player = vnode.attrs.player
         return m(
           'div',
-
-          { class: 'column-justified' },
+          { class: 'col-2 row row-cols-1 justify-content-start row-gap-1' },
           m(
             'div',
-            { class: 'row' },
-            m('input', {
-              value: player.name,
-              oninput: function (e) {
-                changeName(player, e.target.value)
-              },
-            }),
+            { class: 'col row row-cols-2 gap-2 g-0 align-items-center' },
             m(
-              'button',
-              {
-                title: 'Remove',
-                onclick: function () {
-                  remove(player)
+              'div',
+              { class: 'col-10' },
+              m('input', {
+                value: player.name,
+                class: 'form-control',
+                oninput: function(e) {
+                  changeName(player, e.target.value)
                 },
-              },
-              '×',
+              }),
+            ),
+            m(
+              'div',
+              { class: 'col-1 ml-2' },
+              m(
+                'button',
+                {
+                  title: 'Remove',
+                  class: 'btn btn-sm btn-outline-danger',
+                  onclick: function() {
+                    remove(player)
+                  },
+                },
+                '×',
+              ),
             ),
           ),
           m('input', {
             type: 'number',
+            class: 'col form-control',
             min: 0,
             value: player.hva,
-            oninput: function (e) {
+            oninput: function(e) {
               changeHva(player, e.target.value)
             },
           }),
           m('input', {
             type: 'number',
+            class: 'col form-control',
             min: 0,
             disabled: syncShips,
             value: player.tas,
-            oninput: function (e) {
+            oninput: function(e) {
               changeTas(player, e.target.value)
             },
           }),
           m('input', {
             type: 'number',
+            class: 'col form-control',
             min: 0,
             disabled: syncShips,
             value: player.systems,
-            oninput: function (e) {
+            oninput: function(e) {
               changeSystems(player, e.target.value)
             },
           }),
-          m('span', player.ppa),
-          m('span', player.ppa * (player.hva + player.tas)),
+          m('span', { class: 'col form-label' }, player.ppa),
+          m('span', { class: 'col form-label' }, player.ppa * (player.hva + player.tas)),
         )
       },
     }
   }
 
   var main = {
-    oninit: function () {
+    oninit: function() {
       let oldData = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (oldData !== null) {
         data = JSON.parse(oldData)
@@ -451,7 +497,7 @@
         trackShips = data.track
       }
     },
-    view: function () {
+    view: function() {
       function add() {
         players.push({
           name: 'Player',
@@ -473,52 +519,79 @@
 
       return [
         m(OptionsComponent, {}),
-        m('main', { class: 'main column' }, [
+        m('main', { class: 'container' }, [
           m('h1', 'MF0 Intercept Orbit points per asset calculator'),
-          m('div', { class: 'row' }, [
+          m('div', { class: 'row gap-3 border rounded-4 p-2 justify-content-start' }, [
             m(
               'div',
-              { class: 'column-justified', style: 'margin-right: 2px;' },
-              m('span', 'Fleet id'),
-              m('span', 'HVA'),
-              m('span', 'TAs'),
-              m('span', 'Systems'),
-              m('span', 'PPA'),
-              m('span', 'Total'),
+              { class: 'col-1 row row-cols-1 mt-2 gap-2' },
+              m('span', { class: 'form-label' }, 'Fleet id'),
+              m('span', { class: 'form-label' }, 'HVA'),
+              m('span', { class: 'form-label' }, 'TAs'),
+              m('span', { class: 'form-label' }, 'Systems'),
+              m('span', { class: 'form-label' }, 'PPA'),
+              m('span', { class: 'form-label' }, 'Total'),
             ),
-            players.map(function (player) {
+            players.map(function(player) {
               return m(PlayerComponent, { player: player })
             }),
-            m('button', { onclick: add, style: 'margin-left: 5px;' }, 'Add player'),
+            m('button', { onclick: add, class: 'col-1 btn btn-outline-primary' }, 'Add player'),
           ]),
           m(
             'div',
             {
-              class: 'column',
-              style: 'margin-top: 10px; gap: 10px',
+              class: 'row mt-1 gy-4 row-cols-1',
             },
             [
               m(
                 'button',
                 {
                   disabled: players.length === 0,
-                  onclick: function () {
+                  class: 'col mb-4 btn btn-lg btn-outline-success',
+                  onclick: function() {
                     location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
                   },
                 },
                 'Fight!',
               ),
               m(
-                'button',
-                {
-                  class: 'accordion ' + (trackShips ? 'active' : ''),
-                  onclick: function (_) {
-                    setShips(!trackShips)
+                'div',
+                { class: 'col p-0 m-0' },
+                m(
+                  'div',
+                  {
+                    id: 'fleetBuildingAccordion',
+                    class: 'accordion',
                   },
-                },
-                'Fleet builder',
+                  m('div', { class: 'accordion-item' }, [
+                    m(
+                      'h2',
+                      { class: 'accordion-header' },
+                      m(
+                        'button',
+                        {
+                          class: 'accordion-button ' + (trackShips ? '' : 'collapsed'),
+                          ['data-bs-toggle']: 'collapse',
+                          ['data-bs-target']: '#collapseOne',
+                          onclick: function(_) {
+                            setShips(!trackShips)
+                          },
+                        },
+                        'Fleet builder',
+                      ),
+                    ),
+                    m(
+                      'div',
+                      {
+                        id: 'collapseOne',
+                        class: 'accordion-collapse collapse ' + (trackShips ? 'show' : ''),
+                        ['data-bs-parent']: '#fleetBuildingAccordion',
+                      },
+                      m('div', { class: 'accordion-body' }, m(ShipTrackerComponent)),
+                    ),
+                  ]),
+                ),
               ),
-              trackShips ? m(ShipTrackerComponent) : null,
             ],
           ),
           m(FooterComponent, {}),
