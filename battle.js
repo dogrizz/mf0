@@ -192,10 +192,10 @@
     return {
       view: function (vnode) {
         const fleet = vnode.attrs.fleet
-        return m('div', { class: 'column', style: 'gap: 10px' }, [
+        return m('div', { class: 'col row row-cols-1', style: 'gap: 10px' }, [
           m('h3', fleet.name),
-          m('div', { class: 'row', style: 'gap: 15px' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
-          m('div', { class: 'row', style: 'gap: 15px' }, [
+          m('div', { class: 'col', style: 'gap: 15px' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
+          m('div', { class: 'col', style: 'gap: 15px' }, [
             fleet.companies.map((company) => m(CompanyComponent(), { company: company, fleet: fleet })),
           ]),
         ])
@@ -233,7 +233,7 @@
       },
       view: function (vnode) {
         const player = vnode.attrs.player
-        return m('div', { class: 'column-justified' }, [
+        return m('div', { class: 'col row row-cols-1' }, [
           m('span', player.name),
           m('input', {
             type: 'number',
@@ -270,7 +270,7 @@
     view: function () {
       return [
         m(OptionsComponent, {}),
-        m('main', { class: 'main column' }, [
+        m('main', { class: 'container' }, [
           m('h1', 'MF0 Intercept Orbit battle tracker'),
           !battle
             ? "Can't find your battle"
@@ -278,7 +278,7 @@
                 m('div', { class: 'row', style: 'gap: 10px' }, [
                   m(
                     'div',
-                    { class: 'column-justified' },
+                    { class: 'col' },
                     m('span', 'Fleet id'),
                     m('span', 'HVA'),
                     m('span', 'TAs'),

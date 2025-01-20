@@ -1,39 +1,40 @@
-;(function () {
+; (function() {
   const root = document.body
   let battles = []
   var main = {
-    oninit: function () {
+    oninit: function() {
       battles = readBattles()
     },
-    view: function () {
+    view: function() {
       return [
         m(OptionsComponent, { hideBattleLink: true }),
-        m('main', { class: 'main column' }, [
+        m('main', { class: 'container' }, [
           m('h1', 'MF0 Intercept Orbit battles'),
-          m('div', { class: 'column', style: 'gap: 10px' }, [
+          m('div', { class: 'row' }, [
             !battles || Object.entries(battles).length === 0
               ? [
-                  m('span', 'No battles yet. Grab your bricks, dice and get to it!'),
-                  m('a', { href: 'index.html' }, 'Go to Fleet builder / PPA calculator'),
-                ]
-              : Object.entries(battles).map(function (entry) {
-                  const date = new Date(entry[1].date)
-                  const id = entry[0]
-                  return m('div', { class: 'row', style: 'gap: 10px' }, [
-                    m('span', `Battle from ${date.toLocaleString()}`),
-                    m('a', { href: `battle.html?${BATTLE_ID_PARAM}=${id}` }, 'Resume'),
-                    m(
-                      'button',
-                      {
-                        onclick: function () {
-                          delete battles[id]
-                          localStorage.setItem(BATTLE_STORAGE_KEY, JSON.stringify(battles))
-                        },
+                m('span', 'No battles yet. Grab your bricks, dice and get to it!'),
+                m('a', { href: 'index.html' }, 'Go to Fleet builder / PPA calculator'),
+              ]
+              : Object.entries(battles).map(function(entry) {
+                const date = new Date(entry[1].date)
+                const id = entry[0]
+                return m('div', { class: 'col row align-items-center justify-content-start gap-2' }, [
+                  m('span', { class: 'col' }, `Battle from ${date.toLocaleString()}`),
+                  m('a', { class: 'col btn btn-outline-success', href: `battle.html?${BATTLE_ID_PARAM}=${id}` }, 'Resume'),
+                  m(
+                    'button',
+                    {
+                      class: 'col btn btn-outline-danger',
+                      onclick: function() {
+                        delete battles[id]
+                        localStorage.setItem(BATTLE_STORAGE_KEY, JSON.stringify(battles))
                       },
-                      'Forfeit',
-                    ),
-                  ])
-                }),
+                    },
+                    'Forfeit',
+                  ),
+                ])
+              }),
           ]),
           m(FooterComponent, {}),
         ]),
