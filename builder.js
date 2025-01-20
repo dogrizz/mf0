@@ -364,11 +364,12 @@
       view: function() {
         return [
           m(
-            'div',
+            'div', {class: 'form-check'},
             m(
-              'label',
-              'Sync PPA calculations with fleet builder ',
+              'label', {class: 'form-check-label'},
+              'Sync PPA calculations with fleet builder',
               m('input', {
+                class: 'form-check-input',
                 onclick: function(e) {
                   setShips(e.target.checked)
                 },

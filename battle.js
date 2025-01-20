@@ -36,30 +36,34 @@
         company = vnode.attrs.company
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'column tas' }, [
-          m('div', { class: 'row', style: 'gap: 5px' }, [
+        return m('div', { class: 'company col-3 row row-cols-1 p-1 m-0 rounded-3 ' + (company.destroyed || company.outOfFuel ? 'dead' : ' bg-dark') }, [
+          m('div', { class: 'row justify-content-start' }, [
             m(
               'h4',
-              { class: company.destroyed || company.outOfFuel ? 'dead' : '' },
-              company.aceType ? `${company.aceType} ace` : 'Company',
+              { class: 'col text-capitalize' },
+              company.aceType ? `${company.aceType} ace` : 'company',
             ),
-            m(
-              'button',
-              {
-                title: 'Fuel state',
-                onclick: function() {
-                  fuelChange(company)
+            m('div', { class: 'col-1' },
+              m(
+                'button',
+                {
+                  class: 'btn btn-sm btn-outline-warning',
+                  disabled: company.destroyed,
+                  title: 'Fuel state',
+                  onclick: function() {
+                    fuelChange(company)
+                  },
                 },
-              },
-              '⛽',
-            ),
+                '⛽',
+              )),
           ]),
-          m('span', companyDice(company)),
-          m('span', `origin: ${company.origin}`),
+          m('span', { class: 'col' }, companyDice(company)),
+          m('span', { class: 'col' }, `origin: ${company.origin}`),
           company.systems.map(function(system) {
-            return m(
-              'label',
+            return m('div', { class: 'col form-check' }, m(
+              'label', { class: 'form-check-label' },
               m('input', {
+                class: 'form-check-input',
                 type: 'checkbox',
                 checked: system.disabled,
                 disabled: company.outOfFuel,
@@ -68,7 +72,7 @@
                 },
               }),
               system.class,
-            )
+            ))
           }),
         ])
       },
@@ -114,9 +118,9 @@
         ship = vnode.attrs.ship
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'ship col-3 row row-cols-1 rounded-3 p-1 m-0' + (ship.owner !== fleet.id ? ' captured' : '') }, [
+        return m('div', { class: 'ship col-3 row row-cols-1 rounded-3 p-1 m-0 ' +  (ship.destroyed ? ' dead' : 'bg-dark')}, [
           m('div', { class: 'row justify-content-start' }, [
-            m('h4', { class: 'col ' + (ship.destroyed ? 'dead' : ''), title: (ship.name + (ship.destroyed ? ' dead ' : ' ') + (ship.owner !== fleet.id ? 'captured' : '')) }, ship.name || 'noname'),
+            m('h4', { class: 'col ' + (ship.owner !== fleet.id ? ' captured' : ''), title: (ship.name + (ship.destroyed ? ' dead ' : ' ') + (ship.owner !== fleet.id ? 'captured' : '')) }, ship.name || 'noname'),
             m('div', { class: 'col-1' },
               m(
                 'button',
@@ -173,9 +177,10 @@
                 systemText = `${systemText}/${system.attackType2}`
               }
             }
-            return m('div', { class: 'col system' }, m(
-              'label',
+            return m('div', { class: 'col system form-check' }, m(
+              'label', { class: 'form-check-label' },
               m('input', {
+                class: 'form-check-input',
                 type: 'checkbox',
                 checked: system.disabled,
                 onclick: function(e) {
@@ -194,10 +199,10 @@
     return {
       view: function(vnode) {
         const fleet = vnode.attrs.fleet
-        return m('div', { class: 'col row row-cols-1 border rounded-4 p-2 gap-2' }, [
+        return m('div', { class: 'col row row-cols-1 border rounded-4 p-2 gap-2 bg-dark-subtle' }, [
           m('h3', { class: 'col' }, fleet.name),
-          m('div', { class: 'col row justify-content-start' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
-          m('div', { class: 'col row justify-content-start' }, [
+          m('div', { class: 'ships col row justify-content-start gap-2' }, [fleet.ships.map((ship) => m(ShipComponent(), { ship: ship, fleet: fleet }))]),
+          m('div', { class: 'companies col row justify-content-start gap-2' }, [
             fleet.companies.map((company) => m(CompanyComponent(), { company: company, fleet: fleet })),
           ]),
         ])

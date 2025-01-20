@@ -7,19 +7,12 @@
   background-color: rgb(26, 29, 32);
 }
 
-.column-justified {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-left: 5px;
-}
-
 .dead {
-  color: #aaa;
+  background-color: rgb(26, 29, 32);
 }
 
 .captured {
-  background-color: rgb(26, 29, 32);
+  color: rgb(255, 193, 7)
 }
 
 .popup {
@@ -49,8 +42,3 @@
   visibility: visible;
 }
 
-.tas {
-  width: 120px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
