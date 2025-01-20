@@ -118,7 +118,7 @@
         ship = vnode.attrs.ship
         fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'ship col-3 row row-cols-1 rounded-3 p-1 m-0 ' +  (ship.destroyed ? ' dead' : 'bg-dark')}, [
+        return m('div', { class: 'ship col-3 row row-cols-1 rounded-3 p-1 m-0 ' + (ship.destroyed ? ' dead' : 'bg-dark') }, [
           m('div', { class: 'row justify-content-start' }, [
             m('h4', { class: 'col ' + (ship.owner !== fleet.id ? ' captured' : ''), title: (ship.name + (ship.destroyed ? ' dead ' : ' ') + (ship.owner !== fleet.id ? 'captured' : '')) }, ship.name || 'noname'),
             m('div', { class: 'col-1' },
@@ -137,34 +137,33 @@
             m(
               'div',
               { class: ship.showPopup ? 'overlay overlay-show' : 'overlay' },
-              m('div', { class: 'column popup', style: 'gap: 10px' }, [
-                m('div', { class: 'row', style: 'justify-content: space-between;margin-bottom: 10px' }, [
-                  m('h3', `Transfer ship ${ship.name} to:`),
-                  m(
-                    'button',
-                    {
-                      style: 'float: right',
-                      onclick: function() {
-                        ship.showPopup = false
-                      },
-                    },
-                    '×',
-                  ),
-                ]),
+              m('div', { class: 'row row-cols-1 popup gap-3 justofy-content-center border rounded-4', }, [
+                m('h3', { class: 'col' }, `Transfer ship ${ship.name} to:`),
                 battle.roster
                   .filter((f) => f !== fleet)
                   .map((player) =>
-                    m(
+                    m('div', { class: 'col d-flex justify-content-center align-items-center' }, m(
                       'button',
                       {
+                        class: 'btn btn-outline-warning',
                         onclick: function() {
                           ship.showPopup = false
                           transfer(ship, player)
                         },
                       },
                       player.name,
-                    ),
+                    )),
                   ),
+                m('div', { class: 'col d-flex justify-content-center align-items-center' }, m(
+                  'button',
+                  {
+                    class: 'btn btn-outline-light',
+                    onclick: function() {
+                      ship.showPopup = false
+                    },
+                  },
+                  'Cancel',
+                )),
               ]),
             ),
           ]),
