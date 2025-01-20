@@ -56,10 +56,11 @@
           m('option', { value: AttackType.ASSAULT }, 'Assault'),
           m('option', { value: AttackType.SUPPORT }, 'Support'),
         ]
-        return [
+        return m('div', { class: 'col row' }, [
           m(
             'select',
             {
+              class: 'col form-control',
               value: system.class,
               oninput: function(e) {
                 changeClass(system, e.target.value)
@@ -74,10 +75,11 @@
             ],
           ),
           system.class === ShipSystem.ATTACK
-            ? m('div', [
+            ? m('div', { class: 'col row gap-0' }, [
               m(
                 'select',
                 {
+                  class: 'col form-control',
                   value: system.attackType,
                   oninput: function(e) {
                     changeAttackType(system, e.target.value)
@@ -89,6 +91,7 @@
                 ? m(
                   'select',
                   {
+                    class: 'col form-control',
                     value: system.attackType2,
                     oninput: function(e) {
                       changeAttackType2(system, e.target.value)
@@ -100,6 +103,7 @@
               m(
                 'button',
                 {
+                  class: 'col-1 btn btn-sm ' + (secondSystem ? 'btn-outline-warning' : 'btn-outline-success'),
                   onclick: function() {
                     flipSecondSystem(system)
                   },
@@ -108,7 +112,7 @@
               ),
             ])
             : null,
-        ]
+        ])
       },
     }
   }
@@ -140,7 +144,7 @@
 
         return [
           catapults.length > 0
-            ? m('div', { class: 'row', style: 'gap: 10px' }, [
+            ? m('div', { class: 'row border rounded-2' }, [
               m(
                 'div',
                 { class: 'column' },
@@ -164,6 +168,7 @@
               m(
                 'select',
                 {
+                  class: 'form-control',
                   value: ship.aceType,
                   disabled: !ship.hasAce,
                   hidden: !ship.hasAce,
@@ -234,50 +239,55 @@
         var ship = vnode.attrs.ship
         var fleet = vnode.attrs.fleet
 
-        return m('div', { class: 'column' }, [
-          m('div', [
-            m('input', {
-              type: 'text',
-              value: ship.name,
-              oninput: function(e) {
-                changeName(ship, e.target.value)
-              },
-            }),
-            m(
-              'button',
-              {
-                title: 'Copy',
-                onclick: function() {
-                  duplicate(fleet, ship)
+        return m('div', { class: 'ship col border border-black rounded-3 p-2 bg-dark' }, [
+          m('div', { class: 'row row-gap-2 justify-content-start align-items-center' }, [
+            m('div', { class: 'col-5' },
+              m('input', {
+                type: 'text',
+                class: 'form-control',
+                value: ship.name,
+                oninput: function(e) {
+                  changeName(ship, e.target.value)
                 },
-                style: 'margin-left: 5px',
-              },
-              '📋',
-            ),
-            m(
-              'button',
-              {
-                title: 'Remove',
-                onclick: function() {
-                  remove(fleet, ship)
+              })),
+            m('div', { class: 'col-1' },
+              m(
+                'button',
+                {
+                  class: 'btn btn-sm btn-outline-light',
+                  title: 'Copy',
+                  onclick: function() {
+                    duplicate(fleet, ship)
+                  },
                 },
-                style: 'margin: 0px 10px 0px 5px',
-              },
-              '×',
-            ),
-            m('span', dice(ship)),
+                '📋',
+              )),
+            m('div', { class: 'col-1' },
+              m(
+                'button',
+                {
+                  class: 'btn btn-sm btn-outline-danger',
+                  title: 'Remove',
+                  onclick: function() {
+                    remove(fleet, ship)
+                  },
+                },
+                '×',
+              )),
+            m('span', { class: 'col-2' }, dice(ship)),
           ]),
-          m('div', { class: 'row', style: 'gap: 5px' }, [
-            m(
+          m('div', { class: 'ship-systems row row-cols-1 p-2 justify-content-start gap-2' }, [
+            m('div', { class: 'col row mb-2' }, m(
               'select',
               {
+                class: 'form-control',
                 value: ship.class,
                 oninput: function(e) {
                   changeClass(ship, e.target.value)
                 },
               },
               [m('option', { value: ShipType.CAPITAL }, 'Capital'), m('option', { value: ShipType.FRIGATE }, 'Frigate')],
-            ),
+            )),
             ship.hasOwnProperty('systems')
               ? ship.systems.map(function(system) {
                 return m(SystemComponent, { system: system })
@@ -308,21 +318,23 @@
       },
       view: function(vnode) {
         var fleet = vnode.attrs.fleet
-        return m('div', [
-          m('h3', fleet.name),
-          fleet.ships.map(function(ship) {
-            return m('div', { style: 'margin-bottom: 10px' }, [m(ShipComponent, { ship: ship, fleet: fleet })])
-          }),
+        return m('div', { id: 'fleet-' + fleet.name, class: 'col border rounded-4 p-3 bg-dark-subtle' },
+          [m('h3', fleet.name),
+          m('div', { class: 'ships-list row  row-cols-2' },
+            [fleet.ships.map(function(ship) {
+              return m(ShipComponent, { ship: ship, fleet: fleet })
+            })]),
           m(
             'button',
             {
+              class: 'mt-2 btn btn-outline-success',
               onclick: function() {
                 add(fleet)
               },
             },
             'Add ship',
           ),
-        ])
+          ])
       },
     }
   }
@@ -335,11 +347,10 @@
 
     return {
       view: function() {
-        return m('div', { style: 'padding: 0 18px;' }, [
+        return [m('div',
           m(
             'label',
-            { style: 'float: right;margin-top: 5px' },
-            'Sync PPA calculations with fleet builder',
+            'Sync PPA calculations with fleet builder ',
             m('input', {
               onclick: function(e) {
                 setShips(e.target.checked)
@@ -347,12 +358,12 @@
               type: 'checkbox',
               checked: syncShips,
             }),
-          ),
+          )),
+        m('div', { class: 'mt-3 row row-gap-1 row-cols-1' },
           players.map(function(player) {
             return m(FleetComponent, { fleet: player })
-          }),
-        ])
-      },
+          }))]
+      }
     }
   }
 
@@ -509,14 +520,14 @@
                 'button',
                 {
                   disabled: players.length === 0,
-                  class: 'col btn btn-lg btn-outline-success',
+                  class: 'col mb-4 btn btn-lg btn-outline-success',
                   onclick: function() {
                     location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(players, trackShips, syncShips)
                   },
                 },
                 'Fight!',
               ),
-              m('div', { class: 'col' },
+              m('div', { class: 'col p-0 m-0' },
                 m('div',
                   {
                     id: 'fleetBuildingAccordion',
@@ -525,15 +536,15 @@
                   m('div', { class: 'accordion-item' }, [
                     m('h2', { class: 'accordion-header' },
                       m('button', {
-                        class: 'accordion-button '+ (trackShips ? '' : 'collapsed'), ['data-bs-toggle']: "collapse", ['data-bs-target']: "#collapseOne",
+                        class: 'accordion-button ' + (trackShips ? '' : 'collapsed'), ['data-bs-toggle']: "collapse", ['data-bs-target']: "#collapseOne",
                         onclick: function(_) {
                           setShips(!trackShips)
                         }
                       }, 'Fleet builder')
                     ),
                     m('div', { id: "collapseOne", class: "accordion-collapse collapse " + (trackShips ? 'show' : ''), ['data-bs-parent']: "#fleetBuildingAccordion" },
-                      m('div', {class: 'accordion-body'},
-                      m(ShipTrackerComponent))
+                      m('div', { class: 'accordion-body' },
+                        m(ShipTrackerComponent))
                     )]
                   )
                 )),

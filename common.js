@@ -22,7 +22,7 @@ function FooterComponent() {
   return {
     view: function() {
       return m('footer',
-        { class: 'fixed-bottom justify-content-end' },
+        { class: 'fixed-bottom' },
         [
           m('span', 'Please '),
           m('a', { target: '_blank', href: 'https://www.patreon.com/Joshua' }, 'support MF0 creator'),
