@@ -95,7 +95,7 @@
 	    														</div>
 	    														<template x-if="ship.hasOwnProperty('systems')">
 	    															<template x-for="system in ship.systems" :key="system._key">
-	    																<div x-data="systemComponent(system)" class="col row">
+	    																<div x-data="systemComponent(system, ship)" class="col row">
 	    																	<select class="col form-select" :value="system.class" @input="changeClass($event.target.value)">
 	    																		<option value=""></option>
 	    																		<option value="attack">Attack</option>

@@ -59,6 +59,7 @@ document.addEventListener('alpine:init', () => {
 
     changeName(newName) {
       this.player.name = newName
+      this.$store.builder.saveState()
     },
 
     changeHva(newHva) {
@@ -130,6 +131,7 @@ document.addEventListener('alpine:init', () => {
 
     changeName(newName) {
       this.ship.name = newName
+      this.$store.builder.saveState()
     },
 
     changeClass(newClass) {
@@ -185,8 +187,9 @@ document.addEventListener('alpine:init', () => {
     },
   }))
 
-  Alpine.data('systemComponent', (system) => ({
+  Alpine.data('systemComponent', (system, ship) => ({
     system,
+    ship,
     secondSystem: false,
 
     init() {
@@ -208,15 +211,26 @@ document.addEventListener('alpine:init', () => {
 
     changeAttackType2(newType) {
       this.system.attackType2 = newType
+      // dice() checks system.hasOwnProperty('attackType2'), which Alpine's reactivity
+      // can't track (Proxy getOwnPropertyDescriptor trap isn't observed) - reassigning
+      // ship.systems forces the dice display to recompute with the new value.
+      this.ship.systems = [...this.ship.systems]
       this.$store.builder.saveState()
     },
 
     flipSecondSystem() {
       this.secondSystem = !this.secondSystem
-      if (!this.secondSystem) {
+      if (this.secondSystem) {
+        // the <select> falls back to showing its first option ("Point defence")
+        // when :value is bound to an undefined attackType2 - set a real default
+        // so the underlying data matches what's already shown, instead of only
+        // becoming real once the user makes an explicit selection.
+        this.changeAttackType2(AttackType.POINT_DEFENSE)
+      } else {
         delete this.system.attackType2
+        this.ship.systems = [...this.ship.systems]
+        this.$store.builder.saveState()
       }
-      this.$store.builder.saveState()
     },
   }))
 })
