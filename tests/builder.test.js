@@ -194,3 +194,35 @@ test('boolean attributes do not render truthy for freshly-created (undefined) fi
   const aceCheckbox = shipEl.querySelector('input[type="checkbox"]')
   assert.equal(aceCheckbox.checked, false, 'a freshly-created ship has hasAce === undefined, which must render as unchecked, not checked')
 })
+
+test('adding a second attack system triggers dice recalculation (bug #5: hasOwnProperty is not reactively tracked)', async () => {
+  const dom = loadPage('index.html')
+  const { window } = dom
+  await settle()
+
+  window.Alpine.store('builder').addPlayer()
+  await settle()
+  const fleetEl = window.document.querySelector('[id^="fleet-"]')
+  window.Alpine.$data(fleetEl).addShip()
+  await settle()
+
+  const shipEl = fleetEl.querySelector('.ship')
+  const systemEl = shipEl.querySelector('[x-data^="systemComponent"]')
+  window.Alpine.$data(systemEl).changeClass('attack')
+  await settle()
+
+  const diceEl = shipEl.querySelector('span.col-2')
+  assert.equal(diceEl.textContent, '2W1GRp2', 'a single point-defence attack system should count as a 2-die pool')
+
+  const systemData = window.Alpine.$data(systemEl)
+  systemData.flipSecondSystem()
+  await settle()
+  systemData.changeAttackType2('a')
+  await settle()
+
+  assert.equal(
+    diceEl.textContent,
+    '2W1GRp1Ra1',
+    'adding a second attack system (different type) should split into two separate 1-die pools, not keep showing the original single-type pool',
+  )
+})

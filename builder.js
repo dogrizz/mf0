@@ -187,8 +187,9 @@ document.addEventListener('alpine:init', () => {
     },
   }))
 
-  Alpine.data('systemComponent', (system) => ({
+  Alpine.data('systemComponent', (system, ship) => ({
     system,
+    ship,
     secondSystem: false,
 
     init() {
@@ -210,6 +211,10 @@ document.addEventListener('alpine:init', () => {
 
     changeAttackType2(newType) {
       this.system.attackType2 = newType
+      // dice() checks system.hasOwnProperty('attackType2'), which Alpine's reactivity
+      // can't track (Proxy getOwnPropertyDescriptor trap isn't observed) - reassigning
+      // ship.systems forces the dice display to recompute with the new value.
+      this.ship.systems = [...this.ship.systems]
       this.$store.builder.saveState()
     },
 
@@ -218,6 +223,7 @@ document.addEventListener('alpine:init', () => {
       if (!this.secondSystem) {
         delete this.system.attackType2
       }
+      this.ship.systems = [...this.ship.systems]
       this.$store.builder.saveState()
     },
   }))
