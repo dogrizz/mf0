@@ -41,7 +41,7 @@
 	    							<input class="form-control" type="number" min="0" :value="player.hva" @input="changeHva($event.target.value)">
 	    						</div>
 	    						<div class="col">
-	    							<input class="form-control" type="number" min="0" :disabled="battle.sync" :value="player.tas" @input="changeTas($event.target.value)">
+	    							<input class="form-control" type="number" min="0" :disabled="!!battle.sync" :value="player.tas" @input="changeTas($event.target.value)">
 	    						</div>
 	    						<span class="col form-label" x-text="player.ppa"></span>
 	    						<span class="col form-label" x-text="player.total"></span>
@@ -61,7 +61,7 @@
 	    										<div class="row justify-content-start">
 	    											<h4 :class="nameClasses" :title="nameTitle" x-text="ship.name || 'noname'"></h4>
 	    											<div class="col-1">
-	    												<button class="btn btn-sm btn-outline-info" title="Transfer" :hidden="ship.destroyed" @click="startTransfer()">⇌</button>
+	    												<button class="btn btn-sm btn-outline-info" title="Transfer" :hidden="!!ship.destroyed" @click="startTransfer()">⇌</button>
 	    											</div>
 	    											<div :class="ship.showPopup ? 'overlay overlay-show' : 'overlay'">
 	    												<div class="row row-cols-1 popup gap-3 justofy-content-center border rounded-4">
@@ -81,7 +81,7 @@
 	    										<template x-for="system in ship.systems">
 	    											<div class="col system form-check">
 	    												<label class="form-check-label">
-	    													<input class="form-check-input" type="checkbox" :checked="system.disabled" @click="systemStateChange(system, $event.target.checked)">
+	    													<input class="form-check-input" type="checkbox" :checked="!!system.disabled" @click="systemStateChange(system, $event.target.checked)">
 	    													<span x-text="systemText(system)"></span>
 	    												</label>
 	    											</div>
@@ -95,7 +95,7 @@
 	    										<div class="row justify-content-start">
 	    											<h4 class="col text-capitalize" x-text="label"></h4>
 	    											<div class="col-1">
-	    												<button class="btn btn-sm btn-outline-warning" :disabled="company.destroyed" title="Fuel state" @click="fuelChange()">⛽</button>
+	    												<button class="btn btn-sm btn-outline-warning" :disabled="!!company.destroyed" title="Fuel state" @click="fuelChange()">⛽</button>
 	    											</div>
 	    										</div>
 	    										<span class="col" x-text="dice"></span>
@@ -103,7 +103,7 @@
 	    										<template x-for="system in company.systems">
 	    											<div class="col form-check">
 	    												<label class="form-check-label">
-	    													<input class="form-check-input" type="checkbox" :checked="system.disabled" :disabled="company.outOfFuel" @click="systemStateChange(system, $event.target.checked)">
+	    													<input class="form-check-input" type="checkbox" :checked="!!system.disabled" :disabled="!!company.outOfFuel" @click="systemStateChange(system, $event.target.checked)">
 	    													<span x-text="system.class"></span>
 	    												</label>
 	    											</div>

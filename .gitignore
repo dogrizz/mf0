@@ -105,3 +105,6 @@ dist
 
 # Mac
 .DS_Store
+
+# AI assistant working notes (not part of the shipped project)
+.ai/

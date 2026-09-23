@@ -7,7 +7,7 @@
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
-	<body data-bs-theme="dark" x-data="builderPage()">
+	<body data-bs-theme="dark" x-data="{}">
 	    <script type="text/javascript" src="lz-string.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	    <script type="text/javascript" src="support.js"></script>
@@ -27,7 +27,7 @@
 	    			<span class="form-label">PPA</span>
 	    			<span class="form-label">Total</span>
 	    		</div>
-	    		<template x-for="player in players">
+	    		<template x-for="player in $store.builder.players" :key="player._key">
 	    			<div x-data="playerComponent(player)" class="col-2 row row-cols-1 justify-content-start row-gap-1">
 	    				<div class="col row row-cols-2 gap-2 g-0 align-items-center">
 	    					<div class="col-10">
@@ -38,42 +38,42 @@
 	    					</div>
 	    				</div>
 	    				<input type="number" class="col form-control" min="0" :value="player.hva" @input="changeHva($event.target.value)">
-	    				<input type="number" class="col form-control" min="0" :disabled="syncShips" :value="player.tas" @input="changeTas($event.target.value)">
-	    				<input type="number" class="col form-control" min="0" :disabled="syncShips" :value="player.systems" @input="changeSystems($event.target.value)">
+	    				<input type="number" class="col form-control" min="0" :disabled="!!$store.builder.syncShips" :value="player.tas" @input="changeTas($event.target.value)">
+	    				<input type="number" class="col form-control" min="0" :disabled="!!$store.builder.syncShips" :value="player.systems" @input="changeSystems($event.target.value)">
 	    				<span class="col form-label" x-text="player.ppa"></span>
 	    				<span class="col form-label" x-text="player.ppa * (player.hva + player.tas)"></span>
 	    			</div>
 	    		</template>
-	    		<button @click="addPlayer()" class="col-1 btn btn-outline-primary">Add player</button>
+	    		<button @click="$store.builder.addPlayer()" class="col-1 btn btn-outline-primary">Add player</button>
 	    	</div>
 
 	    	<div class="row mt-1 gy-4 row-cols-1">
-	    		<button :disabled="players.length === 0" class="col mb-4 btn btn-lg btn-outline-success" @click="fight()">Fight!</button>
+	    		<button :disabled="$store.builder.players.length === 0" class="col mb-4 btn btn-lg btn-outline-success" @click="$store.builder.fight()">Fight!</button>
 	    		<div class="col p-0 m-0">
 	    			<div id="fleetBuildingAccordion" class="accordion">
 	    				<div class="accordion-item">
 	    					<h2 class="accordion-header">
 	    						<button
-	    							:class="'accordion-button ' + (trackShips ? '' : 'collapsed')"
+	    							:class="'accordion-button ' + ($store.builder.trackShips ? '' : 'collapsed')"
 	    							data-bs-toggle="collapse"
 	    							data-bs-target="#collapseOne"
-	    							@click="setTrackShips(!trackShips)"
+	    							@click="$store.builder.setTrackShips(!$store.builder.trackShips)"
 	    						>Fleet builder</button>
 	    					</h2>
-	    					<div id="collapseOne" :class="'accordion-collapse collapse ' + (trackShips ? 'show' : '')" data-bs-parent="#fleetBuildingAccordion">
+	    					<div id="collapseOne" :class="'accordion-collapse collapse ' + ($store.builder.trackShips ? 'show' : '')" data-bs-parent="#fleetBuildingAccordion">
 	    						<div class="accordion-body">
 	    							<div class="form-check">
 	    								<label class="form-check-label">
 	    									Sync PPA calculations with fleet builder
-	    									<input class="form-check-input" type="checkbox" :checked="syncShips" @click="setSyncShips($event.target.checked)">
+	    									<input class="form-check-input" type="checkbox" :checked="!!$store.builder.syncShips" @click="$store.builder.setSyncShips($event.target.checked)">
 	    								</label>
 	    							</div>
 	    							<div class="mt-3 row row-gap-1 row-cols-1">
-	    								<template x-for="player in players">
+	    								<template x-for="player in $store.builder.players" :key="player._key">
 	    									<div x-data="fleetComponent(player)" :id="'fleet-' + fleet.name" class="col border rounded-4 p-3 bg-dark-subtle">
 	    										<h3 x-text="fleet.name"></h3>
 	    										<div class="ships-list row  row-cols-2">
-	    											<template x-for="ship in fleet.ships">
+	    											<template x-for="ship in fleet.ships" :key="ship._key">
 	    												<div x-data="shipComponent(ship, fleet)" class="ship col border border-black rounded-3 p-2 bg-dark">
 	    													<div class="row row-gap-2 justify-content-start align-items-center">
 	    														<div class="col-5">
@@ -90,31 +90,31 @@
 	    													<div class="ship-systems row row-cols-1 p-2 justify-content-start gap-2">
 	    														<div class="col row mb-2">
 	    															<select class="form-control" :value="ship.class" @input="changeClass($event.target.value)">
-	    																<option :value="ShipType.CAPITAL">Capital</option>
-	    																<option :value="ShipType.FRIGATE">Frigate</option>
+	    																<option value="capital">Capital</option>
+	    																<option value="frigate">Frigate</option>
 	    															</select>
 	    														</div>
 	    														<template x-if="ship.hasOwnProperty('systems')">
-	    															<template x-for="system in ship.systems">
+	    															<template x-for="system in ship.systems" :key="system._key">
 	    																<div x-data="systemComponent(system)" class="col row">
 	    																	<select class="col form-control" :value="system.class" @input="changeClass($event.target.value)">
 	    																		<option value=""></option>
-	    																		<option :value="ShipSystem.ATTACK">Attack</option>
-	    																		<option :value="ShipSystem.DEFENSE">Defence</option>
-	    																		<option :value="ShipSystem.SENSOR">Sensors</option>
-	    																		<option :value="ShipSystem.CATAPULT">Catapult</option>
+	    																		<option value="attack">Attack</option>
+	    																		<option value="defense">Defence</option>
+	    																		<option value="sensor">Sensors</option>
+	    																		<option value="catapult">Catapult</option>
 	    																	</select>
 	    																	<template x-if="system.class === ShipSystem.ATTACK">
 	    																		<div class="col row gap-0">
 	    																			<select class="col form-control" :value="system.attackType" @input="changeAttackType($event.target.value)">
-	    																				<option :value="AttackType.POINT_DEFENSE">Point defence</option>
-	    																				<option :value="AttackType.ASSAULT">Assault</option>
-	    																				<option :value="AttackType.SUPPORT">Support</option>
+	    																				<option value="p">Point defence</option>
+	    																				<option value="a">Assault</option>
+	    																				<option value="s">Support</option>
 	    																			</select>
 	    																			<select x-show="secondSystem" class="col form-control" :value="system.attackType2" @input="changeAttackType2($event.target.value)">
-	    																				<option :value="AttackType.POINT_DEFENSE">Point defence</option>
-	    																				<option :value="AttackType.ASSAULT">Assault</option>
-	    																				<option :value="AttackType.SUPPORT">Support</option>
+	    																				<option value="p">Point defence</option>
+	    																				<option value="a">Assault</option>
+	    																				<option value="s">Support</option>
 	    																			</select>
 	    																			<button
 	    																				:class="'col-1 btn btn-sm ' + (secondSystem ? 'btn-outline-warning' : 'btn-outline-success')"
@@ -130,13 +130,13 @@
 	    													<template x-if="catapults.length > 0">
 	    														<div class="col row m-0 p-1 gap-1 justify-content-start align-items-center row-cols-3">
 	    															<div class="col-3">
-	    																<template x-for="_ in catapults">
+	    																<template x-for="_ in catapults" :key="_._key">
 	    																	<div>Mech company</div>
 	    																</template>
 	    															</div>
-	    															<label class="col-2" :hidden="fleet.aceSelected && !ship.hasAce">
+	    															<label class="col-2" :hidden="!!(fleet.aceSelected && !ship.hasAce)">
 	    																Has ace
-	    																<input type="checkbox" :disabled="fleet.aceSelected && !ship.hasAce" :checked="ship.hasAce" @click="setAce($event.target.checked)">
+	    																<input type="checkbox" :disabled="!!(fleet.aceSelected && !ship.hasAce)" :checked="!!ship.hasAce" @click="setAce($event.target.checked)">
 	    															</label>
 	    															<div class="col">
 	    																<select class="form-control" :value="ship.aceType" :disabled="!ship.hasAce" :hidden="!ship.hasAce" @input="changeAceType($event.target.value)">

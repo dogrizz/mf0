@@ -1,7 +1,11 @@
 const LOCAL_STORAGE_KEY = 'mf0-tools'
 
+function generateKey() {
+  return self.crypto.randomUUID()
+}
+
 document.addEventListener('alpine:init', () => {
-  Alpine.data('builderPage', () => ({
+  Alpine.store('builder', {
     players: [],
     trackShips: false,
     syncShips: false,
@@ -13,6 +17,9 @@ document.addEventListener('alpine:init', () => {
         this.players = data.players
         this.syncShips = data.sync
         this.trackShips = data.track
+        this.players.forEach((player) => {
+          if (!player._key) player._key = generateKey()
+        })
       }
     },
 
@@ -26,7 +33,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     addPlayer() {
-      this.players.push({ name: 'Player', hva: 3, tas: 5, systems: 10, ppa: 5, ships: [] })
+      this.players.push({ _key: generateKey(), name: 'Player', hva: 3, tas: 5, systems: 10, ppa: 5, ships: [] })
       this.recalculatePPA()
     },
 
@@ -45,7 +52,7 @@ document.addEventListener('alpine:init', () => {
     fight() {
       location.href = 'battle.html?' + BATTLE_ID_PARAM + '=' + storeBattle(this.players, this.trackShips, this.syncShips)
     },
-  }))
+  })
 
   Alpine.data('playerComponent', (player) => ({
     player,
@@ -56,23 +63,23 @@ document.addEventListener('alpine:init', () => {
 
     changeHva(newHva) {
       this.player.hva = parseInt(newHva)
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     changeTas(newTas) {
       this.player.tas = parseInt(newTas)
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     changeSystems(newSystems) {
       this.player.systems = parseInt(newSystems)
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     remove() {
-      const position = this.players.indexOf(this.player)
-      this.players.splice(position, 1)
-      this.recalculatePPA()
+      const position = this.$store.builder.players.indexOf(this.player)
+      this.$store.builder.players.splice(position, 1)
+      this.$store.builder.recalculatePPA()
     },
   }))
 
@@ -83,14 +90,18 @@ document.addEventListener('alpine:init', () => {
       if (!this.fleet.hasOwnProperty('ships')) {
         this.fleet.ships = []
         for (let i = 0; i < this.fleet.tas; i++) {
-          this.fleet.ships.push({})
+          this.fleet.ships.push({ _key: generateKey() })
         }
+      } else {
+        this.fleet.ships.forEach((ship) => {
+          if (!ship._key) ship._key = generateKey()
+        })
       }
     },
 
     addShip() {
-      this.fleet.ships.push({ systems: [] })
-      this.recalculatePPA()
+      this.fleet.ships.push({ _key: generateKey(), systems: [] })
+      this.$store.builder.recalculatePPA()
     },
   }))
 
@@ -102,6 +113,10 @@ document.addEventListener('alpine:init', () => {
       if (!this.ship.class) {
         this.ship.name = randomShipName()
         this.changeClass(ShipType.FRIGATE)
+      } else if (this.ship.hasOwnProperty('systems')) {
+        this.ship.systems.forEach((system) => {
+          if (!system._key) system._key = generateKey()
+        })
       }
     },
 
@@ -123,9 +138,9 @@ document.addEventListener('alpine:init', () => {
         this.ship.systems = []
         const systems = MAX_SYSTEMS.hasOwnProperty(newClass) ? MAX_SYSTEMS[newClass] : 0
         for (let i = 0; i < systems; i++) {
-          this.ship.systems.push({ class: '' })
+          this.ship.systems.push({ _key: generateKey(), class: '' })
         }
-        this.saveState()
+        this.$store.builder.saveState()
       }
     },
 
@@ -135,17 +150,24 @@ document.addEventListener('alpine:init', () => {
       if (this.ship.hasAce) {
         this.fleet.aceSelected = false
       }
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     duplicate() {
       const position = this.fleet.ships.indexOf(this.ship)
-      this.fleet.ships.splice(position, 0, copy(this.ship))
+      const duplicatedShip = copy(this.ship)
+      duplicatedShip._key = generateKey()
+      if (duplicatedShip.hasOwnProperty('systems')) {
+        duplicatedShip.systems.forEach((system) => {
+          system._key = generateKey()
+        })
+      }
+      this.fleet.ships.splice(position, 0, duplicatedShip)
       if (this.ship.hasAce) {
         this.ship.hasAce = false
         delete this.ship.aceType
       }
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     setAce(hasAce) {
@@ -154,12 +176,12 @@ document.addEventListener('alpine:init', () => {
       if (!hasAce) {
         delete this.ship.aceType
       }
-      this.saveState()
+      this.$store.builder.saveState()
     },
 
     changeAceType(newType) {
       this.ship.aceType = newType
-      this.saveState()
+      this.$store.builder.saveState()
     },
   }))
 
@@ -176,17 +198,17 @@ document.addEventListener('alpine:init', () => {
       if (this.system.class === ShipSystem.ATTACK) {
         this.changeAttackType(AttackType.POINT_DEFENSE)
       }
-      this.recalculatePPA()
+      this.$store.builder.recalculatePPA()
     },
 
     changeAttackType(newType) {
       this.system.attackType = newType
-      this.saveState()
+      this.$store.builder.saveState()
     },
 
     changeAttackType2(newType) {
       this.system.attackType2 = newType
-      this.saveState()
+      this.$store.builder.saveState()
     },
 
     flipSecondSystem() {
@@ -194,7 +216,7 @@ document.addEventListener('alpine:init', () => {
       if (!this.secondSystem) {
         delete this.system.attackType2
       }
-      this.saveState()
+      this.$store.builder.saveState()
     },
   }))
 })
