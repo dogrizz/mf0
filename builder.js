@@ -59,6 +59,7 @@ document.addEventListener('alpine:init', () => {
 
     changeName(newName) {
       this.player.name = newName
+      this.$store.builder.saveState()
     },
 
     changeHva(newHva) {
@@ -130,6 +131,7 @@ document.addEventListener('alpine:init', () => {
 
     changeName(newName) {
       this.ship.name = newName
+      this.$store.builder.saveState()
     },
 
     changeClass(newClass) {

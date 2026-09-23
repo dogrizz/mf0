@@ -118,6 +118,39 @@ test('ship class and system selections persist across a page reload (bug #3: sel
   assert.equal(systemSelects2[0].value, 'catapult', 'system select should show the saved value, not fall back to blank')
 })
 
+test('player and ship names persist across a page reload (changeName did not save state)', async () => {
+  const dom1 = loadPage('index.html')
+  await settle()
+
+  dom1.window.Alpine.store('builder').addPlayer()
+  await settle()
+  const fleetEl1 = dom1.window.document.querySelector('[id^="fleet-"]')
+  dom1.window.Alpine.$data(fleetEl1).addShip()
+  await settle()
+
+  const playerEl1 = dom1.window.document.querySelector('[x-data^="playerComponent"]')
+  dom1.window.Alpine.$data(playerEl1).changeName('Alice')
+  await settle()
+
+  const shipEl1 = fleetEl1.querySelector('.ship')
+  dom1.window.Alpine.$data(shipEl1).changeName('Ship A')
+  await settle()
+
+  const saved = dom1.window.localStorage.getItem('mf0-tools')
+  assert.ok(saved, 'builder state should have been persisted')
+  assert.match(saved, /Alice/, 'saved state should include the renamed player')
+  assert.match(saved, /Ship A/, 'saved state should include the renamed ship')
+
+  const dom2 = loadPage('index.html', { seedLocalStorage: { 'mf0-tools': saved } })
+  await settle()
+
+  const playerEl2 = dom2.window.document.querySelector('[x-data^="playerComponent"]')
+  assert.equal(dom2.window.Alpine.$data(playerEl2).player.name, 'Alice', 'player name should survive a reload')
+
+  const shipEl2 = dom2.window.document.querySelector('.ship')
+  assert.equal(dom2.window.Alpine.$data(shipEl2).ship.name, 'Ship A', 'ship name should survive a reload')
+})
+
 test('the ace/mech-company checkbox is reachable from a nested system component (bug #1: this-scoping across x-data)', async () => {
   const dom = loadPage('index.html')
   const { window } = dom
