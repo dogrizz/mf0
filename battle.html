@@ -7,12 +7,121 @@
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
-	<body data-bs-theme="dark">
-	    <script type="text/javascript" src="https://unpkg.com/mithril@2.2.2/mithril.min.js"></script>
+	<body data-bs-theme="dark" x-data="battlePage()">
 	    <script type="text/javascript" src="lz-string.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	    <script type="text/javascript" src="support.js"></script>
-		<script type="text/javascript" src="common.js"></script>
 	    <script type="text/javascript" src="battle.js"></script>
+	    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+
+	    <a title="Browse running battles" href="battles.html" style="float: right;margin-right: 15px;text-decoration: none;">Saved battles</a>
+
+	    <main class="container">
+	    	<h1>MF0 Intercept Orbit battle tracker</h1>
+
+	    	<template x-if="!battle">
+	    		<span>Can't find your battle</span>
+	    	</template>
+
+	    	<template x-if="battle">
+	    		<div>
+	    			<div class="row gap-2 justify-content-start p-2 border rounded-4">
+	    				<div class="col-1 row row-cols-1 p-0 mt-2 gap-1">
+	    					<span class="col form-label">Fleet id</span>
+	    					<span class="col form-label">HVA</span>
+	    					<span class="col form-label">TAs</span>
+	    					<span class="col form-label">PPA</span>
+	    					<span class="col form-label">Total</span>
+	    					<span class="col form-label">Role</span>
+	    				</div>
+	    				<template x-for="player in battle.roster">
+	    					<div x-data="playerComponent(player, battle)" class="col-2 row row-cols-1 justify-content-start row-gap-1">
+	    						<label class="col fs-5" x-text="player.name"></label>
+	    						<div class="col">
+	    							<input class="form-control" type="number" min="0" :value="player.hva" @input="changeHva($event.target.value)">
+	    						</div>
+	    						<div class="col">
+	    							<input class="form-control" type="number" min="0" :disabled="battle.sync" :value="player.tas" @input="changeTas($event.target.value)">
+	    						</div>
+	    						<span class="col form-label" x-text="player.ppa"></span>
+	    						<span class="col form-label" x-text="player.total"></span>
+	    						<span class="col form-label" x-text="player.role"></span>
+	    					</div>
+	    				</template>
+	    			</div>
+
+	    			<template x-if="battle.sync">
+	    				<div class="row row-cols-1 gap-2 mt-2">
+	    					<template x-for="fleet in battle.roster">
+	    						<div class="col row row-cols-1 border rounded-4 p-2 gap-2 bg-dark-subtle">
+	    							<h3 class="col" x-text="fleet.name"></h3>
+	    							<div class="ships col row justify-content-start gap-2">
+	    								<template x-for="ship in fleet.ships" :key="ship.id">
+	    									<div x-data="shipComponent(ship, fleet, battle)" :class="classes">
+	    										<div class="row justify-content-start">
+	    											<h4 :class="nameClasses" :title="nameTitle" x-text="ship.name || 'noname'"></h4>
+	    											<div class="col-1">
+	    												<button class="btn btn-sm btn-outline-info" title="Transfer" :hidden="ship.destroyed" @click="startTransfer()">⇌</button>
+	    											</div>
+	    											<div :class="ship.showPopup ? 'overlay overlay-show' : 'overlay'">
+	    												<div class="row row-cols-1 popup gap-3 justofy-content-center border rounded-4">
+	    													<h3 class="col" x-text="`Transfer ship ${ship.name} to:`"></h3>
+	    													<template x-for="target in otherFleets" :key="target.id">
+	    														<div class="col d-flex justify-content-center align-items-center">
+	    															<button class="btn btn-outline-warning" @click="transfer(target)" x-text="target.name"></button>
+	    														</div>
+	    													</template>
+	    													<div class="col d-flex justify-content-center align-items-center">
+	    														<button class="btn btn-outline-light" @click="cancelTransfer()">Cancel</button>
+	    													</div>
+	    												</div>
+	    											</div>
+	    										</div>
+	    										<span class="col" x-text="dice"></span>
+	    										<template x-for="system in ship.systems">
+	    											<div class="col system form-check">
+	    												<label class="form-check-label">
+	    													<input class="form-check-input" type="checkbox" :checked="system.disabled" @click="systemStateChange(system, $event.target.checked)">
+	    													<span x-text="systemText(system)"></span>
+	    												</label>
+	    											</div>
+	    										</template>
+	    									</div>
+	    								</template>
+	    							</div>
+	    							<div class="companies col row justify-content-start gap-2">
+	    								<template x-for="company in fleet.companies">
+	    									<div x-data="companyComponent(company, fleet, battle)" :class="classes">
+	    										<div class="row justify-content-start">
+	    											<h4 class="col text-capitalize" x-text="label"></h4>
+	    											<div class="col-1">
+	    												<button class="btn btn-sm btn-outline-warning" :disabled="company.destroyed" title="Fuel state" @click="fuelChange()">⛽</button>
+	    											</div>
+	    										</div>
+	    										<span class="col" x-text="dice"></span>
+	    										<span class="col" x-text="`origin: ${company.origin}`"></span>
+	    										<template x-for="system in company.systems">
+	    											<div class="col form-check">
+	    												<label class="form-check-label">
+	    													<input class="form-check-input" type="checkbox" :checked="system.disabled" :disabled="company.outOfFuel" @click="systemStateChange(system, $event.target.checked)">
+	    													<span x-text="system.class"></span>
+	    												</label>
+	    											</div>
+	    										</template>
+	    									</div>
+	    								</template>
+	    							</div>
+	    						</div>
+	    					</template>
+	    				</div>
+	    			</template>
+	    		</div>
+	    	</template>
+
+	    	<footer class="float-end" style="font-size: small">
+	    		<span>Please </span><a target="_blank" href="https://www.patreon.com/Joshua">support MF0 creator</a><span> or </span><a target="_blank" href="https://glyphpress.com/talk/mobile-frame-zero-002-intercept-orbit-final-pdf">buy a rulebook</a>
+	    		<div style="font-size: smaller"><span>I am not the creator ;)</span></div>
+	    	</footer>
+	    </main>
 	</body>
 </html>
