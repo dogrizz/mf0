@@ -14,9 +14,10 @@
 	    <script type="text/javascript" src="builder.js"></script>
 	    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
-	    <a title="Browse running battles" href="battles.html" style="float: right;margin-right: 15px;text-decoration: none;">Saved battles</a>
-
 	    <main class="container">
+	    	<div class="d-flex justify-content-end">
+	    		<a title="Browse running battles" href="battles.html" class="text-decoration-none">Saved battles</a>
+	    	</div>
 	    	<h1>MF0 Intercept Orbit points per asset calculator</h1>
 	    	<div class="row gap-3 border rounded-4 p-2 justify-content-start">
 	    		<div class="col-1 row row-cols-1 mt-2 gap-2">
@@ -33,7 +34,7 @@
 	    					<div class="col-10">
 	    						<input class="form-control" :value="player.name" @input="changeName($event.target.value)">
 	    					</div>
-	    					<div class="col-1 ml-2">
+	    					<div class="col-1 ms-2">
 	    						<button title="Remove" class="btn btn-sm btn-outline-danger" @click="remove()">×</button>
 	    					</div>
 	    				</div>
@@ -55,12 +56,10 @@
 	    					<h2 class="accordion-header">
 	    						<button
 	    							:class="'accordion-button ' + ($store.builder.trackShips ? '' : 'collapsed')"
-	    							data-bs-toggle="collapse"
-	    							data-bs-target="#collapseOne"
 	    							@click="$store.builder.setTrackShips(!$store.builder.trackShips)"
 	    						>Fleet builder</button>
 	    					</h2>
-	    					<div id="collapseOne" :class="'accordion-collapse collapse ' + ($store.builder.trackShips ? 'show' : '')" data-bs-parent="#fleetBuildingAccordion">
+	    					<div id="collapseOne" :class="'accordion-collapse collapse ' + ($store.builder.trackShips ? 'show' : '')">
 	    						<div class="accordion-body">
 	    							<div class="form-check">
 	    								<label class="form-check-label">
@@ -89,7 +88,7 @@
 	    													</div>
 	    													<div class="ship-systems row row-cols-1 p-2 justify-content-start gap-2">
 	    														<div class="col row mb-2">
-	    															<select class="form-control" :value="ship.class" @input="changeClass($event.target.value)">
+	    															<select class="form-select" :value="ship.class" @input="changeClass($event.target.value)">
 	    																<option value="capital">Capital</option>
 	    																<option value="frigate">Frigate</option>
 	    															</select>
@@ -97,7 +96,7 @@
 	    														<template x-if="ship.hasOwnProperty('systems')">
 	    															<template x-for="system in ship.systems" :key="system._key">
 	    																<div x-data="systemComponent(system)" class="col row">
-	    																	<select class="col form-control" :value="system.class" @input="changeClass($event.target.value)">
+	    																	<select class="col form-select" :value="system.class" @input="changeClass($event.target.value)">
 	    																		<option value=""></option>
 	    																		<option value="attack">Attack</option>
 	    																		<option value="defense">Defence</option>
@@ -106,12 +105,12 @@
 	    																	</select>
 	    																	<template x-if="system.class === ShipSystem.ATTACK">
 	    																		<div class="col row gap-0">
-	    																			<select class="col form-control" :value="system.attackType" @input="changeAttackType($event.target.value)">
+	    																			<select class="col form-select" :value="system.attackType" @input="changeAttackType($event.target.value)">
 	    																				<option value="p">Point defence</option>
 	    																				<option value="a">Assault</option>
 	    																				<option value="s">Support</option>
 	    																			</select>
-	    																			<select x-show="secondSystem" class="col form-control" :value="system.attackType2" @input="changeAttackType2($event.target.value)">
+	    																			<select x-show="secondSystem" class="col form-select" :value="system.attackType2" @input="changeAttackType2($event.target.value)">
 	    																				<option value="p">Point defence</option>
 	    																				<option value="a">Assault</option>
 	    																				<option value="s">Support</option>
@@ -139,7 +138,7 @@
 	    																<input type="checkbox" :disabled="!!(fleet.aceSelected && !ship.hasAce)" :checked="!!ship.hasAce" @click="setAce($event.target.checked)">
 	    															</label>
 	    															<div class="col">
-	    																<select class="form-control" :value="ship.aceType" :disabled="!ship.hasAce" :hidden="!ship.hasAce" @input="changeAceType($event.target.value)">
+	    																<select class="form-select" :value="ship.aceType" :disabled="!ship.hasAce" :hidden="!ship.hasAce" @input="changeAceType($event.target.value)">
 	    																	<option value="red">Red Ace</option>
 	    																	<option value="blue">Blue Ace</option>
 	    																	<option value="green">Green Ace</option>
@@ -162,7 +161,7 @@
 	    		</div>
 	    	</div>
 
-	    	<footer class="float-end" style="font-size: small">
+	    	<footer class="text-end" style="font-size: small">
 	    		<span>Please </span><a target="_blank" href="https://www.patreon.com/Joshua">support MF0 creator</a><span> or </span><a target="_blank" href="https://glyphpress.com/talk/mobile-frame-zero-002-intercept-orbit-final-pdf">buy a rulebook</a>
 	    		<div style="font-size: smaller"><span>I am not the creator ;)</span></div>
 	    	</footer>

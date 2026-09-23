@@ -14,9 +14,10 @@
 	    <script type="text/javascript" src="battle.js"></script>
 	    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
-	    <a title="Browse running battles" href="battles.html" style="float: right;margin-right: 15px;text-decoration: none;">Saved battles</a>
-
 	    <main class="container">
+	    	<div class="d-flex justify-content-end">
+	    		<a title="Browse running battles" href="battles.html" class="text-decoration-none">Saved battles</a>
+	    	</div>
 	    	<h1>MF0 Intercept Orbit battle tracker</h1>
 
 	    	<template x-if="!battle">
@@ -118,7 +119,7 @@
 	    		</div>
 	    	</template>
 
-	    	<footer class="float-end" style="font-size: small">
+	    	<footer class="text-end" style="font-size: small">
 	    		<span>Please </span><a target="_blank" href="https://www.patreon.com/Joshua">support MF0 creator</a><span> or </span><a target="_blank" href="https://glyphpress.com/talk/mobile-frame-zero-002-intercept-orbit-final-pdf">buy a rulebook</a>
 	    		<div style="font-size: smaller"><span>I am not the creator ;)</span></div>
 	    	</footer>
