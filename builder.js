@@ -220,11 +220,17 @@ document.addEventListener('alpine:init', () => {
 
     flipSecondSystem() {
       this.secondSystem = !this.secondSystem
-      if (!this.secondSystem) {
+      if (this.secondSystem) {
+        // the <select> falls back to showing its first option ("Point defence")
+        // when :value is bound to an undefined attackType2 - set a real default
+        // so the underlying data matches what's already shown, instead of only
+        // becoming real once the user makes an explicit selection.
+        this.changeAttackType2(AttackType.POINT_DEFENSE)
+      } else {
         delete this.system.attackType2
+        this.ship.systems = [...this.ship.systems]
+        this.$store.builder.saveState()
       }
-      this.ship.systems = [...this.ship.systems]
-      this.$store.builder.saveState()
     },
   }))
 })

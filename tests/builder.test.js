@@ -226,3 +226,41 @@ test('adding a second attack system triggers dice recalculation (bug #5: hasOwnP
     'adding a second attack system (different type) should split into two separate 1-die pools, not keep showing the original single-type pool',
   )
 })
+
+test('flipping on the second attack system recalculates dice immediately, without an explicit dropdown selection (bug #6: attackType2 left undefined)', async () => {
+  const dom = loadPage('index.html')
+  const { window } = dom
+  await settle()
+
+  window.Alpine.store('builder').addPlayer()
+  await settle()
+  const fleetEl = window.document.querySelector('[id^="fleet-"]')
+  window.Alpine.$data(fleetEl).addShip()
+  await settle()
+
+  const shipEl = fleetEl.querySelector('.ship')
+  const systemEl = shipEl.querySelector('[x-data^="systemComponent"]')
+  const systemData = window.Alpine.$data(systemEl)
+  systemData.changeClass('attack')
+  await settle()
+  // pick a non-default first attack type so the fix's effect is observable
+  // even if the second type's default happens to match the first
+  systemData.changeAttackType('a')
+  await settle()
+
+  const diceEl = shipEl.querySelector('span.col-2')
+  assert.equal(diceEl.textContent, '2W1GRa2', 'a single assault attack system should count as a 2-die pool')
+
+  // clicking "+" alone, with no dropdown interaction, must already recalculate
+  systemData.flipSecondSystem()
+  await settle()
+
+  assert.equal(
+    diceEl.textContent,
+    '2W1GRp1Ra1',
+    'toggling on the second attack system should immediately register its (point-defence) default, not wait for an explicit dropdown change',
+  )
+
+  const secondSelect = Array.from(systemEl.querySelectorAll('select.col.form-select'))[2]
+  assert.equal(secondSelect.value, 'p', 'the second select should show the same default value that was actually applied to the data')
+})
