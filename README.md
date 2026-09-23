@@ -9,5 +9,5 @@ and http://mobileframezero.com/mfz/ for more information.
 
 Uses:
 
-- https://mithril.js.org
+- https://alpinejs.dev
 - https://github.com/pieroxy/lz-string
