@@ -72,7 +72,7 @@ test('changing ship class replaces its systems and edits land on the live object
   ship.changeClass('capital')
   await settle()
 
-  const systemEls = Array.from(shipEl.querySelectorAll('select.col.form-control'))
+  const systemEls = Array.from(shipEl.querySelectorAll('select.col.form-select'))
   assert.equal(systemEls.length, 4, 'capital ships have 4 system slots')
 
   const firstSystem = window.Alpine.$data(systemEls[0].parentElement)
@@ -100,7 +100,7 @@ test('ship class and system selections persist across a page reload (bug #3: sel
   ship1.changeClass('capital')
   await settle()
 
-  const systemEls1 = Array.from(shipEl1.querySelectorAll('select.col.form-control'))
+  const systemEls1 = Array.from(shipEl1.querySelectorAll('select.col.form-select'))
   dom1.window.Alpine.$data(systemEls1[0].parentElement).changeClass('catapult')
   await settle()
 
@@ -114,7 +114,7 @@ test('ship class and system selections persist across a page reload (bug #3: sel
   const shipClassSelect2 = shipEl2.querySelector('.col.row.mb-2 select')
   assert.equal(shipClassSelect2.value, 'capital', 'ship class select should show the saved value, not fall back to blank')
 
-  const systemSelects2 = Array.from(shipEl2.querySelectorAll('select.col.form-control'))
+  const systemSelects2 = Array.from(shipEl2.querySelectorAll('select.col.form-select'))
   assert.equal(systemSelects2[0].value, 'catapult', 'system select should show the saved value, not fall back to blank')
 })
 
@@ -131,7 +131,7 @@ test('the ace/mech-company checkbox is reachable from a nested system component 
 
   const shipEl = fleetEl.querySelector('.ship')
   const ship = window.Alpine.$data(shipEl)
-  const systemEls = Array.from(shipEl.querySelectorAll('select.col.form-control'))
+  const systemEls = Array.from(shipEl.querySelectorAll('select.col.form-select'))
 
   // calling changeClass on a nested systemComponent must reach the shared
   // store (this.$store.builder.recalculatePPA()) without throwing
@@ -155,7 +155,7 @@ test('boolean attributes do not render truthy for freshly-created (undefined) fi
   await settle()
 
   const shipEl = fleetEl.querySelector('.ship')
-  window.Alpine.$data(Array.from(shipEl.querySelectorAll('select.col.form-control'))[0].parentElement).changeClass('catapult')
+  window.Alpine.$data(Array.from(shipEl.querySelectorAll('select.col.form-select'))[0].parentElement).changeClass('catapult')
   await settle()
 
   const aceCheckbox = shipEl.querySelector('input[type="checkbox"]')
