@@ -1,0 +1,12 @@
+{
+  "name": "mf0-tests",
+  "private": true,
+  "description": "jsdom-based regression tests for the Alpine.js frontend. This is dev-only tooling - the site itself stays a no-build static site.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0",
+    "alpinejs": "3.14.1"
+  }
+}
