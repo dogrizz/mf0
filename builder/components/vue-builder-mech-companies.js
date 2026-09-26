@@ -26,16 +26,12 @@ var VueBuilderMechCompaniesComponent = {
     })
 
     function setAce(hasAce) {
-      props.ship.hasAce = hasAce
-      props.fleet.aceSelected = hasAce
-      if (!hasAce) {
-        delete props.ship.aceType
-      }
+      setShipAce(props.ship, props.fleet, hasAce)
       saveState()
     }
 
     function changeAceType(newType) {
-      props.ship.aceType = newType
+      setShipAceType(props.ship, newType)
       saveState()
     }
 

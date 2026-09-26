@@ -358,6 +358,124 @@ function determineRole(players) {
     }
   })
 }
+// Applies a damage-toggle to one system on a ship or mech company: flips its disabled flag, then
+// destroys/revives the whole entity once all/some of its systems are enabled again, adjusting the
+// owning fleet's tas accordingly. Shared by ships and mech companies since both track damage the
+// same way (a `systems` array plus a `destroyed` flag).
+function applySystemDamage(entity, fleet, roster, system, disabled) {
+  system.disabled = disabled
+  if (entity.systems.filter((s) => !s.disabled).length === 0) {
+    entity.destroyed = true
+    fleet.tas--
+    recalculate(fleet, roster)
+  } else if (entity.destroyed) {
+    entity.destroyed = false
+    fleet.tas++
+    recalculate(fleet, roster)
+  }
+}
+
+function toggleCompanyFuel(company, fleet, roster) {
+  company.outOfFuel = !company.outOfFuel
+  if (company.outOfFuel) {
+    fleet.tas--
+  } else {
+    fleet.tas++
+  }
+  recalculate(fleet, roster)
+}
+
+function transferShip(ship, fromFleet, toFleet) {
+  fromFleet.tas--
+  toFleet.tas++
+  fromFleet.ships.splice(fromFleet.ships.indexOf(ship), 1)
+  toFleet.ships.push(ship)
+}
+
+function changePlayerHva(player, roster, newHva) {
+  player.hva = parseInt(newHva)
+  recalculate(player, roster)
+}
+
+function changePlayerTas(player, roster, newTas) {
+  player.tas = parseInt(newTas)
+  recalculate(player, roster)
+}
+
+function setSystemAttackType(system, newType) {
+  system.attackType = newType
+}
+
+function setSystemSecondAttackType(system, newType) {
+  system.attackType2 = newType
+}
+
+function clearSystemSecondAttackType(system) {
+  delete system.attackType2
+}
+
+function setSystemClass(system, newClass) {
+  system.class = newClass
+  if (system.class === ShipSystem.ATTACK) {
+    setSystemAttackType(system, AttackType.POINT_DEFENSE)
+  }
+}
+
+function setShipClass(ship, newClass) {
+  if (ship.class === newClass) {
+    return false
+  }
+  ship.class = newClass
+  ship.systems = []
+  var systemsCount = MAX_SYSTEMS.hasOwnProperty(newClass) ? MAX_SYSTEMS[newClass] : 0
+  for (var i = 0; i < systemsCount; i++) {
+    ship.systems.push({ class: '' })
+  }
+  return true
+}
+
+function removeShip(fleet, ship) {
+  var position = fleet.ships.indexOf(ship)
+  fleet.ships.splice(position, 1)
+  if (ship.hasAce) {
+    fleet.aceSelected = false
+  }
+}
+
+function duplicateShip(fleet, ship) {
+  var position = fleet.ships.indexOf(ship)
+  fleet.ships.splice(position, 0, copy(ship))
+  if (ship.hasAce) {
+    ship.hasAce = false
+    delete ship.aceType
+  }
+}
+
+function setShipAce(ship, fleet, hasAce) {
+  ship.hasAce = hasAce
+  fleet.aceSelected = hasAce
+  if (!hasAce) {
+    delete ship.aceType
+  }
+}
+
+function setShipAceType(ship, newType) {
+  ship.aceType = newType
+}
+
+function migrateFleetShips(fleet) {
+  if (!fleet.hasOwnProperty('ships')) {
+    fleet.ships = []
+    for (var i = 0; i < fleet.tas; i++) {
+      fleet.ships.push({})
+    }
+  }
+}
+
+function addShip(fleet) {
+  fleet.ships.push({ systems: [] })
+}
+
 function randomShipName() {
   return shipNames[Math.floor(Math.random() * shipNames.length)]
 }

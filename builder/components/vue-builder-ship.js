@@ -17,13 +17,7 @@ var VueBuilderShipComponent = {
   },
   setup: function (props) {
     function changeClass(newClass) {
-      if (props.ship.class !== newClass) {
-        props.ship.class = newClass
-        props.ship.systems = []
-        var systems = MAX_SYSTEMS.hasOwnProperty(newClass) ? MAX_SYSTEMS[newClass] : 0
-        for (var i = 0; i < systems; i++) {
-          props.ship.systems.push({ class: '' })
-        }
+      if (setShipClass(props.ship, newClass)) {
         saveState()
       }
     }
@@ -40,21 +34,12 @@ var VueBuilderShipComponent = {
     }
 
     function remove() {
-      var position = props.fleet.ships.indexOf(props.ship)
-      props.fleet.ships.splice(position, 1)
-      if (props.ship.hasAce) {
-        props.fleet.aceSelected = false
-      }
+      removeShip(props.fleet, props.ship)
       recalculatePPA()
     }
 
     function duplicate() {
-      var position = props.fleet.ships.indexOf(props.ship)
-      props.fleet.ships.splice(position, 0, copy(props.ship))
-      if (props.ship.hasAce) {
-        props.ship.hasAce = false
-        delete props.ship.aceType
-      }
+      duplicateShip(props.fleet, props.ship)
       recalculatePPA()
     }
 

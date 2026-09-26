@@ -41,20 +41,7 @@ var VueBattleShipComponent = {
     }
 
     function systemStateChange(system, newState) {
-      system.disabled = newState
-      if (
-        props.ship.systems.filter(function (s) {
-          return !s.disabled
-        }).length === 0
-      ) {
-        props.ship.destroyed = true
-        props.fleet.tas--
-        recalculate(props.fleet, props.battle.roster)
-      } else if (props.ship.destroyed) {
-        props.ship.destroyed = false
-        props.fleet.tas++
-        recalculate(props.fleet, props.battle.roster)
-      }
+      applySystemDamage(props.ship, props.fleet, props.battle.roster, system, newState)
       store(props.battle)
     }
 
@@ -65,10 +52,7 @@ var VueBattleShipComponent = {
     }
 
     function transfer(targetFleet) {
-      props.fleet.tas--
-      targetFleet.tas++
-      props.fleet.ships.splice(props.fleet.ships.indexOf(props.ship), 1)
-      targetFleet.ships.push(props.ship)
+      transferShip(props.ship, props.fleet, targetFleet)
       store(props.battle)
     }
 

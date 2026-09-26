@@ -21,14 +21,12 @@ var VueBattlePlayerComponent = {
     recalculate(props.player, props.battle.roster)
 
     function changeHva(newHva) {
-      props.player.hva = parseInt(newHva)
-      recalculate(props.player, props.battle.roster)
+      changePlayerHva(props.player, props.battle.roster, newHva)
       store(props.battle)
     }
 
     function changeTas(newTas) {
-      props.player.tas = parseInt(newTas)
-      recalculate(props.player, props.battle.roster)
+      changePlayerTas(props.player, props.battle.roster, newTas)
       store(props.battle)
     }
 
