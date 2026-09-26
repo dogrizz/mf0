@@ -1,0 +1,26 @@
+<div class="ship col border border-black rounded-3 p-2 bg-dark">
+  <div class="row row-gap-2 justify-content-start align-items-center">
+    <div class="col-5">
+      <input type="text" class="form-control" :value="ship.name" @input="changeName($event.target.value)" />
+    </div>
+    <div class="col-1">
+      <button type="button" class="btn btn-sm btn-outline-light" title="Copy" @click="duplicate">📋</button>
+    </div>
+    <div class="col-1">
+      <button type="button" class="btn btn-sm btn-outline-danger" title="Remove" @click="remove">×</button>
+    </div>
+    <span class="col-2">{{ diceText }}</span>
+  </div>
+  <div class="ship-systems row row-cols-1 p-2 justify-content-start gap-2">
+    <div class="col row mb-2">
+      <select class="form-control" :value="ship.class" @input="changeClass($event.target.value)">
+        <option :value="ShipType.CAPITAL">Capital</option>
+        <option :value="ShipType.FRIGATE">Frigate</option>
+      </select>
+    </div>
+    <template v-if="ship.hasOwnProperty('systems')">
+      <builder-system v-for="(system, i) in ship.systems" :key="i" :system="system" />
+    </template>
+  </div>
+  <builder-mech-companies :ship="ship" :fleet="fleet" />
+</div>

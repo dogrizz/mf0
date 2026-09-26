@@ -1,0 +1,35 @@
+<div class="col-2 row row-cols-1 justify-content-start row-gap-1">
+  <div class="col row row-cols-2 gap-2 g-0 align-items-center">
+    <div class="col-10">
+      <input class="form-control" :value="player.name" @input="changeName($event.target.value)" />
+    </div>
+    <div class="col-1 ml-2">
+      <button type="button" title="Remove" class="btn btn-sm btn-outline-danger" @click="remove">×</button>
+    </div>
+  </div>
+  <input
+    type="number"
+    class="col form-control"
+    min="0"
+    :value="player.hva"
+    @input="changeHva($event.target.value)"
+  />
+  <input
+    type="number"
+    class="col form-control"
+    min="0"
+    :disabled="state.sync"
+    :value="player.tas"
+    @input="changeTas($event.target.value)"
+  />
+  <input
+    type="number"
+    class="col form-control"
+    min="0"
+    :disabled="state.sync"
+    :value="player.systems"
+    @input="changeSystems($event.target.value)"
+  />
+  <span class="col form-label">{{ player.ppa }}</span>
+  <span class="col form-label">{{ player.ppa * (player.hva + player.tas) }}</span>
+</div>

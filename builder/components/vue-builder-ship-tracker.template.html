@@ -1,0 +1,9 @@
+<div class="form-check">
+  <label class="form-check-label">
+    Sync PPA calculations with fleet builder
+    <input class="form-check-input" type="checkbox" :checked="state.sync" @click="setSync($event.target.checked)" />
+  </label>
+</div>
+<div class="mt-3 row row-gap-1 row-cols-1">
+  <builder-fleet v-for="(player, i) in state.players" :key="i" :fleet="player" />
+</div>

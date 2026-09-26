@@ -1,0 +1,32 @@
+<div class="col row">
+  <select class="col form-control" :value="system.class" @input="changeClass($event.target.value)">
+    <option value=""></option>
+    <option :value="ShipSystem.ATTACK">Attack</option>
+    <option :value="ShipSystem.DEFENSE">Defence</option>
+    <option :value="ShipSystem.SENSOR">Sensors</option>
+    <option :value="ShipSystem.CATAPULT">Catapult</option>
+  </select>
+  <div v-if="system.class === ShipSystem.ATTACK" class="col row gap-0">
+    <select class="col form-control" :value="system.attackType" @input="changeAttackType($event.target.value)">
+      <option :value="AttackType.POINT_DEFENSE">Point defence</option>
+      <option :value="AttackType.ASSAULT">Assault</option>
+      <option :value="AttackType.SUPPORT">Support</option>
+    </select>
+    <select
+      v-if="secondSystem"
+      class="col form-control"
+      :value="system.attackType2"
+      @input="changeAttackType2($event.target.value)"
+    >
+      <option :value="AttackType.POINT_DEFENSE">Point defence</option>
+      <option :value="AttackType.ASSAULT">Assault</option>
+      <option :value="AttackType.SUPPORT">Support</option>
+    </select>
+    <button
+      type="button"
+      class="col-1 btn btn-sm"
+      :class="secondSystem ? 'btn-outline-warning' : 'btn-outline-success'"
+      @click="flipSecondSystem"
+    >{{ secondSystem ? '-' : '+' }}</button>
+  </div>
+</div>

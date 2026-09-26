@@ -1,0 +1,31 @@
+<div
+  v-if="catapults.length > 0"
+  class="col row m-0 p-1 gap-1 justify-content-start align-items-center row-cols-3"
+>
+  <div class="col-3">
+    <div v-for="(_, i) in catapults" :key="i">Mech company</div>
+  </div>
+  <label class="col-2" :hidden="fleet.aceSelected && !ship.hasAce">
+    Has ace
+    <input
+      type="checkbox"
+      :disabled="fleet.aceSelected && !ship.hasAce"
+      :checked="ship.hasAce"
+      @click="setAce($event.target.checked)"
+    />
+  </label>
+  <div class="col">
+    <select
+      class="form-control"
+      :value="ship.aceType"
+      :disabled="!ship.hasAce"
+      :hidden="!ship.hasAce"
+      @input="changeAceType($event.target.value)"
+    >
+      <option value="red">Red Ace</option>
+      <option value="blue">Blue Ace</option>
+      <option value="green">Green Ace</option>
+      <option value="yellow">Yellow Ace</option>
+    </select>
+  </div>
+</div>

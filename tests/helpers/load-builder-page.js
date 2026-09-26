@@ -1,17 +1,49 @@
-import { click, mountPage, readSource, redraw } from './page.js'
+import { click, mountPage, readSource, redraw, ROOT } from './page.js'
 
-const MITHRIL_SOURCE = readSource('node_modules/mithril/mithril.min.js')
+const VUE_SOURCE = readSource('node_modules/vue/dist/vue.global.js')
 const LZ_STRING_SOURCE = readSource('lz-string.min.js')
 const SUPPORT_SOURCE = readSource('support.js')
-const COMMON_SOURCE = readSource('common.js')
+const VUE_OPTIONS_LINK_SOURCE = readSource('shared/vue-options-link.js')
+const VUE_APP_FOOTER_SOURCE = readSource('shared/vue-app-footer.js')
+const VUE_BUILDER_SYSTEM_SOURCE = readSource('builder/components/vue-builder-system.js')
+const VUE_BUILDER_MECH_COMPANIES_SOURCE = readSource('builder/components/vue-builder-mech-companies.js')
+const VUE_BUILDER_SHIP_SOURCE = readSource('builder/components/vue-builder-ship.js')
+const VUE_BUILDER_FLEET_SOURCE = readSource('builder/components/vue-builder-fleet.js')
+const VUE_BUILDER_SHIP_TRACKER_SOURCE = readSource('builder/components/vue-builder-ship-tracker.js')
+const VUE_BUILDER_PLAYER_SOURCE = readSource('builder/components/vue-builder-player.js')
+const VUE_BUILDER_APP_SOURCE = readSource('builder/vue-builder-app.js')
 const BUILDER_SOURCE = readSource('builder.js')
 
-// Loads the fleet builder page exactly the way index.html does (support.js -> common.js ->
-// builder.js as classic, non-module scripts sharing one global scope), but with Mithril read
-// from the locally vendored dev dependency instead of the CDN <script> tag index.html uses in
-// production, so the characterization suite runs offline and deterministically.
+// Loads the fleet builder page exactly the way index.html does (support.js -> the Vue shared
+// components -> builder.js as classic, non-module scripts sharing one global scope), but with
+// Vue read from the locally vendored dev dependency instead of the CDN <script> tag index.html
+// uses in production, so the characterization suite runs offline and deterministically.
+//
+// Every component's template is loaded via a synchronous XMLHttpRequest against this file's own
+// on-disk `.template.html` sibling (see vue-builder-system.js for why); `xhrRoot` makes that
+// resolve to the real file on disk without an actual HTTP server, while `url` stays
+// `http://localhost/` (mountPage's default) rather than `file://` so this suite's
+// localStorage-reading assertions keep working - jsdom refuses storage access for the "opaque"
+// origin a `file://` document gets.
 export function mountBuilderPage() {
-  return mountPage([MITHRIL_SOURCE, LZ_STRING_SOURCE, SUPPORT_SOURCE, COMMON_SOURCE, BUILDER_SOURCE])
+  return mountPage(
+    [
+      VUE_SOURCE,
+      LZ_STRING_SOURCE,
+      SUPPORT_SOURCE,
+      VUE_OPTIONS_LINK_SOURCE,
+      VUE_APP_FOOTER_SOURCE,
+      VUE_BUILDER_SYSTEM_SOURCE,
+      VUE_BUILDER_MECH_COMPANIES_SOURCE,
+      VUE_BUILDER_SHIP_SOURCE,
+      VUE_BUILDER_FLEET_SOURCE,
+      VUE_BUILDER_SHIP_TRACKER_SOURCE,
+      VUE_BUILDER_PLAYER_SOURCE,
+      VUE_BUILDER_APP_SOURCE,
+      BUILDER_SOURCE,
+    ],
+    { xhrRoot: ROOT },
+  )
 }
 
 export { click, redraw }

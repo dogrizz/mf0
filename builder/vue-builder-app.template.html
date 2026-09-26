@@ -1,0 +1,53 @@
+<div>
+  <options-link />
+  <main class="container">
+    <h1>MF0 Intercept Orbit points per asset calculator</h1>
+    <div class="row gap-3 border rounded-4 p-2 justify-content-start">
+      <div class="col-1 row row-cols-1 mt-2 gap-2">
+        <span class="form-label">Fleet id</span>
+        <span class="form-label">HVA</span>
+        <span class="form-label">TAs</span>
+        <span class="form-label">Systems</span>
+        <span class="form-label">PPA</span>
+        <span class="form-label">Total</span>
+      </div>
+      <builder-player v-for="(player, i) in state.players" :key="i" :player="player" :state="state" />
+      <button type="button" class="col-1 btn btn-outline-primary" @click="addPlayer">Add player</button>
+    </div>
+    <div class="row mt-1 gy-4 row-cols-1">
+      <button
+        type="button"
+        :disabled="state.players.length === 0"
+        class="col mb-4 btn btn-lg btn-outline-success"
+        @click="fight"
+      >Fight!</button>
+      <div class="col p-0 m-0">
+        <div id="fleetBuildingAccordion" class="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                type="button"
+                class="accordion-button"
+                :class="state.track ? '' : 'collapsed'"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                @click="toggleTrackShips"
+              >Fleet builder</button>
+            </h2>
+            <div
+              id="collapseOne"
+              class="accordion-collapse collapse"
+              :class="state.track ? 'show' : ''"
+              data-bs-parent="#fleetBuildingAccordion"
+            >
+              <div class="accordion-body">
+                <builder-ship-tracker :state="state" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer />
+  </main>
+</div>
