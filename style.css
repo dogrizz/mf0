@@ -1,18 +1,24 @@
+:root {
+  --mf0-dark-bg: rgb(26, 29, 32);
+  --mf0-light-text: rgb(248, 249, 250);
+  --mf0-captured-text: rgb(255, 193, 7);
+}
+
 * {
   font-family: 'Sofia Sans', sans-serif;
 }
 
 .accordion-button:not(.collapsed) {
-  color: rgb(248, 249, 250);
-  background-color: rgb(26, 29, 32);
+  color: var(--mf0-light-text);
+  background-color: var(--mf0-dark-bg);
 }
 
 .dead {
-  background-color: rgb(26, 29, 32);
+  background-color: var(--mf0-dark-bg);
 }
 
 .captured {
-  color: rgb(255, 193, 7)
+  color: var(--mf0-captured-text)
 }
 
 .popup {
@@ -21,7 +27,7 @@
   width: 30%;
   position: relative;
   transition: all 5s ease-in-out;
-  background-color: rgb(26, 29, 32);
+  background-color: var(--mf0-dark-bg);
 }
 
 .overlay {
@@ -39,5 +45,36 @@
 .overlay-show {
   opacity: 1;
   visibility: visible;
+}
+
+/* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
+   grid cell as <main>, without pulling it out of flow the way float does. */
+body {
+  display: grid;
+}
+
+body > main.container {
+  grid-area: 1 / 1;
+}
+
+.page-nav-link {
+  grid-area: 1 / 1;
+  justify-self: end;
+  align-self: start;
+  margin-right: 15px;
+  text-decoration: none;
+}
+
+/* Replaces `float-end` on the footer: right-aligns the two footer lines as a flex column
+   instead of relying on float's shrink-to-fit behavior. */
+.app-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: small;
+}
+
+.app-footer-note {
+  font-size: smaller;
 }
 

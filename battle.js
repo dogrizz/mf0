@@ -137,7 +137,7 @@
             m(
               'div',
               { class: ship.showPopup ? 'overlay overlay-show' : 'overlay' },
-              m('div', { class: 'row row-cols-1 popup gap-3 justofy-content-center border rounded-4', }, [
+              m('div', { class: 'row row-cols-1 popup gap-3 justify-content-center border rounded-4', }, [
                 m('h3', { class: 'col' }, `Transfer ship ${ship.name} to:`),
                 battle.roster
                   .filter((f) => f !== fleet)
