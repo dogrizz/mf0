@@ -201,8 +201,11 @@ describe('battle tracker page', () => {
     expect(shipElements(alphaFleet)).toHaveLength(0)
     const transferredShip = shipElements(betaFleet).find((el) => el.querySelector('h4').textContent.includes('Alpha One'))
     expect(transferredShip).toBeTruthy()
-    // The ship keeps its original owner id (used for the captured indicator above) - only its
-    // location in the roster's fleets changes, not this provenance field.
+    // The ship keeps its original owner id - only its location in the roster's fleets changes, not
+    // this field. That's a game-rules requirement, not just a display artifact: the original owner
+    // retains control over the ship's system (white) dice even after capture, so the app needs to
+    // keep tracking who that original owner was. The "captured" class on the ship's title is the
+    // visual surfacing of that same fact.
     expect(isCaptured(transferredShip)).toBe(true)
 
     const state = readBattleState(dom)

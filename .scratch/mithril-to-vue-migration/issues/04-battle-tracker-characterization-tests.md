@@ -43,8 +43,11 @@ elements fresh from `document` after every redraw rather than reusing a captured
 same way a real user interacting with the live page would.
 
 The transfer test also characterizes that `transfer()` never reassigns a moved ship's `owner` field - only
-which fleet's `ships` array contains it. That's what makes the "captured" indicator (`ship.owner !==
-fleet.id`) work after a transfer, so it's confirmed as intended rather than treated as a bug per the
-spec's Testing Decisions.
+which fleet's `ships` array contains it. This is a game-rules requirement, not just a display artifact
+(per the user, correcting an earlier framing of this as merely feeding the "captured" indicator): the
+original owner retains control over a captured ship's system (white) dice under the MFZ:IO rules, so the
+app must keep tracking who that original owner was even after the ship changes fleets. The "captured"
+class on the ship's title (`ship.owner !== fleet.id`) is the visual surfacing of that same fact, not the
+reason the field is preserved.
 
 All 47 tests pass (6 new + the existing 41) via `npm test`; `npx prettier --check tests/` is clean.
