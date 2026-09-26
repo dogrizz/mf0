@@ -253,6 +253,11 @@ function readBattles() {
   return JSON.parse(battles)
 }
 
+function forfeitBattle(battles, id) {
+  delete battles[id]
+  localStorage.setItem(BATTLE_STORAGE_KEY, JSON.stringify(battles))
+}
+
 function readBattle(id) {
   const _id = parseInt(id)
   const battles = readBattles()
