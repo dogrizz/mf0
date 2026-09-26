@@ -1,0 +1,28 @@
+<div class="company col-3 row row-cols-1 p-1 m-0 rounded-3" :class="(company.destroyed || company.outOfFuel) ? 'dead' : 'bg-dark'">
+  <div class="row justify-content-start">
+    <h4 class="col text-capitalize">{{ company.aceType ? company.aceType + ' ace' : 'company' }}</h4>
+    <div class="col-1">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-warning"
+        title="Fuel state"
+        :disabled="company.destroyed"
+        @click="fuelChange"
+      >⛽</button>
+    </div>
+  </div>
+  <span class="col">{{ diceText }}</span>
+  <span class="col">origin: {{ company.origin }}</span>
+  <div v-for="(system, i) in company.systems" :key="i" class="col form-check">
+    <label class="form-check-label">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        :checked="system.disabled"
+        :disabled="company.outOfFuel"
+        @click="systemStateChange(system, $event.target.checked)"
+      />
+      {{ system.class }}
+    </label>
+  </div>
+</div>

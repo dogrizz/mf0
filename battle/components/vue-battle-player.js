@@ -1,0 +1,41 @@
+// Vue equivalent of battle.js's PlayerComponent (Mithril): one row of the battle tracker's
+// scoreboard (fleet name, editable HVA/TAs, computed PPA/total/role). See
+// builder/components/vue-builder-system.js (ticket 08) for why this component's template is
+// loaded via synchronous XHR rather than the fetch()+defineAsyncComponent pattern from ticket 07.
+
+var vueBattlePlayerTemplate = (function () {
+  var xhr = new XMLHttpRequest()
+  xhr.open('GET', 'battle/components/vue-battle-player.template.html', false)
+  xhr.send(null)
+  return xhr.responseText
+})()
+
+var VueBattlePlayerComponent = {
+  props: {
+    player: { type: Object, required: true },
+    battle: { type: Object, required: true },
+  },
+  setup: function (props) {
+    // Mirrors PlayerComponent's oninit: compute this player's total/role as soon as the roster is
+    // known, before the user edits anything.
+    recalculate(props.player, props.battle.roster)
+
+    function changeHva(newHva) {
+      props.player.hva = parseInt(newHva)
+      recalculate(props.player, props.battle.roster)
+      store(props.battle)
+    }
+
+    function changeTas(newTas) {
+      props.player.tas = parseInt(newTas)
+      recalculate(props.player, props.battle.roster)
+      store(props.battle)
+    }
+
+    return {
+      changeHva: changeHva,
+      changeTas: changeTas,
+    }
+  },
+  template: vueBattlePlayerTemplate,
+}

@@ -1,0 +1,9 @@
+<div class="col row row-cols-1 border rounded-4 p-2 gap-2 bg-dark-subtle">
+  <h3 class="col">{{ fleet.name }}</h3>
+  <div class="ships col row justify-content-start gap-2">
+    <battle-ship v-for="(ship, i) in fleet.ships" :key="i" :ship="ship" :fleet="fleet" :battle="battle" />
+  </div>
+  <div class="companies col row justify-content-start gap-2">
+    <battle-company v-for="(company, i) in fleet.companies" :key="i" :company="company" :fleet="fleet" :battle="battle" />
+  </div>
+</div>

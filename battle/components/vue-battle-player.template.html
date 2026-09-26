@@ -1,0 +1,19 @@
+<div class="col-2 row row-cols-1 p-0 gap-1">
+  <label class="col fs-5">{{ player.name }}</label>
+  <div class="col">
+    <input class="form-control" type="number" min="0" :value="player.hva" @input="changeHva($event.target.value)" />
+  </div>
+  <div class="col">
+    <input
+      class="form-control"
+      type="number"
+      min="0"
+      :disabled="battle.sync"
+      :value="player.tas"
+      @input="changeTas($event.target.value)"
+    />
+  </div>
+  <span class="col form-label">{{ player.ppa }}</span>
+  <span class="col form-label">{{ player.total }}</span>
+  <span class="col form-label">{{ player.role }}</span>
+</div>
