@@ -9,12 +9,29 @@ specifically.
 
 **Blocked by:** 01 (Add dev-only test tooling)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Suite drives the rendered page via DOM events: add a ship, add systems, add a mech company via a
+- [x] Suite drives the rendered page via DOM events: add a ship, add systems, add a mech company via a
       catapult system, change ship class
-- [ ] Covers the catapult-system-enables-mech-company interaction
-- [ ] Covers ship class changes affecting which systems are available
-- [ ] Covers live PPA recalculation as the roster changes
-- [ ] Asserts on `localStorage['mf0-tools']` contents after interactions, not on Mithril-specific internals
-- [ ] Suite passes against the current, unmodified Mithril implementation
+- [x] Covers the catapult-system-enables-mech-company interaction
+- [x] Covers ship class changes affecting which systems are available
+- [x] Covers live PPA recalculation as the roster changes
+- [x] Asserts on `localStorage['mf0-tools']` contents after interactions, not on Mithril-specific internals
+- [x] Suite passes against the current, unmodified Mithril implementation
+
+## Comments
+
+Implemented as `tests/builder.test.js` (6 tests) against a real jsdom-rendered page, driven with
+`click()`/`setValue()` DOM events and asserted against rendered DOM plus `localStorage['mf0-tools']`.
+`tests/helpers/load-builder-page.js` builds the page by inlining `mithril.min.js` (from a new
+`mithril@2.2.2` dev dependency, matching the CDN version pinned in `index.html`),
+`lz-string.min.js`, `support.js`, `common.js`, and `builder.js` as real `<script>` tags inside a
+`jsdom` document (`runScripts: 'dangerously'`, `pretendToBeVisual: true` for `requestAnimationFrame`,
+which Mithril's autoredraw needs). Inline `<script>` tags were required rather than sequential
+`window.eval()` calls (the pattern ticket 02 used for `support.js` alone): jsdom only threads
+top-level `const`/`let` bindings - e.g. `ShipSystem`/`ShipType` - across scripts parsed and run
+together as part of the same document, matching how a browser shares one global lexical scope
+across `<script>` elements; separate `eval()` calls don't share that scope, so `builder.js` couldn't
+see `support.js`'s `const` exports that way. Checkbox interactions use the element's native
+`.click()` (not a dispatched synthetic `Event`), since only the native method runs jsdom's
+toggle-then-fire-click activation behavior. `npm audit` remains at 0 findings after adding `mithril`.
