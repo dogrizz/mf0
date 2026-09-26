@@ -5,7 +5,7 @@
 
 var vueBuilderShipTrackerTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-ship-tracker.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-ship-tracker.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()

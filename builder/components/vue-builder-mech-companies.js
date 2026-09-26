@@ -5,7 +5,7 @@
 
 var vueBuilderMechCompaniesTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-mech-companies.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-mech-companies.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()

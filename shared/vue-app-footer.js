@@ -9,12 +9,13 @@
 // 10), local dev must use a static file server (e.g. `python3 -m http.server`) rather
 // than opening the .html file directly.
 
-// The `|| location.href` fallback only matters under a test harness that inlines this file as a
-// same-document <script> body rather than loading it via a real <script src>: an inline script's
+// The fallback only matters under a test harness that inlines this file as a same-document
+// <script> body rather than loading it via a real <script src>: an inline script's
 // currentScript.src is always '', which new URL() below would otherwise reject as an invalid
-// base. Production always loads this file via a real src attribute, so currentScript.src is never
-// empty there and this fallback never applies.
-var appFooterScriptUrl = document.currentScript.src || location.href
+// base. Production always loads this file via a real src attribute (shared/vue-app-footer.js),
+// so currentScript.src is never empty there and this fallback never applies - it exists only to
+// spell out this file's own known location, matching where it actually lives.
+var appFooterScriptUrl = document.currentScript.src || new URL('shared/vue-app-footer.js', location.href).href
 
 var VueAppFooterComponent = Vue.defineAsyncComponent(async () => {
   const templateUrl = new URL('vue-app-footer.template.html', appFooterScriptUrl)

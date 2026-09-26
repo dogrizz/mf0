@@ -8,10 +8,15 @@
 // fully synchronously on mount - an async component would render nothing until its template
 // promise resolves, breaking that first synchronous query. A same-origin, same-directory text
 // file is a reasonable case for the deprecated-but-supported synchronous XHR read.
+//
+// The URL passed to xhr.open() is resolved against the document's location, not this script's own
+// src - unlike fetch() from options-link/app-footer, plain XHR has no equivalent to
+// document.currentScript.src-relative resolution. So it must spell out this component's full
+// path from the page root (builder/components/...) rather than just its filename.
 
 var vueBuilderSystemTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-system.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-system.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()

@@ -8,7 +8,7 @@
 
 var vueBuilderAppTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-app.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-app.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()

@@ -5,7 +5,7 @@
 
 var vueBuilderFleetTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-fleet.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-fleet.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()

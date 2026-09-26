@@ -4,7 +4,7 @@
 
 var vueBuilderPlayerTemplate = (function () {
   var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'vue-builder-player.template.html', false)
+  xhr.open('GET', 'builder/components/vue-builder-player.template.html', false)
   xhr.send(null)
   return xhr.responseText
 })()
