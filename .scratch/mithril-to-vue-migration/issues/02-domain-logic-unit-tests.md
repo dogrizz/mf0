@@ -32,8 +32,9 @@ this migration, per the spec's Testing Decisions):
 - `readBattle()` throws (rather than returning `null`) when no battle has ever been stored, since it calls
   `.hasOwnProperty` on the `null` that `readBattles()` returns for that case — vs. a clean `null` when
   battles exist but the requested id doesn't.
-- `determineRole()` checks "is this the max total" and "is this the min total" unconditionally (not
-  `else if`), so a total tied for both (e.g. all players tied) resolves to `Primary attacker`, not
-  `Defender`.
+
+One more behavior is covered but is *not* a quirk — it's intended per the game rules: `determineRole()`
+checks "is this the max total" and "is this the min total" unconditionally (not `else if`), so a total
+tied for both (e.g. all players tied) resolves to `Primary attacker`, not `Defender`.
 
 All 35 tests pass (34 new + the existing smoke test) via `npm test`; `npx prettier --check tests/` is clean.

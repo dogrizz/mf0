@@ -205,8 +205,9 @@ describe('recalculate / determineRole', () => {
   })
 
   it('resolves a total tied for both the max and the min to Primary attacker', () => {
-    // Characterizes an existing quirk: determineRole checks "is max" then "is min" unconditionally
-    // (not else-if), so a total that's both (every player tied) ends up Primary attacker, not Defender.
+    // Intended per the game rules (not a quirk): the "is max" and "is min" checks run
+    // unconditionally (not else-if), so a total tied for both — e.g. every player tied — resolves
+    // to Primary attacker rather than Defender.
     const players = [player({ name: 'a', ppa: 5, hva: 2, tas: 2 }), player({ name: 'b', ppa: 5, hva: 2, tas: 2 })]
     players.forEach((p) => recalculate(p, players))
     expect(players.every((p) => p.role === 'Primary attacker')).toBe(true)
