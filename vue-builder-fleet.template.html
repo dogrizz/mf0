@@ -1,0 +1,7 @@
+<div :id="'fleet-' + fleet.name" class="col border rounded-4 p-3 bg-dark-subtle">
+  <h3>{{ fleet.name }}</h3>
+  <div class="ships-list row row-cols-2">
+    <builder-ship v-for="(ship, i) in fleet.ships" :key="i" :ship="ship" :fleet="fleet" />
+  </div>
+  <button type="button" class="mt-2 btn btn-outline-success" @click="add">Add ship</button>
+</div>
