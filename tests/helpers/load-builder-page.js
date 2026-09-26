@@ -11,7 +11,7 @@ const VUE_BUILDER_SHIP_SOURCE = readSource('builder/components/vue-builder-ship.
 const VUE_BUILDER_FLEET_SOURCE = readSource('builder/components/vue-builder-fleet.js')
 const VUE_BUILDER_SHIP_TRACKER_SOURCE = readSource('builder/components/vue-builder-ship-tracker.js')
 const VUE_BUILDER_PLAYER_SOURCE = readSource('builder/components/vue-builder-player.js')
-const VUE_BUILDER_APP_SOURCE = readSource('builder/components/vue-builder-app.js')
+const VUE_BUILDER_APP_SOURCE = readSource('builder/vue-builder-app.js')
 const BUILDER_SOURCE = readSource('builder.js')
 
 // Loads the fleet builder page exactly the way index.html does (support.js -> the Vue shared
