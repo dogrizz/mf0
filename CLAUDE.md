@@ -24,14 +24,16 @@ http://mobileframezero.com/mfz/
 - No test suite exists.
 - Formatting follows `.prettierrc` (no semicolons, single quotes, trailing commas, 2-space indent, 140 print
   width): `npx prettier --write .` — note `.prettierignore` excludes `*.html` and `*.min.js`.
-- Third-party deps are loaded from CDN in each HTML file (Mithril 2.2.2, Bootstrap 5.3.3) except
+- Third-party deps are loaded from CDN in each HTML file (Vue 3, Bootstrap 5.3.3) except
   `lz-string.min.js`, which is vendored locally.
 
 ## Architecture
 
-Three independent pages, each an IIFE-wrapped [Mithril](https://mithril.js.org) app mounted straight to
-`document.body` (no router, no shared app shell). Every page loads the same script sequence:
-`support.js` → `common.js` → `<page>.js`.
+Three independent pages, each an IIFE-wrapped [Vue 3](https://vuejs.org) (Composition API, explicit
+`setup()`, no build step — components are loaded at runtime as separate template + logic files) app
+mounted straight to `document.body` (no router, no shared app shell). Every page loads the same script
+sequence: `support.js` → the shared components (`shared/vue-options-link.js`, `shared/vue-app-footer.js`)
+→ the page's own components → `<page>.js`.
 
 - **`index.html` / `builder.js`** — Fleet builder & PPA (points-per-asset) calculator. Lets players build
   fleets (ships with systems, mech companies via catapults) and computes PPA/total score. State persists to
@@ -43,8 +45,8 @@ Three independent pages, each an IIFE-wrapped [Mithril](https://mithril.js.org) 
   mutation calls `store(battle)` to persist immediately.
 - **`battles.html` / `battles.js`** — Lists saved battles from `localStorage['mf0-battles']` with
   resume/forfeit (delete) actions.
-- **`common.js`** — Shared Mithril components used by all three pages: `OptionsComponent` (nav link to
-  saved battles) and `FooterComponent` (support links).
+- **`shared/`** — Vue components used by all three pages: `vue-options-link.js` (nav link to saved
+  battles) and `vue-app-footer.js` (support links), each with a sibling `.template.html`.
 - **`support.js`** — The domain model and all business logic, shared by every page:
   - Constants: `ShipSystem`, `AttackType`, `ShipType`, `MechSystem`, `MAX_SYSTEMS`.
   - `calculatePPA(players, syncShips)` — computes each player's PPA by comparing TAs (transportable
@@ -68,10 +70,10 @@ Three independent pages, each an IIFE-wrapped [Mithril](https://mithril.js.org) 
 - **Company** (mech, deployed from a ship's catapult system): `origin` (ship name), `systems[]` (class
   `system`/`weapon`/`defense`/`comm`/`movement`), `destroyed`, `outOfFuel`, `aceType`.
 
-Each Mithril component factory (`SystemComponent`, `ShipComponent`, `FleetComponent`, etc.) in `builder.js`
-and `battle.js` mutates plain JS objects/arrays directly in Mithril's `oninput`/`onclick` handlers, then
-calls `saveState()` (builder) or `store(battle)` (battle tracker) to persist — there is no separate state
-management layer.
+Each Vue component (in `builder/components/`, `battle/components/`, etc.) calls a mutation function
+exported from `support.js` (e.g. `removeShip`, `applySystemDamage`, `forfeitBattle`) from its `setup()`,
+then calls `saveState()` (builder) or `store(battle)` (battle tracker) to persist — mutation/persistence
+logic lives in `support.js`, not the components, and there is no separate state management layer.
 
 ## Agent skills
 

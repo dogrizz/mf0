@@ -1,29 +1,43 @@
-import { click, mountPage, readSource, redraw } from './page.js'
+import { click, mountPage, readSource, redraw, ROOT } from './page.js'
 
-const MITHRIL_SOURCE = readSource('node_modules/mithril/mithril.min.js')
+const VUE_SOURCE = readSource('node_modules/vue/dist/vue.global.js')
 const SUPPORT_SOURCE = readSource('support.js')
-const COMMON_SOURCE = readSource('common.js')
+const VUE_OPTIONS_LINK_SOURCE = readSource('shared/vue-options-link.js')
+const VUE_APP_FOOTER_SOURCE = readSource('shared/vue-app-footer.js')
+const VUE_BATTLES_APP_SOURCE = readSource('battles/vue-battles-app.js')
 const BATTLES_SOURCE = readSource('battles.js')
 
 const BATTLE_STORAGE_KEY = 'mf0-battles'
 
-// Loads the battles list page exactly the way battles.html does (support.js -> common.js ->
-// battles.js as classic, non-module scripts sharing one global scope), but with Mithril read from
-// the locally vendored dev dependency instead of the CDN <script> tag battles.html uses in
-// production, so the characterization suite runs offline and deterministically. battles.html
-// doesn't load lz-string.min.js itself - the battles list never decompresses battle data, only
-// battle.html does - so it's omitted here too.
+// Loads the battles list page exactly the way battles.html does (support.js -> the Vue shared
+// components -> battles/vue-battles-app.js -> battles.js as classic, non-module scripts sharing
+// one global scope), but with Vue read from the locally vendored dev dependency instead of the
+// CDN <script> tag battles.html uses in production - see tests/helpers/load-builder-page.js
+// (ticket 08) for why (offline, deterministic characterization suite). battles.html doesn't load
+// lz-string.min.js itself - the battles list never decompresses battle data, only battle.html
+// does - so it's omitted here too.
+//
+// Every component's template is loaded via a synchronous XMLHttpRequest against this file's own
+// on-disk `.template.html` sibling (see builder/components/vue-builder-system.js); `xhrRoot` makes
+// that resolve to the real file on disk without an actual HTTP server, while `url` stays
+// `http://localhost/` (mountPage's default) rather than `file://` so this suite's
+// localStorage-reading assertions keep working - jsdom refuses storage access for the "opaque"
+// origin a `file://` document gets.
 //
 // `battles`, when given, seeds localStorage['mf0-battles'] with a script that runs before
-// battles.js's oninit reads it (mirroring a page load where a previous session already saved
-// battles), since m.mount happens synchronously as the last statement of battles.js.
+// battles.js reads it via readBattles(), mirroring a page load where a previous session already
+// saved battles, since Vue.createApp(...).mount happens synchronously as the last statement of
+// battles.js.
 export function mountBattlesPage(battles) {
   const beforeScripts =
     battles === undefined
       ? ''
       : `<script>localStorage.setItem(${JSON.stringify(BATTLE_STORAGE_KEY)}, ${JSON.stringify(JSON.stringify(battles))})</script>`
 
-  return mountPage([MITHRIL_SOURCE, SUPPORT_SOURCE, COMMON_SOURCE, BATTLES_SOURCE], { beforeScripts })
+  return mountPage([VUE_SOURCE, SUPPORT_SOURCE, VUE_OPTIONS_LINK_SOURCE, VUE_APP_FOOTER_SOURCE, VUE_BATTLES_APP_SOURCE, BATTLES_SOURCE], {
+    beforeScripts,
+    xhrRoot: ROOT,
+  })
 }
 
 export { click, redraw }

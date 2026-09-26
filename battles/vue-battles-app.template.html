@@ -1,0 +1,18 @@
+<div>
+  <options-link hide-battle-link />
+  <main class="container">
+    <h1>MF0 Intercept Orbit battles</h1>
+    <div class="battle list row row-cols-1 gap-3">
+      <template v-if="!state.battles || Object.keys(state.battles).length === 0">
+        <span>No battles yet. Grab your bricks, dice and get to it!</span>
+        <a href="index.html">Go to Fleet builder / PPA calculator</a>
+      </template>
+      <div v-for="(entry, id) in state.battles" :key="id" class="battle col row align-items-center justify-content-start gap-2">
+        <span class="col fs-5">{{ 'Battle from ' + new Date(entry.date).toLocaleString() }}</span>
+        <a class="col-2 btn btn-outline-success" :href="resumeHref(id)">Resume</a>
+        <button type="button" class="col-2 btn btn-outline-danger" @click="forfeit(id)">Forfeit</button>
+      </div>
+    </div>
+    <app-footer />
+  </main>
+</div>
