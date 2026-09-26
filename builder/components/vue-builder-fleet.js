@@ -17,15 +17,10 @@ var VueBuilderFleetComponent = {
   setup: function (props) {
     // Mirrors FleetComponent's oninit: back-fills `ships` for fleets saved before that field
     // existed.
-    if (!props.fleet.hasOwnProperty('ships')) {
-      props.fleet.ships = []
-      for (var i = 0; i < props.fleet.tas; i++) {
-        props.fleet.ships.push({})
-      }
-    }
+    migrateFleetShips(props.fleet)
 
     function add() {
-      props.fleet.ships.push({ systems: [] })
+      addShip(props.fleet)
       recalculatePPA()
     }
 

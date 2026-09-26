@@ -22,31 +22,12 @@ var VueBattleCompanyComponent = {
     })
 
     function systemStateChange(system, newState) {
-      system.disabled = newState
-      if (
-        props.company.systems.filter(function (s) {
-          return !s.disabled
-        }).length === 0
-      ) {
-        props.company.destroyed = true
-        props.fleet.tas--
-        recalculate(props.fleet, props.battle.roster)
-      } else if (props.company.destroyed) {
-        props.company.destroyed = false
-        props.fleet.tas++
-        recalculate(props.fleet, props.battle.roster)
-      }
+      applySystemDamage(props.company, props.fleet, props.battle.roster, system, newState)
       store(props.battle)
     }
 
     function fuelChange() {
-      props.company.outOfFuel = !props.company.outOfFuel
-      if (props.company.outOfFuel) {
-        props.fleet.tas--
-      } else {
-        props.fleet.tas++
-      }
-      recalculate(props.fleet, props.battle.roster)
+      toggleCompanyFuel(props.company, props.fleet, props.battle.roster)
       store(props.battle)
     }
 

@@ -29,27 +29,24 @@ var VueBuilderSystemComponent = {
     var secondSystem = Vue.ref(props.system.attackType2 !== undefined)
 
     function changeAttackType(newType) {
-      props.system.attackType = newType
+      setSystemAttackType(props.system, newType)
       saveState()
     }
 
     function changeClass(newClass) {
-      props.system.class = newClass
-      if (props.system.class === ShipSystem.ATTACK) {
-        changeAttackType(AttackType.POINT_DEFENSE)
-      }
+      setSystemClass(props.system, newClass)
       recalculatePPA()
     }
 
     function changeAttackType2(newType) {
-      props.system.attackType2 = newType
+      setSystemSecondAttackType(props.system, newType)
       saveState()
     }
 
     function flipSecondSystem() {
       secondSystem.value = !secondSystem.value
       if (!secondSystem.value) {
-        delete props.system.attackType2
+        clearSystemSecondAttackType(props.system)
       }
       saveState()
     }
