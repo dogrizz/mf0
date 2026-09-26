@@ -81,17 +81,22 @@ describe('dice', () => {
     expect(dice(ship({ destroyed: true }))).toBe('')
   })
 
-  it('falls back to 2W when the ship has no internal systems at all', () => {
+  it('falls back to 2W for a fleet-builder ship, which never has internal systems', () => {
+    // The fleet builder never adds `internal`-class systems (only attack/defense/sensor/catapult
+    // are player-selectable there — see builder.js's `fleet.ships.push({ systems: [] })`).
+    // Internal systems only get added by readBattle()'s migration once a battle starts, so this
+    // 2W fallback is what represents a ship's default wound capacity pre-battle.
     expect(dice(ship({ systems: [] }))).toBe('2W')
   })
 
-  it('counts active internal systems instead of the 2W fallback once any internal system exists', () => {
+  it('counts active internal systems instead of the 2W fallback once a battle has added them', () => {
     expect(dice(ship({ systems: [{ class: 'internal' }, { class: 'internal' }] }))).toBe('2W')
   })
 
-  it('drops the W notation entirely when the only internal systems are disabled (no fallback, no count)', () => {
-    // Characterizes an existing quirk: the 2W fallback only applies when there are zero
-    // internal systems on the ship at all, not when they're all disabled.
+  it('drops the W notation entirely when a battle-tracked ship has taken internal damage', () => {
+    // Once internal systems exist (post-migration, mid-battle), disabling all of them shows no W
+    // token at all rather than the 2W fallback or an explicit 0W — consistent with how every
+    // other system category in this function omits its token at a zero active count.
     expect(dice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('')
   })
 
