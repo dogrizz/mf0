@@ -117,4 +117,45 @@ test.describe('battle tracker tactical redesign', () => {
     expect(box.width).toBeLessThan(500)
     expect(box.y).toBeGreaterThan(50)
   })
+
+  test('destroying a ship does not shift the card header or system list', async ({ page }) => {
+    await seedBattle(page, 1006)
+
+    const ship = page.locator('[data-kind="ship"]', { hasText: 'Alpha One' })
+
+    // Measured relative to the card's own top, not the viewport - clicking several checkboxes in
+    // a row can auto-scroll the page to keep the focused one in view, which would otherwise show
+    // up as a spurious position change unrelated to the card's internal layout.
+    async function systemListOffset() {
+      return ship.evaluate((card) => card.querySelector('.system-list').getBoundingClientRect().top - card.getBoundingClientRect().top)
+    }
+
+    const headBefore = await ship.locator('.asset-card-head').boundingBox()
+    const chipBefore = await ship.locator('.chip').boundingBox()
+    const systemsOffsetBefore = await systemListOffset()
+
+    // readBattle's migration backfills two internal systems onto every ship (see
+    // support/battle.js), so Alpha One (attack + catapult in the fixture below) ends up with four
+    // systems total. Disabling all of them destroys the ship, previously swapping the always-36px
+    // transfer button for a shorter badge and collapsing the now-empty dice chip to its
+    // padding-only height, both shifting the system list up (see .scratch/issues for the original
+    // bug report).
+    const checks = ship.locator('.system-check')
+    const count = await checks.count()
+    for (let i = 0; i < count; i++) {
+      await checks.nth(i).click()
+    }
+    await expect(ship).toHaveClass(/is-dead/)
+
+    const headAfter = await ship.locator('.asset-card-head').boundingBox()
+    const chipAfter = await ship.locator('.chip').boundingBox()
+    const systemsOffsetAfter = await systemListOffset()
+
+    expect(headAfter.height).toBe(headBefore.height)
+    expect(chipAfter.height).toBe(chipBefore.height)
+    expect(systemsOffsetAfter).toBe(systemsOffsetBefore)
+
+    // The empty chip still shows something rather than collapsing to just its border/padding.
+    await expect(ship.locator('.chip')).not.toHaveText('')
+  })
 })

@@ -4,16 +4,21 @@
     <span v-if="ship.destroyed" class="badge badge-destroyed">Destroyed</span>
     <span v-else-if="isCaptured" class="badge badge-captured">Captured &middot; ex {{ originalFleetName }}</span>
     <button
-      v-if="!ship.destroyed"
       type="button"
       class="icon-btn"
       title="Transfer to another fleet"
       aria-label="Transfer ship"
+      :disabled="ship.destroyed"
       @click="startTransfer"
       v-html="transferIconSvg"
     ></button>
   </div>
-  <span class="chip"><span v-for="(segment, i) in diceSegments" :key="i" :class="'dice-' + segment.color">{{ segment.text }}</span></span>
+  <span class="chip">
+    <template v-if="diceSegments.length">
+      <span v-for="(segment, i) in diceSegments" :key="i" :class="'dice-' + segment.color">{{ segment.text }}</span>
+    </template>
+    <span v-else class="dice-empty">&mdash;</span>
+  </span>
   <div class="system-list">
     <label v-for="(system, i) in ship.systems" :key="i" class="system-row" :class="{ 'is-disabled': system.disabled }">
       <span class="system-icon" v-html="systemIcon(system.class)"></span>
