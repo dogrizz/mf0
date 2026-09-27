@@ -11,7 +11,8 @@ var vueBattlePlayerTemplate = (function () {
 })()
 
 // 'Defender' -> 'badge-role-defender', 'Primary attacker' -> 'badge-role-primary-attacker', etc.
-// - one badge modifier class per determineRole() output in support/battle.js.
+// - one badge modifier class per role value attachComputedTotalAndRole() produces in
+// support/battle.js.
 function roleBadgeClass(role) {
   return 'badge-role-' + role.toLowerCase().replace(/\s+/g, '-')
 }
@@ -23,16 +24,12 @@ var VueBattlePlayerComponent = {
     accent: { type: String, required: true },
   },
   setup: function (props) {
-    // Mirrors PlayerComponent's oninit: compute this player's total/role as soon as the roster is
-    // known, before the user edits anything.
-    recalculate(props.player, props.battle.roster)
-
     function changeHva(newHva) {
-      changePlayerHva(props.player, props.battle.roster, newHva)
+      changePlayerHva(props.player, newHva)
     }
 
     function changeTas(newTas) {
-      changePlayerTas(props.player, props.battle.roster, newTas)
+      changePlayerTas(props.player, newTas)
     }
 
     return {

@@ -1,16 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import {
-  battleDice,
-  builderDice,
-  calculatePPA,
-  companyDice,
-  determineRole,
-  readBattle,
-  readBattles,
-  recalculate,
-  store,
-  storeBattle,
-} from './helpers/load-support.js'
+import { battleDice, builderDice, calculatePPA, companyDice, readBattle, readBattles, store, storeBattle } from './helpers/load-support.js'
 
 beforeEach(() => {
   localStorage.clear()
@@ -250,36 +239,6 @@ describe('companyDice', () => {
     expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'blue' }))).toEqual([seg('1W', 'white'), seg('+Bd8', 'blue')])
     expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'green' }))).toEqual([seg('1W', 'white'), seg('+Gd8', 'green')])
     expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'yellow' }))).toEqual([seg('1W', 'white'), seg('+Yd8', 'yellow')])
-  })
-})
-
-describe('recalculate / determineRole', () => {
-  it('assigns Defender to the highest total, Primary attacker to the lowest, Secondary attacker to the rest', () => {
-    const players = [
-      player({ name: 'a', ppa: 5, hva: 1, tas: 1 }),
-      player({ name: 'b', ppa: 5, hva: 3, tas: 3 }),
-      player({ name: 'c', ppa: 5, hva: 5, tas: 5 }),
-    ]
-    players.forEach((p) => recalculate(p, players))
-    const roleByName = Object.fromEntries(players.map((p) => [p.name, p.role]))
-    expect(roleByName.c).toBe('Defender')
-    expect(roleByName.b).toBe('Secondary attacker')
-    expect(roleByName.a).toBe('Primary attacker')
-  })
-
-  it('resolves a total tied for both the max and the min to Primary attacker', () => {
-    // Intended per the game rules (not a quirk): the "is max" and "is min" checks run
-    // unconditionally (not else-if), so a total tied for both — e.g. every player tied — resolves
-    // to Primary attacker rather than Defender.
-    const players = [player({ name: 'a', ppa: 5, hva: 2, tas: 2 }), player({ name: 'b', ppa: 5, hva: 2, tas: 2 })]
-    players.forEach((p) => recalculate(p, players))
-    expect(players.every((p) => p.role === 'Primary attacker')).toBe(true)
-  })
-
-  it('computes total as ppa * (hva + tas)', () => {
-    const players = [player({ ppa: 4, hva: 3, tas: 2 })]
-    recalculate(players[0], players)
-    expect(players[0].total).toBe(20)
   })
 })
 

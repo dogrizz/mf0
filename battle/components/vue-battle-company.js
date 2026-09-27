@@ -45,11 +45,11 @@ var VueBattleCompanyComponent = {
     }
 
     function systemStateChange(system, newState) {
-      applySystemDamage(props.company, props.fleet, props.battle.roster, system, newState)
+      applySystemDamage(props.company, props.fleet, system, newState)
     }
 
     function fuelChange() {
-      toggleCompanyFuel(props.company, props.fleet, props.battle.roster)
+      toggleCompanyFuel(props.company, props.fleet)
     }
 
     return {

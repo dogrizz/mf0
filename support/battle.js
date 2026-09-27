@@ -137,59 +137,58 @@ function buildCompanyData(player) {
   })
 }
 
-function recalculate(player, players) {
-  player.total = player.ppa * (player.hva + player.tas)
-  determineRole(players)
-}
-
-function determineRole(players) {
-  const playersSorted = [...players].sort(function (a, b) {
-    return b.total - a.total
+// Attaches `total`/`role` as Vue `computed` properties, one pair per player, replacing the old
+// imperative recalculate()/determineRole() calls that used to be scattered across every mutation
+// (see .scratch/support-domain-split/issues/02-spike-computed-total-and-role.md). Must be called
+// once the roster is already inside Vue's
+// reactive tree (i.e. in battle.js's page entry, right after `readBattle()`'s result is assigned
+// into the reactive battle state) - a computed's getter only tracks dependencies read through a
+// reactive Proxy's `get` trap, so calling this on readBattle()'s plain returned object would
+// attach computeds that cache their first value forever and never update.
+function attachComputedTotalAndRole(roster) {
+  roster.forEach((player) => {
+    player.total = Vue.computed(() => player.ppa * (player.hva + player.tas))
   })
-  const playersNumber = players.length
-  players.forEach((player) => (player.role = ''))
-  players.forEach((player) => {
-    if (player.total === playersSorted[0].total) {
-      player.role = 'Defender'
-    }
-    if (player.total === playersSorted[playersNumber - 1].total) {
-      player.role = 'Primary attacker'
-    }
-  })
-  players.forEach((player) => {
-    if (player.role === '') {
-      player.role = 'Secondary attacker'
-    }
+  roster.forEach((player) => {
+    player.role = Vue.computed(() => {
+      const sorted = [...roster].sort((a, b) => b.total - a.total)
+      let role = ''
+      if (player.total === sorted[0].total) role = 'Defender'
+      if (player.total === sorted[roster.length - 1].total) role = 'Primary attacker'
+      if (role === '') role = 'Secondary attacker'
+      return role
+    })
   })
 }
 
 // Applies a damage-toggle to one system on a ship or mech company: flips its disabled flag, then
 // destroys/revives the whole entity once all/some of its systems are enabled again, adjusting the
 // owning fleet's tas accordingly. Shared by ships and mech companies since both track damage the
-// same way (a `systems` array plus a `destroyed` flag).
-function applySystemDamage(entity, fleet, roster, system, disabled) {
+// same way (a `systems` array plus a `destroyed` flag). The fleet's total/role recompute on their
+// own via the computed properties attached in battle.js - no recalculate call needed here.
+function applySystemDamage(entity, fleet, system, disabled) {
   system.disabled = disabled
   if (entity.systems.filter((s) => !s.disabled).length === 0) {
     entity.destroyed = true
     fleet.tas--
-    recalculate(fleet, roster)
   } else if (entity.destroyed) {
     entity.destroyed = false
     fleet.tas++
-    recalculate(fleet, roster)
   }
 }
 
-function toggleCompanyFuel(company, fleet, roster) {
+function toggleCompanyFuel(company, fleet) {
   company.outOfFuel = !company.outOfFuel
   if (company.outOfFuel) {
     fleet.tas--
   } else {
     fleet.tas++
   }
-  recalculate(fleet, roster)
 }
 
+// fromFleet/toFleet's total/role recompute on their own once tas changes, via the computed
+// properties attached in battle.js - previously this never called recalculate(), silently
+// leaving both fleets' total/role stale after a transfer.
 function transferShip(ship, fromFleet, toFleet) {
   fromFleet.tas--
   toFleet.tas++
@@ -197,12 +196,10 @@ function transferShip(ship, fromFleet, toFleet) {
   toFleet.ships.push(ship)
 }
 
-function changePlayerHva(player, roster, newHva) {
+function changePlayerHva(player, newHva) {
   player.hva = parseInt(newHva)
-  recalculate(player, roster)
 }
 
-function changePlayerTas(player, roster, newTas) {
+function changePlayerTas(player, newTas) {
   player.tas = parseInt(newTas)
-  recalculate(player, roster)
 }

@@ -6,6 +6,13 @@
     battleState.battle = readBattle(params.get(BATTLE_ID_PARAM))
   }
 
+  // Must run after the assignment above, not inside readBattle() itself: attachComputedTotalAndRole
+  // needs the roster already inside Vue's reactive tree for its computed()s to track dependencies
+  // (see support/battle.js and the spike at .scratch/support-domain-split/issues/02-...).
+  if (battleState.battle) {
+    attachComputedTotalAndRole(battleState.battle.roster)
+  }
+
   // Every battle-mutating component (vue-battle-player.js, vue-battle-ship.js,
   // vue-battle-company.js) used to call store(props.battle) itself right after mutating - six
   // near-identical call sites all doing the same "persist the whole battle" step. One deep watch

@@ -5,11 +5,16 @@ import {
   fleetElements,
   fleetName,
   fuelButton,
+  hvaInput,
   isCaptured,
   isDead,
   mountBattlePage,
+  playerCards,
+  playerRole,
+  playerTotal,
   readBattleState,
   redraw,
+  setValue,
   shipElements,
   systemCheckbox,
   systemCheckboxes,
@@ -214,5 +219,94 @@ describe('battle tracker page', () => {
     expect(state.roster[1].ships[1].owner).toBe(originalOwnerId)
     expect(state.roster[0].tas).toBe(initialAlphaTas - 1)
     expect(state.roster[1].tas).toBe(initialBetaTas + 1)
+  })
+})
+
+// total/role are Vue `computed` properties (see support/battle.js's attachComputedTotalAndRole and
+// the spike at .scratch/support-domain-split/issues/02-spike-computed-total-and-role.md) rather
+// than fields set by an imperative recalculate()/determineRole() call - these characterize that
+// they stay correct, read straight off the rendered scoreboard, across every mutation path that
+// used to carry its own recalculate() call.
+describe('total / role (computed from ppa/hva/tas)', () => {
+  let dom
+
+  beforeEach(() => {
+    dom = mountBattlePage({ roster: makeRoster() })
+  })
+
+  afterEach(() => {
+    dom.window.close()
+  })
+
+  it('starts with total = ppa * (hva + tas) and assigns Defender/Primary attacker across the roster', async () => {
+    const { document } = dom.window
+    await redraw(dom)
+
+    const [alphaCard, betaCard] = playerCards(document)
+    expect(playerTotal(alphaCard)).toBe(25) // 5 * (3 + 2)
+    expect(playerTotal(betaCard)).toBe(20) // 5 * (3 + 1)
+    expect(playerRole(alphaCard)).toBe('Defender')
+    expect(playerRole(betaCard)).toBe('Primary attacker')
+  })
+
+  it('recomputes total and swaps roles when HVA is edited via its input, with no imperative recalculate call', async () => {
+    const { document } = dom.window
+    await redraw(dom)
+
+    setValue(hvaInput(playerCards(document)[1]), '10')
+    await redraw(dom)
+
+    const [alphaCard, betaCard] = playerCards(document)
+    expect(playerTotal(betaCard)).toBe(55) // 5 * (10 + 1)
+    expect(playerRole(betaCard)).toBe('Defender')
+    expect(playerRole(alphaCard)).toBe('Primary attacker')
+  })
+
+  it('recomputes total when system damage destroys a ship (decrementing fleet tas) and again when reviving it', async () => {
+    const { document } = dom.window
+    await redraw(dom)
+    const betaShip = shipElements(fleetElements(document)[1])[0]
+    const boxes = systemCheckboxes(betaShip)
+
+    for (let i = 0; i < boxes.length; i++) {
+      click(systemCheckboxes(shipElements(fleetElements(document)[1])[0])[i])
+      await redraw(dom)
+    }
+
+    expect(playerTotal(playerCards(document)[1])).toBe(15) // beta tas 1 -> 0: 5 * (3 + 0)
+
+    click(systemCheckboxes(shipElements(fleetElements(document)[1])[0])[0])
+    await redraw(dom)
+
+    expect(playerTotal(playerCards(document)[1])).toBe(20) // beta tas back to 1: 5 * (3 + 1)
+  })
+
+  it('recomputes total when a mech company runs out of fuel, resolving a tie to Primary attacker for both fleets', async () => {
+    const { document } = dom.window
+    await redraw(dom)
+
+    click(fuelButton(companyElements(fleetElements(document)[0])[0]))
+    await redraw(dom)
+
+    // Alpha's tas drops 2 -> 1: total = 5 * (3 + 1) = 20, tying Beta's untouched total of 20.
+    const [alphaCard, betaCard] = playerCards(document)
+    expect(playerTotal(alphaCard)).toBe(20)
+    expect(playerTotal(betaCard)).toBe(20)
+    expect(playerRole(alphaCard)).toBe('Primary attacker')
+    expect(playerRole(betaCard)).toBe('Primary attacker')
+  })
+
+  it('recomputes total and role on both fleets after a ship transfer, with no call site left to forget it', async () => {
+    const { document } = dom.window
+    await redraw(dom)
+
+    click(transferButton(shipElements(fleetElements(document)[0])[0]))
+    await redraw(dom)
+
+    const [alphaCard, betaCard] = playerCards(document)
+    expect(playerTotal(alphaCard)).toBe(20) // alpha tas 2 -> 1: 5 * (3 + 1)
+    expect(playerTotal(betaCard)).toBe(25) // beta tas 1 -> 2: 5 * (3 + 2)
+    expect(playerRole(alphaCard)).toBe('Primary attacker')
+    expect(playerRole(betaCard)).toBe('Defender')
   })
 })

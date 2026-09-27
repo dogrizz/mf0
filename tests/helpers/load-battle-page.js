@@ -1,4 +1,4 @@
-import { click, mountPage, readSource, redraw, ROOT } from './page.js'
+import { click, mountPage, readSource, redraw, ROOT, setValue } from './page.js'
 
 const VUE_SOURCE = readSource('node_modules/vue/dist/vue.global.js')
 const LZ_STRING_SOURCE = readSource('lz-string.min.js')
@@ -58,7 +58,7 @@ export function mountBattlePage({ roster, battleId = 1, track = true, sync = tru
   )
 }
 
-export { click, redraw }
+export { click, redraw, setValue }
 
 export function readBattleState(dom, battleId = 1) {
   const raw = dom.window.localStorage.getItem('mf0-battles')
@@ -74,6 +74,28 @@ export function readBattleState(dom, battleId = 1) {
 
 export function fleetElements(document) {
   return [...document.querySelectorAll('.fleet-section')]
+}
+
+// The scoreboard's per-fleet stat cards (name, HVA/TAs inputs, PPA/total readouts, role badge) -
+// rendered separately from .fleet-section, in roster order.
+export function playerCards(document) {
+  return [...document.querySelectorAll('.scoreboard .stat-card')]
+}
+
+export function hvaInput(cardEl) {
+  return cardEl.querySelectorAll('input')[0]
+}
+
+export function tasInput(cardEl) {
+  return cardEl.querySelectorAll('input')[1]
+}
+
+export function playerTotal(cardEl) {
+  return Number(cardEl.querySelectorAll('.stat-readout-value')[1].textContent)
+}
+
+export function playerRole(cardEl) {
+  return cardEl.querySelector('.badge').textContent.trim()
 }
 
 export function fleetName(fleetEl) {
