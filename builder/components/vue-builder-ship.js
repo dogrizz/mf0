@@ -44,7 +44,7 @@ var VueBuilderShipComponent = {
     }
 
     var diceText = Vue.computed(function () {
-      return dice(props.ship)
+      return builderDice(props.ship)
     })
 
     return {

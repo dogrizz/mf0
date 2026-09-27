@@ -22,12 +22,10 @@ var VueBattlePlayerComponent = {
 
     function changeHva(newHva) {
       changePlayerHva(props.player, props.battle.roster, newHva)
-      store(props.battle)
     }
 
     function changeTas(newTas) {
       changePlayerTas(props.player, props.battle.roster, newTas)
-      store(props.battle)
     }
 
     return {

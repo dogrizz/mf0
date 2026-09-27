@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
+  battleDice,
+  builderDice,
   calculatePPA,
   companyDice,
   determineRole,
-  dice,
   readBattle,
   readBattles,
   recalculate,
@@ -76,38 +77,62 @@ describe('calculatePPA', () => {
   })
 })
 
-describe('dice', () => {
+// builderDice and battleDice replaced a single dice() that branched on hasInternals(ship) to tell
+// a builder-shaped ship from a battle-shaped one (see docs/adr/0001-split-support-js-by-domain.md
+// and CONTEXT.md's "Builder-shaped"/"Battle-shaped ship"). They share a private scoring helper
+// (support/common.js's shipSystemsDice) for the frigate/catapult/defense/sensor/attack notation,
+// which is identical either way — exercised in full below via battleDice, with builderDice's own
+// tests confirming it shares that same scoring rather than re-implementing it.
+describe('builderDice', () => {
   it('returns an empty string for a destroyed ship', () => {
-    expect(dice(ship({ destroyed: true }))).toBe('')
+    expect(builderDice(ship({ destroyed: true }))).toBe('')
   })
 
-  it('falls back to 2W for a fleet-builder ship, which never has internal systems', () => {
-    // The fleet builder never adds `internal`-class systems (only attack/defense/sensor/catapult
-    // are player-selectable there — see builder.js's `fleet.ships.push({ systems: [] })`).
-    // Internal systems only get added by readBattle()'s migration once a battle starts, so this
-    // 2W fallback is what represents a ship's default wound capacity pre-battle.
-    expect(dice(ship({ systems: [] }))).toBe('2W')
+  it('always uses the 2W baseline, since the fleet builder never tracks individual internal systems', () => {
+    expect(builderDice(ship({ systems: [] }))).toBe('2W')
   })
 
-  it('counts active internal systems instead of the 2W fallback once a battle has added them', () => {
-    expect(dice(ship({ systems: [{ class: 'internal' }, { class: 'internal' }] }))).toBe('2W')
+  it('ignores any internal-class systems rather than counting them, unlike battleDice', () => {
+    // The fleet builder never creates internal-class systems itself, but builderDice shouldn't
+    // even look for them — that's exactly the domain-shape branching this split removed.
+    expect(builderDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('2W')
+  })
+
+  it('appends 1G for frigates but not capitals', () => {
+    expect(builderDice(ship({ class: 'frigate', systems: [] }))).toBe('2W1G')
+    expect(builderDice(ship({ class: 'capital', systems: [] }))).toBe('2W')
+  })
+
+  it('notes a single catapult as 1K and multiple catapults as 3K', () => {
+    expect(builderDice(ship({ systems: [{ class: 'catapult' }] }))).toBe('2W1K')
+    expect(builderDice(ship({ systems: [{ class: 'catapult' }, { class: 'catapult' }] }))).toBe('2W3K')
+  })
+})
+
+describe('battleDice', () => {
+  it('returns an empty string for a destroyed ship', () => {
+    expect(battleDice(ship({ destroyed: true }))).toBe('')
+  })
+
+  it('counts active internal systems instead of a fixed baseline', () => {
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'internal' }] }))).toBe('2W')
   })
 
   it('drops the W notation entirely when a battle-tracked ship has taken internal damage', () => {
     // Once internal systems exist (post-migration, mid-battle), disabling all of them shows no W
-    // token at all rather than the 2W fallback or an explicit 0W — consistent with how every
-    // other system category in this function omits its token at a zero active count.
-    expect(dice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('')
+    // token at all rather than a 2W fallback or an explicit 0W — consistent with how every other
+    // system category in this function omits its token at a zero active count.
+    expect(battleDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('')
   })
 
   it('appends 1G for frigates but not capitals', () => {
-    expect(dice(ship({ class: 'frigate', systems: [{ class: 'internal' }] }))).toBe('1W1G')
-    expect(dice(ship({ class: 'capital', systems: [{ class: 'internal' }] }))).toBe('1W')
+    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }] }))).toBe('1W1G')
+    expect(battleDice(ship({ class: 'capital', systems: [{ class: 'internal' }] }))).toBe('1W')
   })
 
   it('notes a single catapult as 1K and multiple catapults as 3K', () => {
-    expect(dice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }] }))).toBe('1W1K')
-    expect(dice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }, { class: 'catapult' }] }))).toBe('1W3K')
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }] }))).toBe('1W1K')
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }, { class: 'catapult' }] }))).toBe('1W3K')
   })
 
   it('counts active defense and sensor systems, excluding disabled ones', () => {
@@ -120,7 +145,7 @@ describe('dice', () => {
         { class: 'sensor' },
       ],
     })
-    expect(dice(testShip)).toBe('1W1B2Y')
+    expect(battleDice(testShip)).toBe('1W1B2Y')
   })
 
   it('excludes disabled catapults, defense, and sensor systems from the notation', () => {
@@ -132,28 +157,28 @@ describe('dice', () => {
         { class: 'sensor', disabled: true },
       ],
     })
-    expect(dice(testShip)).toBe('1W')
+    expect(battleDice(testShip)).toBe('1W')
   })
 
   it('combines internal, class, and attack notation in order for a frigate', () => {
-    expect(dice(ship({ class: 'frigate', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] }))).toBe('1W1GRa2')
+    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] }))).toBe('1W1GRa2')
   })
 })
 
-describe('dice — attack notation', () => {
+describe('battleDice — attack notation', () => {
   it('gives an un-split attack system its full weight of 2', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] })
-    expect(dice(testShip)).toBe('1WRa2')
+    expect(battleDice(testShip)).toBe('1WRa2')
   })
 
   it('splits a dual-type attack system into 1 point per attack type', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a', attackType2: 's' }] })
-    expect(dice(testShip)).toBe('1WRa1Rs1')
+    expect(battleDice(testShip)).toBe('1WRa1Rs1')
   })
 
   it('excludes disabled attack systems from the notation', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a', disabled: true }] })
-    expect(dice(testShip)).toBe('1W')
+    expect(battleDice(testShip)).toBe('1W')
   })
 
   it('caps combined attack value per type at 4 and switches to the 2+d8 notation above 3', () => {
@@ -161,7 +186,7 @@ describe('dice — attack notation', () => {
       class: 'capital',
       systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }, { class: 'attack', attackType: 'a' }],
     })
-    expect(dice(testShip)).toBe('1WRa2+d8')
+    expect(battleDice(testShip)).toBe('1WRa2+d8')
   })
 })
 

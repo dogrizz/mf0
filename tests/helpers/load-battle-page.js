@@ -2,7 +2,9 @@ import { click, mountPage, readSource, redraw, ROOT } from './page.js'
 
 const VUE_SOURCE = readSource('node_modules/vue/dist/vue.global.js')
 const LZ_STRING_SOURCE = readSource('lz-string.min.js')
-const SUPPORT_SOURCE = readSource('support.js')
+const SUPPORT_COMMON_SOURCE = readSource('support/common.js')
+const SUPPORT_STORAGE_SOURCE = readSource('support/storage.js')
+const SUPPORT_BATTLE_SOURCE = readSource('support/battle.js')
 const VUE_OPTIONS_LINK_SOURCE = readSource('shared/vue-options-link.js')
 const VUE_APP_FOOTER_SOURCE = readSource('shared/vue-app-footer.js')
 const VUE_BATTLE_PLAYER_SOURCE = readSource('battle/components/vue-battle-player.js')
@@ -12,18 +14,19 @@ const VUE_BATTLE_FLEET_SOURCE = readSource('battle/components/vue-battle-fleet.j
 const VUE_BATTLE_APP_SOURCE = readSource('battle/vue-battle-app.js')
 const BATTLE_SOURCE = readSource('battle.js')
 
-// Loads the battle tracker page exactly the way battle.html does (support.js -> the Vue shared
-// components -> the battle-specific components -> battle.js as classic, non-module scripts
-// sharing one global scope), but with Vue read from the locally vendored dev dependency instead
-// of the CDN <script> tag battle.html uses in production - see tests/helpers/load-builder-page.js
-// (ticket 08) for why (offline, deterministic characterization suite).
+// Loads the battle tracker page exactly the way battle.html does (support/common.js ->
+// support/storage.js -> support/battle.js -> the Vue shared components -> the battle-specific
+// components -> battle.js as classic, non-module scripts sharing one global scope), but with Vue
+// read from the locally vendored dev dependency instead of the CDN <script> tag battle.html uses
+// in production - see tests/helpers/load-builder-page.js (ticket 08) for why (offline,
+// deterministic characterization suite).
 //
 // A battle is handed to battle.html the same way the fleet builder hands one off in real use: by
 // calling storeBattle() (and thus populating localStorage['mf0-battles']) before battle.js reads
 // `battleId` from the URL and calls readBattle(). Since a fresh JSDOM's localStorage can't be
 // pre-seeded from outside, an inline seed script that calls the real storeBattle() is spliced in
-// between support.js and the page's own scripts, using an explicit id so the URL's `battleId`
-// query param can be fixed ahead of time.
+// between the support/*.js files and the page's own scripts, using an explicit id so the URL's
+// `battleId` query param can be fixed ahead of time.
 //
 // Every component's template is loaded via a synchronous XMLHttpRequest against this file's own
 // on-disk `.template.html` sibling (see builder/components/vue-builder-system.js); `xhrRoot` makes
@@ -38,7 +41,9 @@ export function mountBattlePage({ roster, battleId = 1, track = true, sync = tru
     [
       VUE_SOURCE,
       LZ_STRING_SOURCE,
-      SUPPORT_SOURCE,
+      SUPPORT_COMMON_SOURCE,
+      SUPPORT_STORAGE_SOURCE,
+      SUPPORT_BATTLE_SOURCE,
       VUE_OPTIONS_LINK_SOURCE,
       VUE_APP_FOOTER_SOURCE,
       VUE_BATTLE_PLAYER_SOURCE,

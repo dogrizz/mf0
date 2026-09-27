@@ -18,7 +18,7 @@ var VueBattleShipComponent = {
   },
   setup: function (props) {
     var diceText = Vue.computed(function () {
-      return dice(props.ship)
+      return battleDice(props.ship)
     })
 
     // The ship keeps its original owner id after a transfer - only its location in the roster's
@@ -42,7 +42,6 @@ var VueBattleShipComponent = {
 
     function systemStateChange(system, newState) {
       applySystemDamage(props.ship, props.fleet, props.battle.roster, system, newState)
-      store(props.battle)
     }
 
     function otherFleets() {
@@ -53,7 +52,6 @@ var VueBattleShipComponent = {
 
     function transfer(targetFleet) {
       transferShip(props.ship, props.fleet, targetFleet)
-      store(props.battle)
     }
 
     function startTransfer() {
