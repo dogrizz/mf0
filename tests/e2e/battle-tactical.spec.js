@@ -50,6 +50,11 @@ async function seedBattle(page, battleId) {
   await page.evaluate(({ r, id }) => storeBattle(r, true, true, id), { r: roster(), id: battleId })
   await page.goto(`/battle.html?battleId=${battleId}`)
   await page.waitForSelector('.fleet-section')
+  // .chip's line-height depends on whichever font is active when it's measured, and the
+  // IBM Plex Mono @font-face (loaded with `display=swap`) can still be mid-swap this soon after
+  // navigation - unrelated to any of this file's own layout assertions, so settle it before any
+  // of them take a "before" measurement.
+  await page.evaluate(() => document.fonts.ready)
 }
 
 async function openTransferDialog(page) {

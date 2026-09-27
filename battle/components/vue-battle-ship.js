@@ -1,14 +1,7 @@
 // Vue equivalent of battle.js's ShipComponent (Mithril): one ship card during a battle - name,
-// transfer button + fleet-picker popup, dice notation, per-system damage checkboxes. See
-// builder/components/vue-builder-system.js (ticket 08) for why this component's template is
-// loaded via synchronous XHR rather than the fetch()+defineAsyncComponent pattern from ticket 07.
+// transfer button + fleet-picker popup, dice notation, per-system damage checkboxes.
 
-var vueBattleShipTemplate = (function () {
-  var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'battle/components/vue-battle-ship.template.html', false)
-  xhr.send(null)
-  return xhr.responseText
-})()
+var vueBattleShipScriptUrl = document.currentScript.src || new URL('battle/components/vue-battle-ship.js', location.href).href
 
 // Inline stroke icons for each ShipSystem class, matching the tactical redesign mockup (see
 // .scratch/tactical-redesign/issues/01-battle-tracker-tactical-redesign.md). Rendered via v-html
@@ -33,97 +26,102 @@ var TRANSFER_ICON_SVG =
 var CLOSE_ICON_SVG =
   '<svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
 
-var VueBattleShipComponent = {
-  props: {
-    ship: { type: Object, required: true },
-    fleet: { type: Object, required: true },
-    battle: { type: Object, required: true },
-  },
-  setup: function (props) {
-    var diceSegments = Vue.computed(function () {
-      return battleDice(props.ship)
-    })
+var VueBattleShipComponent = Vue.defineAsyncComponent(async () => {
+  const templateUrl = new URL('vue-battle-ship.template.html', vueBattleShipScriptUrl)
+  const template = await fetch(templateUrl).then((response) => response.text())
 
-    // The ship keeps its original owner id after a transfer - only its location in the roster's
-    // fleets changes, not this field (see tests/battle.test.js). That's a game-rules requirement,
-    // not just a display artifact: the original owner retains control over the ship's system
-    // (white) dice even after capture, so the "captured" styling below surfaces who that was.
-    var isCaptured = Vue.computed(function () {
-      return props.ship.owner !== props.fleet.id
-    })
-
-    var originalFleetName = Vue.computed(function () {
-      var owner = props.battle.roster.find(function (f) {
-        return f.id === props.ship.owner
+  return {
+    props: {
+      ship: { type: Object, required: true },
+      fleet: { type: Object, required: true },
+      battle: { type: Object, required: true },
+    },
+    setup: function (props) {
+      var diceSegments = Vue.computed(function () {
+        return battleDice(props.ship)
       })
-      return owner ? owner.name : ''
-    })
 
-    function systemText(system) {
-      if (system.class !== ShipSystem.ATTACK) {
-        return system.class
-      }
-      var text = ATTACK_TYPE_LABELS[system.attackType]
-      if (system.attackType2) {
-        text = text + ' / ' + ATTACK_TYPE_LABELS[system.attackType2]
-      }
-      return text
-    }
-
-    function systemIcon(systemClass) {
-      return SHIP_SYSTEM_ICONS[systemClass] || ''
-    }
-
-    function systemStateChange(system, newState) {
-      applySystemDamage(props.ship, props.fleet, system, newState)
-    }
-
-    function otherFleets() {
-      return props.battle.roster.filter(function (f) {
-        return f !== props.fleet
+      // The ship keeps its original owner id after a transfer - only its location in the roster's
+      // fleets changes, not this field (see tests/battle.test.js). That's a game-rules requirement,
+      // not just a display artifact: the original owner retains control over the ship's system
+      // (white) dice even after capture, so the "captured" styling below surfaces who that was.
+      var isCaptured = Vue.computed(function () {
+        return props.ship.owner !== props.fleet.id
       })
-    }
 
-    function fleetAccent(fleet) {
-      return fleetAccentColor(props.battle.roster.indexOf(fleet))
-    }
+      var originalFleetName = Vue.computed(function () {
+        var owner = props.battle.roster.find(function (f) {
+          return f.id === props.ship.owner
+        })
+        return owner ? owner.name : ''
+      })
 
-    function transfer(targetFleet) {
-      transferShip(props.ship, props.fleet, targetFleet)
-    }
-
-    function startTransfer() {
-      if (props.battle.roster.length === 2) {
-        transfer(otherFleets()[0])
-      } else {
-        props.ship.showPopup = true
+      function systemText(system) {
+        if (system.class !== ShipSystem.ATTACK) {
+          return system.class
+        }
+        var text = ATTACK_TYPE_LABELS[system.attackType]
+        if (system.attackType2) {
+          text = text + ' / ' + ATTACK_TYPE_LABELS[system.attackType2]
+        }
+        return text
       }
-    }
 
-    function pickTransferTarget(targetFleet) {
-      props.ship.showPopup = false
-      transfer(targetFleet)
-    }
+      function systemIcon(systemClass) {
+        return SHIP_SYSTEM_ICONS[systemClass] || ''
+      }
 
-    function cancelTransfer() {
-      props.ship.showPopup = false
-    }
+      function systemStateChange(system, newState) {
+        applySystemDamage(props.ship, props.fleet, system, newState)
+      }
 
-    return {
-      diceSegments: diceSegments,
-      isCaptured: isCaptured,
-      originalFleetName: originalFleetName,
-      systemText: systemText,
-      systemIcon: systemIcon,
-      systemStateChange: systemStateChange,
-      otherFleets: otherFleets,
-      fleetAccent: fleetAccent,
-      startTransfer: startTransfer,
-      pickTransferTarget: pickTransferTarget,
-      cancelTransfer: cancelTransfer,
-      transferIconSvg: TRANSFER_ICON_SVG,
-      closeIconSvg: CLOSE_ICON_SVG,
-    }
-  },
-  template: vueBattleShipTemplate,
-}
+      function otherFleets() {
+        return props.battle.roster.filter(function (f) {
+          return f !== props.fleet
+        })
+      }
+
+      function fleetAccent(fleet) {
+        return fleetAccentColor(props.battle.roster.indexOf(fleet))
+      }
+
+      function transfer(targetFleet) {
+        transferShip(props.ship, props.fleet, targetFleet)
+      }
+
+      function startTransfer() {
+        if (props.battle.roster.length === 2) {
+          transfer(otherFleets()[0])
+        } else {
+          props.ship.showPopup = true
+        }
+      }
+
+      function pickTransferTarget(targetFleet) {
+        props.ship.showPopup = false
+        transfer(targetFleet)
+      }
+
+      function cancelTransfer() {
+        props.ship.showPopup = false
+      }
+
+      return {
+        diceSegments: diceSegments,
+        isCaptured: isCaptured,
+        originalFleetName: originalFleetName,
+        systemText: systemText,
+        systemIcon: systemIcon,
+        systemStateChange: systemStateChange,
+        otherFleets: otherFleets,
+        fleetAccent: fleetAccent,
+        startTransfer: startTransfer,
+        pickTransferTarget: pickTransferTarget,
+        cancelTransfer: cancelTransfer,
+        transferIconSvg: TRANSFER_ICON_SVG,
+        closeIconSvg: CLOSE_ICON_SVG,
+      }
+    },
+    template,
+  }
+})

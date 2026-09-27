@@ -1,14 +1,7 @@
 // Vue equivalent of battle.js's CompanyComponent (Mithril): one mech company card during a
-// battle - fuel toggle, dice notation, per-system damage checkboxes. See
-// builder/components/vue-builder-system.js (ticket 08) for why this component's template is
-// loaded via synchronous XHR rather than the fetch()+defineAsyncComponent pattern from ticket 07.
+// battle - fuel toggle, dice notation, per-system damage checkboxes.
 
-var vueBattleCompanyTemplate = (function () {
-  var xhr = new XMLHttpRequest()
-  xhr.open('GET', 'battle/components/vue-battle-company.template.html', false)
-  xhr.send(null)
-  return xhr.responseText
-})()
+var vueBattleCompanyScriptUrl = document.currentScript.src || new URL('battle/components/vue-battle-company.js', location.href).href
 
 // Inline stroke icons for each MechSystem class, matching the tactical redesign mockup (see
 // .scratch/tactical-redesign/issues/01-battle-tracker-tactical-redesign.md). Rendered via v-html
@@ -29,36 +22,41 @@ var MECH_SYSTEM_ICONS = {
 var FUEL_ICON_SVG =
   '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="3" width="9" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 8h1.5a1.5 1.5 0 011.5 1.5V13a1 1 0 001 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 7h5v4H7z" stroke="currentColor" stroke-width="1.3"/></svg>'
 
-var VueBattleCompanyComponent = {
-  props: {
-    company: { type: Object, required: true },
-    fleet: { type: Object, required: true },
-    battle: { type: Object, required: true },
-  },
-  setup: function (props) {
-    var diceSegments = Vue.computed(function () {
-      return companyDice(props.company)
-    })
+var VueBattleCompanyComponent = Vue.defineAsyncComponent(async () => {
+  const templateUrl = new URL('vue-battle-company.template.html', vueBattleCompanyScriptUrl)
+  const template = await fetch(templateUrl).then((response) => response.text())
 
-    function systemIcon(systemClass) {
-      return MECH_SYSTEM_ICONS[systemClass] || ''
-    }
+  return {
+    props: {
+      company: { type: Object, required: true },
+      fleet: { type: Object, required: true },
+      battle: { type: Object, required: true },
+    },
+    setup: function (props) {
+      var diceSegments = Vue.computed(function () {
+        return companyDice(props.company)
+      })
 
-    function systemStateChange(system, newState) {
-      applySystemDamage(props.company, props.fleet, system, newState)
-    }
+      function systemIcon(systemClass) {
+        return MECH_SYSTEM_ICONS[systemClass] || ''
+      }
 
-    function fuelChange() {
-      toggleCompanyFuel(props.company, props.fleet)
-    }
+      function systemStateChange(system, newState) {
+        applySystemDamage(props.company, props.fleet, system, newState)
+      }
 
-    return {
-      diceSegments: diceSegments,
-      systemIcon: systemIcon,
-      systemStateChange: systemStateChange,
-      fuelChange: fuelChange,
-      fuelIconSvg: FUEL_ICON_SVG,
-    }
-  },
-  template: vueBattleCompanyTemplate,
-}
+      function fuelChange() {
+        toggleCompanyFuel(props.company, props.fleet)
+      }
+
+      return {
+        diceSegments: diceSegments,
+        systemIcon: systemIcon,
+        systemStateChange: systemStateChange,
+        fuelChange: fuelChange,
+        fuelIconSvg: FUEL_ICON_SVG,
+      }
+    },
+    template,
+  }
+})
