@@ -2,7 +2,9 @@ import { click, mountPage, readSource, redraw, ROOT } from './page.js'
 
 const VUE_SOURCE = readSource('node_modules/vue/dist/vue.global.js')
 const LZ_STRING_SOURCE = readSource('lz-string.min.js')
-const SUPPORT_SOURCE = readSource('support.js')
+const SUPPORT_COMMON_SOURCE = readSource('support/common.js')
+const SUPPORT_STORAGE_SOURCE = readSource('support/storage.js')
+const SUPPORT_BUILDER_SOURCE = readSource('support/builder.js')
 const VUE_OPTIONS_LINK_SOURCE = readSource('shared/vue-options-link.js')
 const VUE_APP_FOOTER_SOURCE = readSource('shared/vue-app-footer.js')
 const VUE_BUILDER_SYSTEM_SOURCE = readSource('builder/components/vue-builder-system.js')
@@ -14,10 +16,11 @@ const VUE_BUILDER_PLAYER_SOURCE = readSource('builder/components/vue-builder-pla
 const VUE_BUILDER_APP_SOURCE = readSource('builder/vue-builder-app.js')
 const BUILDER_SOURCE = readSource('builder.js')
 
-// Loads the fleet builder page exactly the way index.html does (support.js -> the Vue shared
-// components -> builder.js as classic, non-module scripts sharing one global scope), but with
-// Vue read from the locally vendored dev dependency instead of the CDN <script> tag index.html
-// uses in production, so the characterization suite runs offline and deterministically.
+// Loads the fleet builder page exactly the way index.html does (support/common.js ->
+// support/storage.js -> support/builder.js -> the Vue shared components -> builder.js as classic,
+// non-module scripts sharing one global scope), but with Vue read from the locally vendored dev
+// dependency instead of the CDN <script> tag index.html uses in production, so the
+// characterization suite runs offline and deterministically.
 //
 // Every component's template is loaded via a synchronous XMLHttpRequest against this file's own
 // on-disk `.template.html` sibling (see vue-builder-system.js for why); `xhrRoot` makes that
@@ -30,7 +33,9 @@ export function mountBuilderPage() {
     [
       VUE_SOURCE,
       LZ_STRING_SOURCE,
-      SUPPORT_SOURCE,
+      SUPPORT_COMMON_SOURCE,
+      SUPPORT_STORAGE_SOURCE,
+      SUPPORT_BUILDER_SOURCE,
       VUE_OPTIONS_LINK_SOURCE,
       VUE_APP_FOOTER_SOURCE,
       VUE_BUILDER_SYSTEM_SOURCE,
@@ -48,8 +53,8 @@ export function mountBuilderPage() {
 
 export { click, redraw }
 
-// Mirrors typing/selecting a value, then leaving the field - support.js and builder.js bind their
-// state changes to `oninput`.
+// Mirrors typing/selecting a value, then leaving the field - support/builder.js and builder.js
+// bind their state changes to `oninput`.
 export function setValue(el, value) {
   el.value = value
   el.dispatchEvent(new el.ownerDocument.defaultView.Event('input', { bubbles: true }))

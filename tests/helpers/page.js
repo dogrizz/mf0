@@ -43,11 +43,12 @@ class SyncFileXHR {
 
 // Mounts a page from classic, non-module script sources inlined in document order (optionally
 // preceded by a raw HTML snippet, e.g. to seed localStorage before the page's own scripts run),
-// mirroring how each mf0 page loads support.js -> common.js -> <page>.js as real <script> tags
-// sharing one global scope. Inlining (rather than running each source through window.eval) is
-// required because jsdom only threads top-level `const`/`let` bindings - such as support.js's
-// `ShipSystem`/`ShipType` - across scripts that are parsed and run together as part of the same
-// document, matching how a browser shares one global lexical scope across <script> tags.
+// mirroring how each mf0 page loads its support/*.js files -> shared/page components -> <page>.js
+// as real <script> tags sharing one global scope. Inlining (rather than running each source
+// through window.eval) is required because jsdom only threads top-level `const`/`let` bindings -
+// such as support/common.js's `ShipSystem`/`ShipType` - across scripts that are parsed and run
+// together as part of the same document, matching how a browser shares one global lexical scope
+// across <script> tags.
 //
 // `xhrRoot`, if given, installs SyncFileXHR (see above) as `window.XMLHttpRequest` before any
 // inline script runs, so a script's first, synchronous top-level statement can already use it.
