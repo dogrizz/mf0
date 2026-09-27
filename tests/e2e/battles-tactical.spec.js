@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
 
 // Regression tests for the tactical redesign (ticket 03, see .scratch/tactical-redesign) covering
-// real-browser CSS/layout behavior that tests/battles.test.js's jsdom suite can't see - jsdom has
-// no layout engine, so it can't catch horizontal overflow or a media query's effect. See
-// tests/e2e/battle-tactical.spec.js (ticket 01) for the same rationale.
+// real-browser CSS/layout behavior that tests/e2e/battles.spec.js's behavior-focused suite doesn't
+// assert on - overflow or a media query's effect. See tests/e2e/battle-tactical.spec.js (ticket 01)
+// for the same rationale.
 
 function roster() {
   return [{ name: 'Alpha', hva: 3, tas: 2, ppa: 5, ships: [{ name: 'Alpha One', class: 'capital', systems: [], destroyed: false }] }]
