@@ -819,6 +819,13 @@ body > main.container {
   width: auto;
 }
 
+.root .asset-card-row .chip {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  min-height: 36px;
+}
+
 .root .system-slot-list {
   display: flex;
   flex-direction: column;
