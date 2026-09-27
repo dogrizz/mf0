@@ -193,13 +193,14 @@ body > main.container {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  background: var(--tac-elevated);
-  border: 1px solid var(--tac-border);
+  background: rgba(35, 42, 51, 0.5);
+  border: 1px solid rgba(49, 58, 69, 0.6);
   border-radius: 8px;
   padding: 5px 10px;
   color: var(--tac-text);
   white-space: nowrap;
   align-self: flex-start;
+  cursor: default;
 }
 
 .root .chip .dice-white {
@@ -774,6 +775,8 @@ body > main.container {
 
 .root .asset-name-input {
   font-size: 15px;
+  border-color: rgba(49, 58, 69, 0.6);
+  background: rgba(35, 42, 51, 0.5);
 }
 
 .root .stat-card-name-input:focus,
