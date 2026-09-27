@@ -16,5 +16,10 @@ var VueBattleAppComponent = {
   props: {
     state: { type: Object, required: true },
   },
+  setup: function () {
+    return {
+      fleetAccent: fleetAccentColor,
+    }
+  },
   template: vueBattleAppTemplate,
 }

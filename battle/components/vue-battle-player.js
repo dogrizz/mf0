@@ -10,10 +10,17 @@ var vueBattlePlayerTemplate = (function () {
   return xhr.responseText
 })()
 
+// 'Defender' -> 'badge-role-defender', 'Primary attacker' -> 'badge-role-primary-attacker', etc.
+// - one badge modifier class per determineRole() output in support/battle.js.
+function roleBadgeClass(role) {
+  return 'badge-role-' + role.toLowerCase().replace(/\s+/g, '-')
+}
+
 var VueBattlePlayerComponent = {
   props: {
     player: { type: Object, required: true },
     battle: { type: Object, required: true },
+    accent: { type: String, required: true },
   },
   setup: function (props) {
     // Mirrors PlayerComponent's oninit: compute this player's total/role as soon as the roster is
@@ -31,6 +38,7 @@ var VueBattlePlayerComponent = {
     return {
       changeHva: changeHva,
       changeTas: changeTas,
+      roleBadgeClass: roleBadgeClass,
     }
   },
   template: vueBattlePlayerTemplate,

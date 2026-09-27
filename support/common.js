@@ -32,6 +32,16 @@ const MechSystem = {
   MOVEMENT: 'movement',
 }
 
+// Presentation constant, not game domain data - lives here (rather than a page-specific file)
+// because it's loaded by all three pages and the tactical redesign (see
+// .scratch/tactical-redesign/spec.md) assigns fleet identity colors consistently across all of
+// them, cycling once a battle/fleet-builder session has more fleets than colors.
+const FLEET_ACCENT_COLORS = ['#f2a154', '#4fb0e0', '#9c8cf0']
+
+function fleetAccentColor(rosterIndex) {
+  return FLEET_ACCENT_COLORS[rosterIndex % FLEET_ACCENT_COLORS.length]
+}
+
 // Scores the part of a ship's dice notation that's identical whether the ship is builder-shaped
 // or battle-shaped (frigate movement die, catapults, defense, sensors, attack) - shared by
 // support/builder.js's builderDice and support/battle.js's battleDice. Internal ("W") systems are

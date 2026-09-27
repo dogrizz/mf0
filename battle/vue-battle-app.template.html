@@ -1,24 +1,28 @@
-<div>
-  <options-link />
-  <main class="container">
-    <h1>MF0 Intercept Orbit battle tracker</h1>
-    <template v-if="!state.battle">Can't find your battle</template>
-    <template v-else>
-      <div class="row gap-2 justify-content-start p-2 border rounded-4">
-        <div class="col-1 row row-cols-1 p-0 mt-2 gap-1">
-          <span class="col form-label">Fleet id</span>
-          <span class="col form-label">HVA</span>
-          <span class="col form-label">TAs</span>
-          <span class="col form-label">PPA</span>
-          <span class="col form-label">Total</span>
-          <span class="col form-label">Role</span>
-        </div>
-        <battle-player v-for="(player, i) in state.battle.roster" :key="i" :player="player" :battle="state.battle" />
+<div class="root">
+  <div class="topbar">
+    <div class="topbar-heading">
+      <span class="eyebrow">MF0 &middot; Intercept Orbit</span>
+      <h1 class="h1">Battle tracker</h1>
+    </div>
+    <options-link />
+  </div>
+  <template v-if="!state.battle">Can't find your battle</template>
+  <template v-else>
+    <div class="scoreboard-section">
+      <div class="eyebrow">Scoreboard</div>
+      <div class="scoreboard">
+        <battle-player
+          v-for="(player, i) in state.battle.roster"
+          :key="i"
+          :player="player"
+          :battle="state.battle"
+          :accent="fleetAccent(i)"
+        />
       </div>
-      <div v-if="state.battle.sync" class="row row-cols-1 gap-2 mt-2">
-        <battle-fleet v-for="(fleet, i) in state.battle.roster" :key="i" :fleet="fleet" :battle="state.battle" />
-      </div>
-    </template>
-    <app-footer />
-  </main>
+    </div>
+    <div v-if="state.battle.sync" class="fleet-list">
+      <battle-fleet v-for="(fleet, i) in state.battle.roster" :key="i" :fleet="fleet" :battle="state.battle" :accent="fleetAccent(i)" />
+    </div>
+  </template>
+  <app-footer />
 </div>

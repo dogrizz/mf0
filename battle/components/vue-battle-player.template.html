@@ -1,19 +1,27 @@
-<div class="col-2 row row-cols-1 p-0 gap-1">
-  <label class="col fs-5">{{ player.name }}</label>
-  <div class="col">
-    <input class="form-control" type="number" min="0" :value="player.hva" @input="changeHva($event.target.value)" />
+<div class="stat-card">
+  <div class="stat-card-name">
+    <span class="fleet-dot" :style="{ background: accent }"></span>
+    {{ player.name }}
   </div>
-  <div class="col">
-    <input
-      class="form-control"
-      type="number"
-      min="0"
-      :disabled="battle.sync"
-      :value="player.tas"
-      @input="changeTas($event.target.value)"
-    />
+  <div class="field-row">
+    <div class="field">
+      <label>HVA</label>
+      <input type="number" min="0" :value="player.hva" @input="changeHva($event.target.value)" />
+    </div>
+    <div class="field">
+      <label>TAs</label>
+      <input type="number" min="0" :disabled="battle.sync" :value="player.tas" @input="changeTas($event.target.value)" />
+    </div>
   </div>
-  <span class="col form-label">{{ player.ppa }}</span>
-  <span class="col form-label">{{ player.total }}</span>
-  <span class="col form-label">{{ player.role }}</span>
+  <div class="stat-readout-row">
+    <div class="stat-readout">
+      <span class="v mono">{{ player.ppa }}</span>
+      <span class="k">PPA</span>
+    </div>
+    <div class="stat-readout">
+      <span class="v mono">{{ player.total }}</span>
+      <span class="k">Total</span>
+    </div>
+    <span class="badge" :class="roleBadgeClass(player.role)">{{ player.role }}</span>
+  </div>
 </div>

@@ -13,38 +13,8 @@
   background-color: var(--mf0-dark-bg);
 }
 
-.dead {
-  background-color: var(--mf0-dark-bg);
-}
-
 .captured {
   color: var(--mf0-captured-text)
-}
-
-.popup {
-  margin: 70px auto;
-  padding: 20px;
-  width: 30%;
-  position: relative;
-  transition: all 5s ease-in-out;
-  background-color: var(--mf0-dark-bg);
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  transition: opacity 500ms;
-  visibility: hidden;
-  opacity: 1;
-}
-
-.overlay-show {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
@@ -76,5 +46,583 @@ body > main.container {
 
 .app-footer-note {
   font-size: smaller;
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Tactical redesign (ticket 01: .scratch/tactical-redesign/issues/01-battle-tracker-tactical-redesign.md,
+ * design language: .scratch/tactical-redesign/spec.md).
+ *
+ * Everything below is scoped under `.root` (the wrapper a redesigned page's Vue app mounts into)
+ * or given a `tactical-*` class name, so builder.html/battles.html - not yet redesigned by
+ * tickets 02/03 - keep their current Bootstrap look untouched. `.root .badge`/`.root .btn` in
+ * particular must stay scoped this way since Bootstrap already defines bare `.badge`/`.btn`
+ * globally on those still-Bootstrap pages.
+ * --------------------------------------------------------------------------------------------- */
+
+:root {
+  --tac-bg: #12151a;
+  --tac-surface: #1b2027;
+  --tac-surface-dim: #171b20;
+  --tac-elevated: #232a33;
+  --tac-border: #313a45;
+  --tac-border-strong: #4a5563;
+  --tac-text: #f2f4f6;
+  --tac-text-secondary: #9aa7b3;
+  --tac-text-faint: #6b7683;
+  --tac-danger: #e0616f;
+  --tac-warning: #e0b34f;
+  --tac-success: #6fbf8b;
+  --tac-focus: #4fb0e0;
+}
+
+.root,
+.root * {
+  font-family: 'IBM Plex Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+.root {
+  background: var(--tac-bg);
+  color: var(--tac-text);
+  min-height: 100vh;
+  min-width: 0;
+  overflow-x: hidden;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.root .eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tac-text-faint);
+}
+
+.root .h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  font-size: 24px;
+}
+
+.root .mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.root .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.root .topbar-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.root .tactical-nav-link {
+  /* Resets `.page-nav-link`'s grid-overlay positioning (style.css, above): harmless on a grid
+   * parent, but `align-self`/`margin-right` are valid flex-item properties too and would otherwise
+   * leak into this page's flex `.topbar`. */
+  grid-area: unset;
+  justify-self: unset;
+  align-self: unset;
+  margin-right: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--tac-text);
+  padding: 9px 14px;
+  border: 1px solid var(--tac-border);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.root .tactical-nav-link:hover {
+  border-color: var(--tac-border-strong);
+  background: var(--tac-elevated);
+}
+
+.root .btn {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--tac-border);
+  background: var(--tac-elevated);
+  color: var(--tac-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.root .btn:hover {
+  border-color: var(--tac-border-strong);
+  background: #2a323d;
+}
+
+.root .btn-ghost {
+  background: transparent;
+}
+
+.root .chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--tac-elevated);
+  border: 1px solid var(--tac-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: var(--tac-text);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.root .badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.root .badge-destroyed {
+  background: rgba(224, 97, 111, 0.16);
+  color: var(--tac-danger);
+}
+
+.root .badge-captured {
+  background: rgba(224, 179, 79, 0.16);
+  color: var(--tac-warning);
+}
+
+.root .badge-fuel-ok {
+  background: rgba(111, 191, 139, 0.16);
+  color: var(--tac-success);
+}
+
+.root .badge-fuel-out {
+  background: rgba(224, 179, 79, 0.16);
+  color: var(--tac-warning);
+}
+
+.root .badge-role-defender {
+  background: rgba(154, 167, 179, 0.16);
+  color: var(--tac-text-secondary);
+}
+
+.root .badge-role-primary-attacker {
+  background: rgba(242, 161, 84, 0.18);
+  color: #f2a154;
+}
+
+.root .badge-role-secondary-attacker {
+  background: rgba(79, 176, 224, 0.18);
+  color: #4fb0e0;
+}
+
+.root .fleet-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.root .stat-card {
+  background: var(--tac-surface);
+  border: 1px solid var(--tac-border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 220px;
+}
+
+.root .stat-card-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.root .field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.root .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.root .field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tac-text-faint);
+}
+
+.root .field input {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tac-text);
+  background: var(--tac-elevated);
+  border: 1px solid var(--tac-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: 100%;
+  min-height: 40px;
+}
+
+.root .field input:focus {
+  outline: 2px solid var(--tac-focus);
+  outline-offset: 1px;
+}
+
+.root .field input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.root .stat-readout-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.root .stat-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.root .stat-readout .v {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.root .stat-readout .k {
+  font-size: 10px;
+  color: var(--tac-text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.root .scoreboard {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .root .scoreboard {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 4px;
+    margin: 0 -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .root .scoreboard .stat-card {
+    scroll-snap-align: start;
+    min-width: 260px;
+    flex: none;
+  }
+}
+
+.root .scoreboard-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.root .fleet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.root .fleet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.root .fleet-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.root .fleet-header h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.root .fleet-header .meta {
+  font-size: 12px;
+  color: var(--tac-text-faint);
+}
+
+.root .asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.root .asset-card {
+  background: var(--tac-surface);
+  border: 1px solid var(--tac-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.root .asset-card.is-dead {
+  background: var(--tac-surface-dim);
+  border-color: #262d36;
+}
+
+.root .asset-card.is-dead .asset-name {
+  color: var(--tac-text-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--tac-text-faint);
+}
+
+.root .asset-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.root .asset-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: capitalize;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.root .asset-name.captured {
+  color: var(--tac-warning);
+}
+
+.root .icon-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--tac-border);
+  background: var(--tac-elevated);
+  color: var(--tac-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+}
+
+.root .icon-btn:hover {
+  border-color: var(--tac-border-strong);
+}
+
+.root .icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.root .icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.root .asset-meta {
+  font-size: 12px;
+  color: var(--tac-text-faint);
+}
+
+.root .system-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.root .system-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.root .system-row:hover {
+  background: var(--tac-elevated);
+}
+
+.root .system-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--tac-text-secondary);
+  display: inline-flex;
+}
+
+.root .system-label {
+  flex: 1;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.root .system-row.is-disabled .system-label {
+  color: var(--tac-text-faint);
+  text-decoration: line-through;
+}
+
+.root .system-row.is-disabled .system-icon {
+  color: var(--tac-text-faint);
+}
+
+.root .system-check {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--tac-danger);
+}
+
+.root .tactical-footer {
+  font-size: 12px;
+  color: var(--tac-text-faint);
+  gap: 2px;
+}
+
+.root .tactical-footer a {
+  color: var(--tac-text-secondary);
+}
+
+.root .tactical-footer-note {
+  font-size: 11px;
+}
+
+/* Ship-transfer overlay: a centered dialog at >=480px wide viewports, a full-width bottom sheet
+ * below that - the redesign's one reusable "overlay pattern" (spec.md), matching the mockup's
+ * MobileTransfer artboard.
+ */
+.root .overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 13, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.root .dialog {
+  width: min(420px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: var(--tac-surface);
+  border: 1px solid var(--tac-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.root .dialog-drag-handle {
+  display: none;
+}
+
+.root .dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.root .dialog-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.root .dialog-subtitle {
+  font-size: 13px;
+  color: var(--tac-text-secondary);
+}
+
+.root .dialog-option {
+  justify-content: flex-start;
+  padding: 14px 16px;
+  min-height: 52px;
+}
+
+.root .dialog-cancel {
+  justify-content: center;
+  padding: 12px 16px;
+  min-height: 48px;
+  border-style: dashed;
+}
+
+@media (max-width: 479px) {
+  .root .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .root .dialog {
+    width: 100%;
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+    padding: 10px 20px 28px;
+  }
+
+  .root .dialog-drag-handle {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--tac-border);
+    margin: 6px auto 0;
+  }
 }
 
