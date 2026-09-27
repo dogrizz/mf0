@@ -1,41 +1,50 @@
-<div class="ship col-3 row row-cols-1 rounded-3 p-1 m-0" :class="ship.destroyed ? 'dead' : 'bg-dark'">
-  <div class="row justify-content-start">
-    <h4
-      class="col"
-      :class="isCaptured ? 'captured' : ''"
-      :title="ship.name + (ship.destroyed ? ' dead ' : ' ') + (isCaptured ? 'captured' : '')"
-    >{{ ship.name || 'noname' }}</h4>
-    <div class="col-1">
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-info"
-        title="Transfer"
-        :hidden="ship.destroyed"
-        @click="startTransfer"
-      >⇌</button>
-    </div>
-    <div :class="ship.showPopup ? 'overlay overlay-show' : 'overlay'">
-      <div class="row row-cols-1 popup gap-3 justify-content-center border rounded-4">
-        <h3 class="col">Transfer ship {{ ship.name }} to:</h3>
-        <div v-for="(target, i) in otherFleets()" :key="i" class="col d-flex justify-content-center align-items-center">
-          <button type="button" class="btn btn-outline-warning" @click="pickTransferTarget(target)">{{ target.name }}</button>
-        </div>
-        <div class="col d-flex justify-content-center align-items-center">
-          <button type="button" class="btn btn-outline-light" @click="cancelTransfer">Cancel</button>
-        </div>
-      </div>
-    </div>
+<div class="asset-card" data-kind="ship" :class="{ 'is-dead': ship.destroyed }">
+  <div class="asset-card-head">
+    <span class="asset-name" :class="{ captured: isCaptured }" :title="ship.name || 'noname'">{{ ship.name || 'noname' }}</span>
+    <span v-if="ship.destroyed" class="badge badge-destroyed">Destroyed</span>
+    <span v-else-if="isCaptured" class="badge badge-captured">Captured &middot; ex {{ originalFleetName }}</span>
+    <button
+      v-if="!ship.destroyed"
+      type="button"
+      class="icon-btn"
+      title="Transfer to another fleet"
+      aria-label="Transfer ship"
+      @click="startTransfer"
+      v-html="transferIconSvg"
+    ></button>
   </div>
-  <span class="col">{{ diceText }}</span>
-  <div v-for="(system, i) in ship.systems" :key="i" class="col system form-check">
-    <label class="form-check-label">
+  <span class="chip">{{ diceText }}</span>
+  <div class="system-list">
+    <label v-for="(system, i) in ship.systems" :key="i" class="system-row" :class="{ 'is-disabled': system.disabled }">
+      <span class="system-icon" v-html="systemIcon(system.class)"></span>
+      <span class="system-label">{{ systemText(system) }}</span>
       <input
-        class="form-check-input"
+        class="system-check"
         type="checkbox"
         :checked="system.disabled"
         @click="systemStateChange(system, $event.target.checked)"
       />
-      {{ systemText(system) }}
     </label>
+  </div>
+  <div v-if="ship.showPopup" class="overlay" @click.self="cancelTransfer">
+    <div class="dialog" role="dialog" aria-modal="true" :aria-label="'Transfer ' + ship.name">
+      <div class="dialog-drag-handle" aria-hidden="true"></div>
+      <div class="dialog-head">
+        <h3 class="dialog-title">Transfer &ldquo;{{ ship.name }}&rdquo;</h3>
+        <button type="button" class="icon-btn" aria-label="Cancel transfer" @click="cancelTransfer" v-html="closeIconSvg"></button>
+      </div>
+      <span class="dialog-subtitle">Send this ship to:</span>
+      <button
+        v-for="(target, i) in otherFleets()"
+        :key="i"
+        type="button"
+        class="btn dialog-option"
+        @click="pickTransferTarget(target)"
+      >
+        <span class="fleet-dot" :style="{ background: fleetAccent(target) }"></span>
+        {{ target.name }}
+      </button>
+      <button type="button" class="btn btn-ghost dialog-cancel" @click="cancelTransfer">Cancel</button>
+    </div>
   </div>
 </div>

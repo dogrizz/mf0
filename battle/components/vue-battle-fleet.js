@@ -10,10 +10,24 @@ var vueBattleFleetTemplate = (function () {
   return xhr.responseText
 })()
 
+function pluralize(count, singular, plural) {
+  return count + ' ' + (count === 1 ? singular : plural)
+}
+
 var VueBattleFleetComponent = {
   props: {
     fleet: { type: Object, required: true },
     battle: { type: Object, required: true },
+    accent: { type: String, required: true },
+  },
+  setup: function (props) {
+    var meta = Vue.computed(function () {
+      return pluralize(props.fleet.ships.length, 'ship', 'ships') + ' · ' + pluralize(props.fleet.companies.length, 'company', 'companies')
+    })
+
+    return {
+      meta: meta,
+    }
   },
   template: vueBattleFleetTemplate,
 }

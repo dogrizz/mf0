@@ -1,28 +1,30 @@
-<div class="company col-3 row row-cols-1 p-1 m-0 rounded-3" :class="(company.destroyed || company.outOfFuel) ? 'dead' : 'bg-dark'">
-  <div class="row justify-content-start">
-    <h4 class="col text-capitalize">{{ company.aceType ? company.aceType + ' ace' : 'company' }}</h4>
-    <div class="col-1">
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-warning"
-        title="Fuel state"
-        :disabled="company.destroyed"
-        @click="fuelChange"
-      >⛽</button>
-    </div>
+<div class="asset-card" data-kind="company" :class="{ 'is-dead': company.destroyed || company.outOfFuel }">
+  <div class="asset-card-head">
+    <span class="asset-name">{{ company.aceType ? company.aceType + ' ace' : 'company' }}</span>
+    <span class="badge" :class="company.outOfFuel ? 'badge-fuel-out' : 'badge-fuel-ok'">{{ company.outOfFuel ? 'Out of fuel' : 'Fueled' }}</span>
+    <button
+      type="button"
+      class="icon-btn"
+      title="Fuel state"
+      aria-label="Toggle fuel state"
+      :disabled="company.destroyed"
+      @click="fuelChange"
+      v-html="fuelIconSvg"
+    ></button>
   </div>
-  <span class="col">{{ diceText }}</span>
-  <span class="col">origin: {{ company.origin }}</span>
-  <div v-for="(system, i) in company.systems" :key="i" class="col form-check">
-    <label class="form-check-label">
+  <span class="chip">{{ diceText }}</span>
+  <span class="asset-meta">origin: {{ company.origin }}</span>
+  <div class="system-list">
+    <label v-for="(system, i) in company.systems" :key="i" class="system-row" :class="{ 'is-disabled': system.disabled }">
+      <span class="system-icon" v-html="systemIcon(system.class)"></span>
+      <span class="system-label">{{ system.class }}</span>
       <input
-        class="form-check-input"
+        class="system-check"
         type="checkbox"
         :checked="system.disabled"
         :disabled="company.outOfFuel"
         @click="systemStateChange(system, $event.target.checked)"
       />
-      {{ system.class }}
     </label>
   </div>
 </div>

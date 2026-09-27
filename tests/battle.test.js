@@ -199,7 +199,7 @@ describe('battle tracker page', () => {
 
     const [alphaFleet, betaFleet] = fleetElements(document)
     expect(shipElements(alphaFleet)).toHaveLength(0)
-    const transferredShip = shipElements(betaFleet).find((el) => el.querySelector('h4').textContent.includes('Alpha One'))
+    const transferredShip = shipElements(betaFleet).find((el) => el.querySelector('.asset-name').textContent.includes('Alpha One'))
     expect(transferredShip).toBeTruthy()
     // The ship keeps its original owner id - only its location in the roster's fleets changes, not
     // this field. That's a game-rules requirement, not just a display artifact: the original owner

@@ -73,47 +73,47 @@ export function readBattleState(dom, battleId = 1) {
 }
 
 export function fleetElements(document) {
-  return [...document.querySelectorAll('.bg-dark-subtle')]
+  return [...document.querySelectorAll('.fleet-section')]
 }
 
 export function fleetName(fleetEl) {
-  return fleetEl.querySelector('h3').textContent
+  return fleetEl.querySelector('h2').textContent
 }
 
 export function shipElements(fleetEl) {
-  return [...fleetEl.querySelectorAll('.ship')]
+  return [...fleetEl.querySelectorAll('[data-kind="ship"]')]
 }
 
 export function companyElements(fleetEl) {
-  return [...fleetEl.querySelectorAll('.company')]
+  return [...fleetEl.querySelectorAll('[data-kind="company"]')]
 }
 
 export function isDead(el) {
-  return el.classList.contains('dead')
+  return el.classList.contains('is-dead')
 }
 
 export function isCaptured(shipEl) {
-  return shipEl.querySelector('h4').classList.contains('captured')
+  return shipEl.querySelector('.asset-name').classList.contains('captured')
 }
 
 export function transferButton(shipEl) {
-  return shipEl.querySelector('.btn-outline-info')
+  return shipEl.querySelector('.icon-btn[aria-label="Transfer ship"]')
 }
 
 export function fuelButton(companyEl) {
-  return companyEl.querySelector('.btn-outline-warning')
+  return companyEl.querySelector('.icon-btn[aria-label="Toggle fuel state"]')
 }
 
 // Finds a system checkbox by its rendered label text (e.g. 'internal', 'defense', 'weapon') -
-// scoped to a ship or company element, since both render one label+checkbox pair per system.
+// scoped to a ship or company element, since both render one system-row per system.
 export function systemCheckbox(el, labelText) {
-  const label = [...el.querySelectorAll('label.form-check-label')].find((l) => l.textContent.trim().startsWith(labelText))
-  if (!label) {
+  const row = [...el.querySelectorAll('.system-row')].find((r) => r.querySelector('.system-label').textContent.trim().startsWith(labelText))
+  if (!row) {
     throw new Error(`no system labeled "${labelText}" found`)
   }
-  return label.querySelector('input[type="checkbox"]')
+  return row.querySelector('.system-check')
 }
 
 export function systemCheckboxes(el) {
-  return [...el.querySelectorAll('label.form-check-label input[type="checkbox"]')]
+  return [...el.querySelectorAll('.system-row .system-check')]
 }
