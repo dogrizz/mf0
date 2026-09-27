@@ -64,9 +64,12 @@ mounted straight to `document.body` (no router, no shared app shell). Every page
     ±1 PPA at the extremes), and `builderDice(ship)` — the fleet builder's dice notation, which always
     shows a `2W` baseline since builder-shaped ships never track individual internal systems.
   - `battle.js` — battle-only mutators (`applySystemDamage`, `toggleCompanyFuel`, `transferShip`,
-    `changePlayerHva`/`changePlayerTas`), `recalculate`/`determineRole` (compute `total` and assign roles —
-    Defender / Primary attacker / Secondary attacker), `companyDice(company)`, and `battleDice(ship)` (dice
-    notation that counts real non-disabled internal systems). Also owns `readBattle`, which calls
+    `changePlayerHva`/`changePlayerTas`) and `attachComputedTotalAndRole(roster)`, which attaches `total`/
+    `role` (Defender / Primary attacker / Secondary attacker) as Vue `computed` properties once per player
+    — called from `battle.js`'s page entry right after the roster is inside Vue's reactive tree, not from
+    inside `readBattle` (see `.scratch/support-domain-split/issues/02-spike-computed-total-and-role.md` for
+    why). Also has `companyDice(company)` and `battleDice(ship)` (dice notation that counts real
+    non-disabled internal systems), and owns `readBattle`, which calls
     `storage.js` for the raw read/write and lazily migrates old saved data on first read (backfilling ship
     `internal` systems and mech `companies` — see CONTEXT.md's "Builder-shaped"/"Battle-shaped ship").
   - `builder.js` and `battle.js` never call each other; anything both need lives in `common.js`.

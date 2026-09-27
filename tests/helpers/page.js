@@ -88,3 +88,10 @@ export function redraw(dom) {
 export function click(el) {
   el.click()
 }
+
+// Sets an <input>'s value and fires the 'input' event Vue's v-model-less `@input` handlers listen
+// for (the HVA/TAs fields in vue-battle-player.template.html), matching a real user typing into it.
+export function setValue(el, value) {
+  el.value = value
+  el.dispatchEvent(new el.ownerDocument.defaultView.Event('input', { bubbles: true }))
+}

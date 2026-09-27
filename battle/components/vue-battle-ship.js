@@ -75,7 +75,7 @@ var VueBattleShipComponent = {
     }
 
     function systemStateChange(system, newState) {
-      applySystemDamage(props.ship, props.fleet, props.battle.roster, system, newState)
+      applySystemDamage(props.ship, props.fleet, system, newState)
     }
 
     function otherFleets() {
