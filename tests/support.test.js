@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import './helpers/local-storage-mock.js'
 import { battleDice, builderDice, calculatePPA, companyDice, readBattle, readBattles, store, storeBattle } from './helpers/load-support.js'
 
 beforeEach(() => {

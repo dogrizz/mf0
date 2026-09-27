@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test'
 
 // Regression tests for the tactical redesign (ticket 01, see .scratch/tactical-redesign) covering
-// real-browser CSS/layout behavior that tests/battle.test.js's jsdom suite can't see - jsdom has
-// no layout engine, so it can't catch horizontal overflow, a dead CSS rule silently winning the
-// cascade, or a media query's effect. Each test below locks in a bug that was actually found and
-// fixed this way (manual Playwright inspection) after tactical-redesign shipped.
+// real-browser CSS/layout behavior that tests/e2e/battle.spec.js's behavior-focused suite doesn't
+// assert on - overflow, a dead CSS rule silently winning the cascade, or a media query's effect.
+// Each test below locks in a bug that was actually found and fixed this way (manual Playwright
+// inspection) after tactical-redesign shipped.
 
 // Three fleets - rather than tests/battle.test.js's two - so opening a ship transfer shows the
 // picker dialog instead of transferring immediately (see vue-battle-ship.js's otherFleets()).
