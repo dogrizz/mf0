@@ -12,7 +12,7 @@
       v-html="fuelIconSvg"
     ></button>
   </div>
-  <span class="chip">{{ diceText }}</span>
+  <span class="chip"><span v-for="(segment, i) in diceSegments" :key="i" :class="'dice-' + segment.color">{{ segment.text }}</span></span>
   <span class="asset-meta">origin: {{ company.origin }}</span>
   <div class="system-list">
     <label v-for="(system, i) in company.systems" :key="i" class="system-row" :class="{ 'is-disabled': system.disabled }">

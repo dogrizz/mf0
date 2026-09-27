@@ -36,7 +36,7 @@ var VueBattleCompanyComponent = {
     battle: { type: Object, required: true },
   },
   setup: function (props) {
-    var diceText = Vue.computed(function () {
+    var diceSegments = Vue.computed(function () {
       return companyDice(props.company)
     })
 
@@ -53,7 +53,7 @@ var VueBattleCompanyComponent = {
     }
 
     return {
-      diceText: diceText,
+      diceSegments: diceSegments,
       systemIcon: systemIcon,
       systemStateChange: systemStateChange,
       fuelChange: fuelChange,

@@ -1,42 +1,46 @@
 function companyDice(company) {
   if (company.destroyed || company.outOfFuel) {
-    return ''
+    return []
   }
-  let diceDescription = ''
+  var segments = []
   var internals = company.systems.filter(function (system) {
     return system.class === MechSystem.SYSTEM && !system.disabled
   }).length
   if (internals) {
-    diceDescription = `${diceDescription}${internals}W`
+    segments.push(diceSegment(`${internals}W`, 'W'))
   }
   var attack = company.systems.filter(function (system) {
     return system.class === MechSystem.WEAPON && !system.disabled
   }).length
   if (attack) {
-    diceDescription = `${diceDescription}2Rd`
+    segments.push(diceSegment('2Rd', 'R'))
   }
   var defense = company.systems.filter(function (system) {
     return system.class === MechSystem.DEFENSE && !system.disabled
   }).length
   if (defense) {
-    diceDescription = `${diceDescription}${defense}B`
+    segments.push(diceSegment(`${defense}B`, 'B'))
   }
   var comms = company.systems.filter(function (system) {
     return system.class === MechSystem.COMMS && !system.disabled
   }).length
   if (comms) {
-    diceDescription = `${diceDescription}${comms}Y`
+    segments.push(diceSegment(`${comms}Y`, 'Y'))
   }
   var movement = company.systems.filter(function (system) {
     return system.class === MechSystem.MOVEMENT && !system.disabled
   }).length
   if (movement) {
-    diceDescription = `${diceDescription}${movement}G`
+    segments.push(diceSegment(`${movement}G`, 'G'))
   }
   if (company.aceType) {
-    diceDescription = `${diceDescription}+${company.aceType[0].toUpperCase()}d8`
+    // aceType is always one of ACE_TYPES' four color names (red/blue/green/yellow - see
+    // builder/components/vue-builder-mech-companies.js), so the leading letter already matches a
+    // DICE_COLORS key and colors the suffix to the same hue as the ace's assigned swatch.
+    var letter = company.aceType[0].toUpperCase()
+    segments.push(diceSegment(`+${letter}d8`, letter))
   }
-  return diceDescription
+  return segments
 }
 
 // Battle-domain dice notation: counts real non-disabled internal systems, since every
