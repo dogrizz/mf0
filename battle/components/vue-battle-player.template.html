@@ -15,12 +15,12 @@
   </div>
   <div class="stat-readout-row">
     <div class="stat-readout">
-      <span class="v mono">{{ player.ppa }}</span>
-      <span class="k">PPA</span>
+      <span class="stat-readout-value mono">{{ player.ppa }}</span>
+      <span class="stat-readout-label">PPA</span>
     </div>
     <div class="stat-readout">
-      <span class="v mono">{{ player.total }}</span>
-      <span class="k">Total</span>
+      <span class="stat-readout-value mono">{{ player.total }}</span>
+      <span class="stat-readout-label">Total</span>
     </div>
     <span class="badge" :class="roleBadgeClass(player.role)">{{ player.role }}</span>
   </div>

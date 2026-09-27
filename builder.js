@@ -27,6 +27,9 @@
     builderState.players = data.players
     builderState.sync = data.sync
     builderState.track = data.track
+    // Backfills `total` (and re-derives `ppa`) for fleets saved before calculatePPA started
+    // computing it, so the scoreboard doesn't show `undefined` until the next edit.
+    recalculatePPA()
   }
 
   var app = Vue.createApp(VueBuilderAppComponent, { state: builderState })

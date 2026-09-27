@@ -28,7 +28,13 @@ const BUILDER_SOURCE = readSource('builder.js')
 // `http://localhost/` (mountPage's default) rather than `file://` so this suite's
 // localStorage-reading assertions keep working - jsdom refuses storage access for the "opaque"
 // origin a `file://` document gets.
-export function mountBuilderPage() {
+// `seedToolsState`, if given, is written to localStorage['mf0-tools'] before builder.js's own
+// top-level script runs, so tests can exercise its page-load restore path (builder.js reads this
+// key synchronously as soon as it's evaluated - see mountPage's `beforeScripts`).
+export function mountBuilderPage({ seedToolsState } = {}) {
+  const beforeScripts = seedToolsState
+    ? `<script>localStorage.setItem('mf0-tools', ${JSON.stringify(JSON.stringify(seedToolsState))})</script>`
+    : ''
   return mountPage(
     [
       VUE_SOURCE,
@@ -47,7 +53,7 @@ export function mountBuilderPage() {
       VUE_BUILDER_APP_SOURCE,
       BUILDER_SOURCE,
     ],
-    { xhrRoot: ROOT },
+    { xhrRoot: ROOT, beforeScripts },
   )
 }
 

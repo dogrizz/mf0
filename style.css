@@ -331,13 +331,13 @@ body > main.container {
   gap: 2px;
 }
 
-.root .stat-readout .v {
+.root .stat-readout-value {
   font-family: 'IBM Plex Mono', monospace;
   font-weight: 600;
   font-size: 16px;
 }
 
-.root .stat-readout .k {
+.root .stat-readout-label {
   font-size: 10px;
   color: var(--tac-text-faint);
   letter-spacing: 0.06em;
@@ -713,13 +713,6 @@ body > main.container {
  * and the fleet-builder disclosure that replaces Bootstrap's accordion - live here rather than in
  * the shared block above, since no other page needs them.
  */
-
-.root .fleet-header h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-}
 
 .root .btn-lg {
   font-size: 16px;
