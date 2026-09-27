@@ -83,29 +83,44 @@ describe('calculatePPA', () => {
 // (support/common.js's shipSystemsDice) for the frigate/catapult/defense/sensor/attack notation,
 // which is identical either way — exercised in full below via battleDice, with builderDice's own
 // tests confirming it shares that same scoring rather than re-implementing it.
+// builderDice returns an array of { text, color } segments (see .scratch/dice-notation-colors/
+// spec.md) rather than a flat string, so the fleet builder's dice chip can tint each segment by
+// its die color. `seg` builds the expected segment shape for each assertion below.
+function seg(text, color) {
+  return { text, color }
+}
+
 describe('builderDice', () => {
-  it('returns an empty string for a destroyed ship', () => {
-    expect(builderDice(ship({ destroyed: true }))).toBe('')
+  it('returns no segments for a destroyed ship', () => {
+    expect(builderDice(ship({ destroyed: true }))).toEqual([])
   })
 
   it('always uses the 2W baseline, since the fleet builder never tracks individual internal systems', () => {
-    expect(builderDice(ship({ systems: [] }))).toBe('2W')
+    expect(builderDice(ship({ systems: [] }))).toEqual([seg('2W', 'white')])
   })
 
   it('ignores any internal-class systems rather than counting them, unlike battleDice', () => {
     // The fleet builder never creates internal-class systems itself, but builderDice shouldn't
     // even look for them — that's exactly the domain-shape branching this split removed.
-    expect(builderDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('2W')
+    expect(builderDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toEqual([seg('2W', 'white')])
   })
 
   it('appends 1G for frigates but not capitals', () => {
-    expect(builderDice(ship({ class: 'frigate', systems: [] }))).toBe('2W1G')
-    expect(builderDice(ship({ class: 'capital', systems: [] }))).toBe('2W')
+    expect(builderDice(ship({ class: 'frigate', systems: [] }))).toEqual([seg('2W', 'white'), seg('1G', 'green')])
+    expect(builderDice(ship({ class: 'capital', systems: [] }))).toEqual([seg('2W', 'white')])
   })
 
   it('notes a single catapult as 1K and multiple catapults as 3K', () => {
-    expect(builderDice(ship({ systems: [{ class: 'catapult' }] }))).toBe('2W1K')
-    expect(builderDice(ship({ systems: [{ class: 'catapult' }, { class: 'catapult' }] }))).toBe('2W3K')
+    expect(builderDice(ship({ systems: [{ class: 'catapult' }] }))).toEqual([seg('2W', 'white'), seg('1K', 'black')])
+    expect(builderDice(ship({ systems: [{ class: 'catapult' }, { class: 'catapult' }] }))).toEqual([seg('2W', 'white'), seg('3K', 'black')])
+  })
+
+  it('colors defense, sensor, and attack notation blue, yellow, and red respectively', () => {
+    const testShip = ship({
+      class: 'capital',
+      systems: [{ class: 'defense' }, { class: 'sensor' }, { class: 'attack', attackType: 'a' }],
+    })
+    expect(builderDice(testShip)).toEqual([seg('2W', 'white'), seg('1B', 'blue'), seg('1Y', 'yellow'), seg('Ra2', 'red')])
   })
 })
 
