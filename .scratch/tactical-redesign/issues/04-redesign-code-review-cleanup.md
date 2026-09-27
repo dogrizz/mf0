@@ -36,19 +36,19 @@ Concretely:
 **Blocked by:** None (all five items are independent presentation-only edits; can be done in any
 order within this one ticket)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `.fleet-header`'s heading rule exists once in `style.css`, not twice
-- [ ] `.v`/`.k` renamed to semantic class names in both battle and builder player templates, with
+- [x] `.fleet-header`'s heading rule exists once in `style.css`, not twice
+- [x] `.v`/`.k` renamed to semantic class names in both battle and builder player templates, with
       `style.css` updated to match; no visual change
-- [ ] Builder's `player.total` reuses the same computed formula as `support/battle.js` instead of
+- [x] Builder's `player.total` reuses the same computed formula as `support/battle.js` instead of
       inlining the arithmetic in the template
-- [ ] `system-slot-attack-select` either has a real rule or is removed from the template
-- [ ] `ATTACK_TYPE_LABELS`'s placement in `support/common.js` is confirmed-with-rationale or moved;
+- [x] `system-slot-attack-select` either has a real rule or is removed from the template
+- [x] `ATTACK_TYPE_LABELS`'s placement in `support/common.js` is confirmed-with-rationale or moved;
       not left as a silent scope-creep item
-- [ ] `npx vitest run` passes
-- [ ] `npx prettier --check` passes on every changed `.js` file
-- [ ] Manual smoke pass at 390px, 834px, and 1440px on battle.html and index.html: confirm stat
+- [x] `npx vitest run` passes
+- [x] `npx prettier --check` passes on every changed `.js` file
+- [x] Manual smoke pass at 390px, 834px, and 1440px on battle.html and index.html: confirm stat
       readouts and system-slot editor still render identically to before this ticket
 
 ## Comments
@@ -67,3 +67,20 @@ class.
 presentation-only feature. Also noted (not actioned by this ticket): ticket 02's Comments claim
 `badge` was reused verbatim in the builder, but it's never actually used there — a documentation
 accuracy nit, not a code change.
+
+**Resolution (merged as PR #30):** Normalized the fleet builder's `h3` to `h2` (correct `h1 > h2`
+nesting, matching `battle.html`), deduping the `.fleet-header` rule. Renamed `.v`/`.k` to
+`.stat-readout-value`/`.stat-readout-label`. Reused `support/battle.js`'s `PPA*(HVA+TAs)` formula in
+`support/builder.js`'s `calculatePPA` instead of inlining it in the builder template. Dropped the
+dead `system-slot-attack-select` class. Confirmed `ATTACK_TYPE_LABELS`'s place in
+`support/common.js` with a self-contained rationale comment (also fixed a stale
+"see FLEET_ACCENT_COLORS above" reference that actually pointed below).
+
+A regression was caught during review and fixed in the same PR: the fleet builder's page-load path
+restored players from localStorage without recalculating, so a fleet saved before `total` existed
+would render `Total` as `undefined` until the next edit — backfilled via `recalculatePPA()` on
+load, with a regression test added.
+
+`npx vitest run` (57 tests) and `npx prettier --check` clean. Manual Playwright smoke pass at
+390/834/1440px on `battle.html` and `index.html` confirmed stat readouts and the system-slot editor
+render identically to before.

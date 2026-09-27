@@ -44,28 +44,46 @@ stays wired exactly as it is today, only the surrounding markup/classes change.
 
 **Blocked by:** none
 
-**Status:** ready
+**Status:** done
 
-- [ ] `battle.html` loads the new Google Fonts link; Bootstrap CDN tags kept or dropped with a
+- [x] `battle.html` loads the new Google Fonts link; Bootstrap CDN tags kept or dropped with a
       one-line note in the PR explaining the call
-- [ ] `style.css` carries the shared design tokens + component classes, written so tickets 02/03 can
+- [x] `style.css` carries the shared design tokens + component classes, written so tickets 02/03 can
       reuse them without duplication
-- [ ] Scoreboard renders as `stat-card`s, scroll-snapping horizontally below the mobile breakpoint
-- [ ] Ship/company grid uses `auto-fill minmax(240px, 1fr)` — verify by resizing from 390px to
+- [x] Scoreboard renders as `stat-card`s, scroll-snapping horizontally below the mobile breakpoint
+- [x] Ship/company grid uses `auto-fill minmax(240px, 1fr)` — verify by resizing from 390px to
       1440px that it reflows without any card being clipped or overflowing
-- [ ] Destroyed/captured/out-of-fuel all show an explicit text badge, not just a color change
-- [ ] Every icon-only button (`⇌`, `⛽`) has a real `aria-label` and is ≥36px square
-- [ ] System toggle rows are ≥40px tall and show a small icon per `system.class`
+- [x] Destroyed/captured/out-of-fuel all show an explicit text badge, not just a color change
+- [x] Every icon-only button (`⇌`, `⛽`) has a real `aria-label` and is ≥36px square
+- [x] System toggle rows are ≥40px tall and show a small icon per `system.class`
       (internal/attack/defense/sensor/catapult for ships; system/weapon/defense/comm/movement for
       companies)
-- [ ] Transfer popup is a centered dialog ≥480px wide viewports, a full-width bottom sheet on
+- [x] Transfer popup is a centered dialog ≥480px wide viewports, a full-width bottom sheet on
       narrow ones — no more fixed `width: 30%`
-- [ ] `tests/helpers/load-battle-page.js` selectors updated to match the new markup (see spec.md's
+- [x] `tests/helpers/load-battle-page.js` selectors updated to match the new markup (see spec.md's
       Testing decisions) — no change to what `tests/battle.test.js` asserts
-- [ ] `npx vitest run` passes
-- [ ] `npx prettier --check` passes on every changed `.js` file
-- [ ] Manual smoke pass at 390px, 834px, and 1440px widths: build a fleet, fight, damage a system,
+- [x] `npx vitest run` passes
+- [x] `npx prettier --check` passes on every changed `.js` file
+- [x] Manual smoke pass at 390px, 834px, and 1440px widths: build a fleet, fight, damage a system,
       capture/transfer a ship, toggle a company's fuel — confirm state still persists across reload
       and nothing regressed from the current battle.html behavior
 
 ## Comments
+
+Merged as PR #24. Dropped `battle.html`'s Bootstrap CSS/JS tags entirely — the new markup uses no
+Bootstrap grid/utility/component classes, and the JS bundle was already unused on the page. New
+shared classes (`stat-card`, `asset-card`, `chip`, `system-row`, `icon-btn`, badges, `fleet-dot`,
+`.btn`) scoped under `.root` so tickets 02/03 could redesign independently without a mid-migration
+mixed look. Added `FLEET_ACCENT_COLORS` to `support/common.js` for fleet-identity color consistency
+across pages. Removed the now-fully-dead `.dead`/`.popup`/`.overlay`/`.overlay-show` rules.
+
+Three cascade bugs surfaced during review/manual verification and were fixed in the same PR: a
+leftover `visibility: hidden` on the removed bare `.overlay` rule silently beating the new scoped
+dialog rule; `.page-nav-link`'s old grid-positioning properties leaking into the new flex topbar;
+and `.root` (body's sole `display: grid` item) defaulting to `min-width: auto`, forcing horizontal
+page overflow instead of the scoreboard's mobile scroll-snap staying internal (fixed with
+`min-width: 0` + `overflow-x: hidden`).
+
+`npx vitest run` (56/56) and `npx prettier --check` clean. Manual Playwright smoke pass at
+390/834/1440px (3-fleet battle, destroy a ship, toggle company fuel, transfer via the picker
+dialog, resize across breakpoints, reload) confirmed all behavior in the checklist.
