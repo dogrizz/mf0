@@ -18,9 +18,19 @@
 }
 
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
-   grid cell as <main>, without pulling it out of flow the way float does. */
+   grid cell as <main>, without pulling it out of flow the way float does. `margin: 0` matches
+   what Bootstrap's reboot.css already zeroes out on builder.html/battles.html - needed explicitly
+   here now that battle.html (ticket 01) no longer loads Bootstrap at all, otherwise the browser's
+   default 8px body margin shows as a pale border around `.root`'s dark background. */
 body {
   display: grid;
+  margin: 0;
+}
+
+/* Covers the same gap for any residual scroll-bounce area (e.g. mobile Safari's elastic
+   overscroll) on a page that has adopted the tactical redesign - see spec.md and ticket 01. */
+body:has(> .root) {
+  background: var(--tac-bg);
 }
 
 body > main.container {
