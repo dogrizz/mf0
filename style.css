@@ -77,7 +77,9 @@ body > main.container {
   --tac-surface: #1b2027;
   --tac-surface-dim: #171b20;
   --tac-elevated: #232a33;
+  --tac-elevated-rgb: 35, 42, 51;
   --tac-border: #313a45;
+  --tac-border-rgb: 49, 58, 69;
   --tac-border-strong: #4a5563;
   --tac-text: #f2f4f6;
   --tac-text-secondary: #9aa7b3;
@@ -193,13 +195,14 @@ body > main.container {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  background: var(--tac-elevated);
-  border: 1px solid var(--tac-border);
+  background: rgba(var(--tac-elevated-rgb), 0.5);
+  border: 1px solid rgba(var(--tac-border-rgb), 0.6);
   border-radius: 8px;
   padding: 5px 10px;
   color: var(--tac-text);
   white-space: nowrap;
   align-self: flex-start;
+  cursor: default;
 }
 
 .root .chip .dice-white {
@@ -774,6 +777,8 @@ body > main.container {
 
 .root .asset-name-input {
   font-size: 15px;
+  border-color: rgba(var(--tac-border-rgb), 0.6);
+  background: rgba(var(--tac-elevated-rgb), 0.5);
 }
 
 .root .stat-card-name-input:focus,
