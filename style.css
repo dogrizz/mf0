@@ -226,6 +226,10 @@ body > main.container {
   color: var(--tac-warning);
 }
 
+.root .chip .dice-empty {
+  color: var(--tac-text-faint);
+}
+
 .root .badge {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 11px;
