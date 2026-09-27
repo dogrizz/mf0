@@ -1,18 +1,27 @@
-<div>
-  <options-link hide-battle-link />
-  <main class="container">
-    <h1>MF0 Intercept Orbit battles</h1>
-    <div class="battle list row row-cols-1 gap-3">
-      <template v-if="!state.battles || Object.keys(state.battles).length === 0">
-        <span>No battles yet. Grab your bricks, dice and get to it!</span>
-        <a href="index.html">Go to Fleet builder / PPA calculator</a>
-      </template>
-      <div v-for="(entry, id) in state.battles" :key="id" class="battle col row align-items-center justify-content-start gap-2">
-        <span class="col fs-5">{{ 'Battle from ' + new Date(entry.date).toLocaleString() }}</span>
-        <a class="col-2 btn btn-outline-success" :href="resumeHref(id)">Resume</a>
-        <button type="button" class="col-2 btn btn-outline-danger" @click="forfeit(id)">Forfeit</button>
+<div class="root">
+  <div class="topbar">
+    <div class="topbar-heading">
+      <span class="eyebrow">MF0 &middot; Intercept Orbit</span>
+      <h1 class="h1">Saved battles</h1>
+    </div>
+    <options-link hide-battle-link />
+  </div>
+  <template v-if="battleList.length === 0">
+    <div class="empty-state">
+      <p class="empty-state-message">No battles yet. Grab your bricks, dice and get to it!</p>
+      <a class="tactical-nav-link" href="index.html">Go to Fleet builder / PPA calculator</a>
+    </div>
+  </template>
+  <div v-else class="battle-list">
+    <div v-for="entry in battleList" :key="entry.id" class="battle-card">
+      <span class="battle-date">{{ 'Battle from ' + entry.date }}</span>
+      <div class="battle-card-actions">
+        <a class="btn btn-primary" :href="resumeHref(entry.id)" :aria-label="'Resume battle from ' + entry.date">Resume</a>
+        <button type="button" class="btn btn-danger" :aria-label="'Forfeit battle from ' + entry.date" @click="forfeit(entry.id)">
+          Forfeit
+        </button>
       </div>
     </div>
-    <app-footer />
-  </main>
+  </div>
+  <app-footer />
 </div>

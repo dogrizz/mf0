@@ -40,7 +40,7 @@ describe('battles list page', () => {
     const rows = battleRows(document)
     expect(rows).toHaveLength(2)
     rows.forEach((row) => {
-      expect(row.querySelector('.fs-5').textContent).toBe(`Battle from ${new Date(savedAt).toLocaleString()}`)
+      expect(row.querySelector('.battle-date').textContent).toBe(`Battle from ${new Date(savedAt).toLocaleString()}`)
     })
   })
 
