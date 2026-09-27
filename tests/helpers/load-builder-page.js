@@ -108,5 +108,5 @@ export function diceText(shipEl) {
 }
 
 export function hasMechCompany(shipEl) {
-  return shipEl.textContent.includes('Mech company')
+  return shipEl.querySelector('.ace-picker') !== null
 }

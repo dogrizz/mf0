@@ -24,7 +24,7 @@ var SHIP_SYSTEM_ICONS = {
   sensor:
     '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" fill="currentColor"/><path d="M4.5 4.5a5 5 0 000 7M11.5 4.5a5 5 0 010 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
   catapult:
-    '<svg viewBox="0 0 16 16" fill="none"><path d="M2 13L9 6M9 6L13 2M9 6L11 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M3 13h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 12V2M8 2L5 5M8 2l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 }
 
 var TRANSFER_ICON_SVG =
@@ -63,9 +63,9 @@ var VueBattleShipComponent = {
       if (system.class !== ShipSystem.ATTACK) {
         return system.class
       }
-      var text = system.class + ' ' + system.attackType
+      var text = ATTACK_TYPE_LABELS[system.attackType]
       if (system.attackType2) {
-        text = text + '/' + system.attackType2
+        text = text + ' / ' + ATTACK_TYPE_LABELS[system.attackType2]
       }
       return text
     }

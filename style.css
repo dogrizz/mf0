@@ -893,8 +893,8 @@ body > main.container {
 .root .ace-swatch {
   width: 18px;
   height: 18px;
-  border-radius: 50%;
   flex: none;
+  display: inline-flex;
 }
 
 .root .disclosure {

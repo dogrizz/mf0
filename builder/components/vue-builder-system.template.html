@@ -11,9 +11,7 @@
   </div>
   <div v-if="system.class === ShipSystem.ATTACK" class="system-slot-row system-slot-attack-row">
     <select class="field-select system-slot-attack-select" :value="system.attackType" @input="changeAttackType($event.target.value)">
-      <option :value="AttackType.POINT_DEFENSE">Point defence</option>
-      <option :value="AttackType.ASSAULT">Assault</option>
-      <option :value="AttackType.SUPPORT">Support</option>
+      <option v-for="(label, code) in AttackTypeLabels" :key="code" :value="code">{{ label }}</option>
     </select>
     <select
       v-if="secondSystem"
@@ -21,9 +19,7 @@
       :value="system.attackType2"
       @input="changeAttackType2($event.target.value)"
     >
-      <option :value="AttackType.POINT_DEFENSE">Point defence</option>
-      <option :value="AttackType.ASSAULT">Assault</option>
-      <option :value="AttackType.SUPPORT">Support</option>
+      <option v-for="(label, code) in AttackTypeLabels" :key="code" :value="code">{{ label }}</option>
     </select>
     <button
       type="button"

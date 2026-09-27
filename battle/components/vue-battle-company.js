@@ -23,7 +23,7 @@ var MECH_SYSTEM_ICONS = {
     '<svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L14 4V8C14 11.5 11.5 13.8 8 14.5C4.5 13.8 2 11.5 2 8V4L8 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
   comm: '<svg viewBox="0 0 16 16" fill="none"><path d="M3 9a5 5 0 0110 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="12.5" r="1.2" fill="currentColor"/></svg>',
   movement:
-    '<svg viewBox="0 0 16 16" fill="none"><path d="M2 12l4-8 3 5 2-3 3 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M3 5l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 }
 
 var FUEL_ICON_SVG =
