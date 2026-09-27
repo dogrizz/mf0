@@ -19,14 +19,33 @@ swatch itself in `builder/components/vue-builder-mech-companies.js`.
 **Blocked by:** 01 (reuses its `DICE_COLORS`/`diceSegment` helper and the `.dice-*` CSS classes;
 independent of 02)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `companyDice` returns colored segments including a colored ace suffix
-- [ ] The mech company chip renders colors matching ticket 01's mapping
-- [ ] A company's ace suffix color matches its assigned ace swatch color (test all four:
+- [x] `companyDice` returns colored segments including a colored ace suffix
+- [x] The mech company chip renders colors matching ticket 01's mapping
+- [x] A company's ace suffix color matches its assigned ace swatch color (test all four:
       red/blue/green/yellow)
-- [ ] An out-of-fuel or destroyed company still renders an empty chip, no error
-- [ ] Manual smoke pass: deploy a mech company with every system type and each of the four ace
+- [x] An out-of-fuel or destroyed company still renders an empty chip, no error
+- [x] Manual smoke pass: deploy a mech company with every system type and each of the four ace
       assignments, confirm colors match and nothing else in the battle tracker regressed
 
 ## Comments
+
+Implemented as specced: `companyDice` (support/battle.js) now returns `[]` for a destroyed/out-of-fuel
+company, otherwise a `diceSegment` per active system group (`W`/`2Rd`/`B`/`Y`/`G`) plus a colored
+`+<letter>d8` ace suffix when `aceType` is set — the leading letter (R/B/G/Y) maps straight through
+`DICE_COLORS` since `aceType` is always one of the four color names from `ACE_TYPES` in
+`vue-builder-mech-companies.js`. `vue-battle-company.js` renamed its `diceText` computed to
+`diceSegments`; the template swapped the flat interpolation for a `v-for` over segments, matching
+tickets 01/02's pattern exactly. No new CSS needed — reused the existing `.dice-*` rules.
+
+Updated `tests/support.test.js`'s `companyDice` describe block to the new segment-array contract,
+including a case per ace color. `npx vitest run`: 58/58 passing. `npx prettier --check` clean on all
+changed files. `/code-review medium`: no findings.
+
+Manual smoke pass via Playwright (`nix-shell`, per this machine's local setup — see CLAUDE.local.md):
+served the worktree over `python3 -m http.server` (file:// blocks the synchronous XHR the components
+use to load their templates), deployed two mech companies off a carrier with a double catapult, gave
+one every system type plus a red ace and the other a blue ace, confirmed the chip renders `2W2Rd1B1Y1G`
+with each segment in its mapped color and the ace suffix (`+Rd8`/`+Bd8`) tinted to match its assigned
+ace color — no console/page errors.

@@ -217,12 +217,12 @@ describe('companyDice', () => {
     return { origin: 'Ship', systems: [], destroyed: false, outOfFuel: false, ...overrides }
   }
 
-  it('returns an empty string when destroyed or out of fuel', () => {
-    expect(companyDice(company({ destroyed: true }))).toBe('')
-    expect(companyDice(company({ outOfFuel: true }))).toBe('')
+  it('returns no segments when destroyed or out of fuel', () => {
+    expect(companyDice(company({ destroyed: true }))).toEqual([])
+    expect(companyDice(company({ outOfFuel: true }))).toEqual([])
   })
 
-  it('builds notation from each active system type, excluding disabled systems', () => {
+  it('builds colored segments from each active system type, excluding disabled systems', () => {
     const testCompany = company({
       systems: [
         { class: 'system' },
@@ -233,12 +233,23 @@ describe('companyDice', () => {
         { class: 'movement' },
       ],
     })
-    expect(companyDice(testCompany)).toBe('1W2Rd1B1Y1G')
+    expect(companyDice(testCompany)).toEqual([
+      seg('1W', 'white'),
+      seg('2Rd', 'red'),
+      seg('1B', 'blue'),
+      seg('1Y', 'yellow'),
+      seg('1G', 'green'),
+    ])
   })
 
-  it('appends an ace die keyed off the first letter of aceType', () => {
-    const testCompany = company({ systems: [{ class: 'system' }], aceType: 'pilot' })
-    expect(companyDice(testCompany)).toBe('1W+Pd8')
+  // aceType is always one of the four colors from builder/components/vue-builder-mech-companies.js's
+  // ACE_TYPES (red/blue/green/yellow), so the suffix's leading letter (R/B/G/Y) maps straight through
+  // DICE_COLORS to the same color as the ace's assigned swatch.
+  it("appends an ace suffix colored to match the company's assigned ace color", () => {
+    expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'red' }))).toEqual([seg('1W', 'white'), seg('+Rd8', 'red')])
+    expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'blue' }))).toEqual([seg('1W', 'white'), seg('+Bd8', 'blue')])
+    expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'green' }))).toEqual([seg('1W', 'white'), seg('+Gd8', 'green')])
+    expect(companyDice(company({ systems: [{ class: 'system' }], aceType: 'yellow' }))).toEqual([seg('1W', 'white'), seg('+Yd8', 'yellow')])
   })
 })
 
