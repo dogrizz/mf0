@@ -13,7 +13,7 @@
       v-html="transferIconSvg"
     ></button>
   </div>
-  <span class="chip">{{ diceText }}</span>
+  <span class="chip"><span v-for="(segment, i) in diceSegments" :key="i" :class="'dice-' + segment.color">{{ segment.text }}</span></span>
   <div class="system-list">
     <label v-for="(system, i) in ship.systems" :key="i" class="system-row" :class="{ 'is-disabled': system.disabled }">
       <span class="system-icon" v-html="systemIcon(system.class)"></span>

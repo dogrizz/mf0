@@ -40,7 +40,7 @@ var VueBattleShipComponent = {
     battle: { type: Object, required: true },
   },
   setup: function (props) {
-    var diceText = Vue.computed(function () {
+    var diceSegments = Vue.computed(function () {
       return battleDice(props.ship)
     })
 
@@ -110,7 +110,7 @@ var VueBattleShipComponent = {
     }
 
     return {
-      diceText: diceText,
+      diceSegments: diceSegments,
       isCaptured: isCaptured,
       originalFleetName: originalFleetName,
       systemText: systemText,

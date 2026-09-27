@@ -125,29 +125,32 @@ describe('builderDice', () => {
 })
 
 describe('battleDice', () => {
-  it('returns an empty string for a destroyed ship', () => {
-    expect(battleDice(ship({ destroyed: true }))).toBe('')
+  it('returns no segments for a destroyed ship', () => {
+    expect(battleDice(ship({ destroyed: true }))).toEqual([])
   })
 
   it('counts active internal systems instead of a fixed baseline', () => {
-    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'internal' }] }))).toBe('2W')
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'internal' }] }))).toEqual([seg('2W', 'white')])
   })
 
   it('drops the W notation entirely when a battle-tracked ship has taken internal damage', () => {
     // Once internal systems exist (post-migration, mid-battle), disabling all of them shows no W
     // token at all rather than a 2W fallback or an explicit 0W — consistent with how every other
     // system category in this function omits its token at a zero active count.
-    expect(battleDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toBe('')
+    expect(battleDice(ship({ systems: [{ class: 'internal', disabled: true }] }))).toEqual([])
   })
 
   it('appends 1G for frigates but not capitals', () => {
-    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }] }))).toBe('1W1G')
-    expect(battleDice(ship({ class: 'capital', systems: [{ class: 'internal' }] }))).toBe('1W')
+    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }] }))).toEqual([seg('1W', 'white'), seg('1G', 'green')])
+    expect(battleDice(ship({ class: 'capital', systems: [{ class: 'internal' }] }))).toEqual([seg('1W', 'white')])
   })
 
   it('notes a single catapult as 1K and multiple catapults as 3K', () => {
-    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }] }))).toBe('1W1K')
-    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }, { class: 'catapult' }] }))).toBe('1W3K')
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }] }))).toEqual([seg('1W', 'white'), seg('1K', 'black')])
+    expect(battleDice(ship({ systems: [{ class: 'internal' }, { class: 'catapult' }, { class: 'catapult' }] }))).toEqual([
+      seg('1W', 'white'),
+      seg('3K', 'black'),
+    ])
   })
 
   it('counts active defense and sensor systems, excluding disabled ones', () => {
@@ -160,7 +163,7 @@ describe('battleDice', () => {
         { class: 'sensor' },
       ],
     })
-    expect(battleDice(testShip)).toBe('1W1B2Y')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('1B', 'blue'), seg('2Y', 'yellow')])
   })
 
   it('excludes disabled catapults, defense, and sensor systems from the notation', () => {
@@ -172,28 +175,32 @@ describe('battleDice', () => {
         { class: 'sensor', disabled: true },
       ],
     })
-    expect(battleDice(testShip)).toBe('1W')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white')])
   })
 
   it('combines internal, class, and attack notation in order for a frigate', () => {
-    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] }))).toBe('1W1GRa2')
+    expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] }))).toEqual([
+      seg('1W', 'white'),
+      seg('1G', 'green'),
+      seg('Ra2', 'red'),
+    ])
   })
 })
 
 describe('battleDice — attack notation', () => {
   it('gives an un-split attack system its full weight of 2', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] })
-    expect(battleDice(testShip)).toBe('1WRa2')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra2', 'red')])
   })
 
   it('splits a dual-type attack system into 1 point per attack type', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a', attackType2: 's' }] })
-    expect(battleDice(testShip)).toBe('1WRa1Rs1')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra1', 'red'), seg('Rs1', 'red')])
   })
 
   it('excludes disabled attack systems from the notation', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a', disabled: true }] })
-    expect(battleDice(testShip)).toBe('1W')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white')])
   })
 
   it('caps combined attack value per type at 4 and switches to the 2+d8 notation above 3', () => {
@@ -201,7 +208,7 @@ describe('battleDice — attack notation', () => {
       class: 'capital',
       systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }, { class: 'attack', attackType: 'a' }],
     })
-    expect(battleDice(testShip)).toBe('1WRa2+d8')
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra2+d8', 'red')])
   })
 })
 
