@@ -54,13 +54,13 @@ var VueBuilderShipComponent = {
       recalculatePPA()
     }
 
-    var diceText = Vue.computed(function () {
+    var diceSegments = Vue.computed(function () {
       return builderDice(props.ship)
     })
 
     return {
       ShipType: ShipType,
-      diceText: diceText,
+      diceSegments: diceSegments,
       changeName: changeName,
       changeClass: changeClass,
       remove: remove,

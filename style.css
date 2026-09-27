@@ -14,7 +14,7 @@
 }
 
 .captured {
-  color: var(--mf0-captured-text)
+  color: var(--mf0-captured-text);
 }
 
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
@@ -200,6 +200,30 @@ body > main.container {
   color: var(--tac-text);
   white-space: nowrap;
   align-self: flex-start;
+}
+
+.root .chip .dice-white {
+  color: var(--tac-text);
+}
+
+.root .chip .dice-black {
+  color: var(--tac-text-secondary);
+}
+
+.root .chip .dice-green {
+  color: var(--tac-success);
+}
+
+.root .chip .dice-red {
+  color: var(--tac-danger);
+}
+
+.root .chip .dice-blue {
+  color: var(--tac-focus);
+}
+
+.root .chip .dice-yellow {
+  color: var(--tac-warning);
 }
 
 .root .badge {
@@ -916,4 +940,3 @@ body > main.container {
   flex-direction: column;
   gap: 20px;
 }
-
