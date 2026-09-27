@@ -92,7 +92,7 @@ management layer.
 ### Issue tracker
 
 Issues and specs live as local markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
-When picking up a task make sure to do it on a fresh worktree based off refreshed main.
+When picking up a task make sure to do it on a fresh worktree based off refreshed main to be sure we won't introduce unnecessary conflicts. Finish up implementation with a PR.
 
 ### Domain docs
 
