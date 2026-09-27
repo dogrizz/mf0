@@ -163,7 +163,7 @@ describe('fleet builder page', () => {
     expect(state.players[1]).toMatchObject({ ppa: 6, tas: 0, systems: 0 })
     // The scoreboard's live PPA/total display for fleet A's row, not just localStorage.
     const [rowA] = scoreboardRows(document)
-    const displaySpans = rowA.querySelectorAll('.form-label')
+    const displaySpans = rowA.querySelectorAll('.stat-readout .v')
     expect(displaySpans[0].textContent).toBe('4')
     expect(displaySpans[1].textContent).toBe(String(4 * (3 + 1)))
 

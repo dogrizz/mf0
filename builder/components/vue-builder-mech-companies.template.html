@@ -1,31 +1,21 @@
-<div
-  v-if="catapults.length > 0"
-  class="col row m-0 p-1 gap-1 justify-content-start align-items-center row-cols-3"
->
-  <div class="col-3">
-    <div v-for="(_, i) in catapults" :key="i">Mech company</div>
-  </div>
-  <label class="col-2" :hidden="fleet.aceSelected && !ship.hasAce">
-    Has ace
-    <input
-      type="checkbox"
-      :disabled="fleet.aceSelected && !ship.hasAce"
-      :checked="ship.hasAce"
-      @click="setAce($event.target.checked)"
-    />
+<div v-if="catapults.length > 0" class="ace-picker">
+  <span class="eyebrow">Mech company</span>
+  <label v-if="!(fleet.aceSelected && !ship.hasAce)" class="check-toggle">
+    <input type="checkbox" :checked="ship.hasAce" @click="setAce($event.target.checked)" />
+    <span>Eligible for an ace</span>
   </label>
-  <div class="col">
-    <select
-      class="form-control"
-      :value="ship.aceType"
-      :disabled="!ship.hasAce"
-      :hidden="!ship.hasAce"
-      @input="changeAceType($event.target.value)"
+  <div v-if="ship.hasAce" class="ace-swatches">
+    <button
+      v-for="ace in aceTypes"
+      :key="ace.value"
+      type="button"
+      class="ace-swatch-btn"
+      :class="{ 'is-selected': ship.aceType === ace.value }"
+      :aria-label="ace.label"
+      @click="changeAceType(ace.value)"
     >
-      <option value="red">Red Ace</option>
-      <option value="blue">Blue Ace</option>
-      <option value="green">Green Ace</option>
-      <option value="yellow">Yellow Ace</option>
-    </select>
+      <span class="ace-swatch" :style="{ background: ace.color }"></span>
+      <span>{{ ace.label }}</span>
+    </button>
   </div>
 </div>

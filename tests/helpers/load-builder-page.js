@@ -70,43 +70,41 @@ export function addPlayerButton(document) {
 }
 
 export function syncCheckbox(document) {
-  return document.querySelector('.form-check-input')
+  return document.querySelector('.sync-check')
 }
 
-// The scoreboard row (name/HVA/TAs/systems/PPA/total) rendered per player above the fleet builder
-// accordion, in player order.
+// The scoreboard stat-card (name/HVA/TAs/systems/PPA/total) rendered per player, in player order.
 export function scoreboardRows(document) {
-  const container = document.querySelector('.row.gap-3.border')
-  return [...container.children].slice(1, -1)
+  return [...document.querySelectorAll('.scoreboard .stat-card')]
 }
 
-// The fleet builder block (name, ships, "Add ship") rendered per player inside the accordion, in
-// player order. Scoped under .accordion-body since a scoreboard row also matches the fleet
-// container's own class list.
+// The fleet builder block (name, ships, "Add ship") rendered per player inside the fleet-builder
+// disclosure (always in the DOM - see vue-builder-app.template.html's v-show - regardless of
+// whether the disclosure is currently expanded), in player order.
 export function fleetElements(document) {
-  return [...document.querySelector('.accordion-body .row-gap-1.row-cols-1').children]
+  return [...document.querySelectorAll('.disclosure-body .fleet-section')]
 }
 
 export function addShipButton(fleetEl) {
-  return fleetEl.querySelector('.btn-outline-success')
+  return fleetEl.querySelector('.btn-add')
 }
 
 export function shipElements(fleetEl) {
-  return [...fleetEl.querySelectorAll('.ship')]
+  return [...fleetEl.querySelectorAll('[data-kind="ship"]')]
 }
 
 export function shipClassSelect(shipEl) {
-  return shipEl.querySelector('.ship-systems .mb-2 select')
+  return shipEl.querySelector('.ship-class-select')
 }
 
-// The per-slot system class dropdowns (Attack/Defence/Sensors/Catapult), excluding the ship class
-// select above them.
+// The per-slot system class dropdowns (Attack/Defence/Sensors/Catapult), excluding the attack-type
+// dropdown(s) a slot reveals once it's set to Attack.
 export function systemSelects(shipEl) {
-  return [...shipEl.querySelectorAll('.ship-systems > div:not(.mb-2) > select')]
+  return [...shipEl.querySelectorAll('.system-slot-class-select')]
 }
 
 export function diceText(shipEl) {
-  return shipEl.querySelector('.col-2').textContent
+  return shipEl.querySelector('.chip').textContent
 }
 
 export function hasMechCompany(shipEl) {

@@ -10,6 +10,17 @@ var vueBuilderMechCompaniesTemplate = (function () {
   return xhr.responseText
 })()
 
+// The ace-type picker shows ace color as a swatch rather than text alone (tactical redesign
+// ticket 02), reusing the same red/blue/yellow hues the redesign already assigns to
+// danger/focus/warning status elsewhere, plus success-green for the "green ace" option not
+// otherwise represented in the palette.
+var ACE_TYPES = [
+  { value: 'red', label: 'Red ace', color: 'var(--tac-danger)' },
+  { value: 'blue', label: 'Blue ace', color: 'var(--tac-focus)' },
+  { value: 'green', label: 'Green ace', color: 'var(--tac-success)' },
+  { value: 'yellow', label: 'Yellow ace', color: 'var(--tac-warning)' },
+]
+
 var VueBuilderMechCompaniesComponent = {
   props: {
     ship: { type: Object, required: true },
@@ -39,6 +50,7 @@ var VueBuilderMechCompaniesComponent = {
       catapults: catapults,
       setAce: setAce,
       changeAceType: changeAceType,
+      aceTypes: ACE_TYPES,
     }
   },
   template: vueBuilderMechCompaniesTemplate,

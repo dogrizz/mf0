@@ -1,26 +1,18 @@
-<div class="ship col border border-black rounded-3 p-2 bg-dark">
-  <div class="row row-gap-2 justify-content-start align-items-center">
-    <div class="col-5">
-      <input type="text" class="form-control" :value="ship.name" @input="changeName($event.target.value)" />
-    </div>
-    <div class="col-1">
-      <button type="button" class="btn btn-sm btn-outline-light" title="Copy" @click="duplicate">📋</button>
-    </div>
-    <div class="col-1">
-      <button type="button" class="btn btn-sm btn-outline-danger" title="Remove" @click="remove">×</button>
-    </div>
-    <span class="col-2">{{ diceText }}</span>
+<div class="asset-card" data-kind="ship">
+  <div class="asset-card-head">
+    <input class="asset-name-input" :value="ship.name" @input="changeName($event.target.value)" />
+    <button type="button" class="icon-btn" title="Duplicate ship" aria-label="Duplicate ship" @click="duplicate" v-html="duplicateIconSvg"></button>
+    <button type="button" class="icon-btn" title="Remove ship" aria-label="Remove ship" @click="remove" v-html="removeIconSvg"></button>
   </div>
-  <div class="ship-systems row row-cols-1 p-2 justify-content-start gap-2">
-    <div class="col row mb-2">
-      <select class="form-control" :value="ship.class" @input="changeClass($event.target.value)">
-        <option :value="ShipType.CAPITAL">Capital</option>
-        <option :value="ShipType.FRIGATE">Frigate</option>
-      </select>
-    </div>
-    <template v-if="ship.hasOwnProperty('systems')">
-      <builder-system v-for="(system, i) in ship.systems" :key="i" :system="system" />
-    </template>
+  <div class="asset-card-row">
+    <select class="field-select ship-class-select" :value="ship.class" @input="changeClass($event.target.value)">
+      <option :value="ShipType.CAPITAL">Capital</option>
+      <option :value="ShipType.FRIGATE">Frigate</option>
+    </select>
+    <span class="chip">{{ diceText }}</span>
+  </div>
+  <div v-if="ship.hasOwnProperty('systems')" class="system-slot-list">
+    <builder-system v-for="(system, i) in ship.systems" :key="i" :system="system" />
   </div>
   <builder-mech-companies :ship="ship" :fleet="fleet" />
 </div>
