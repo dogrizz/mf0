@@ -25,16 +25,29 @@ This ticket also introduces the shared groundwork tickets 02 and 03 reuse:
 
 **Blocked by:** none
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `shipSystemsDice`/`builderDice` return colored segments instead of a flat string
-- [ ] The fleet builder's ship dice chip visually colors each letter group per the mapping table in
+- [x] `shipSystemsDice`/`builderDice` return colored segments instead of a flat string
+- [x] The fleet builder's ship dice chip visually colors each letter group per the mapping table in
       `../spec.md` (build a frigate with a catapult, a defense system, a sensor, and both a
       single-type and dual-type attack system to exercise every color)
-- [ ] A destroyed ship still renders an empty chip, no error
-- [ ] `style.css` has one rule per die color, scoped under `.chip`, with no new hex values
+- [x] A destroyed ship still renders an empty chip, no error
+- [x] `style.css` has one rule per die color, scoped under `.chip`, with no new hex values
       introduced (only existing `--tac-*` tokens)
-- [ ] Manual smoke pass: open `index.html`, add ships covering every system type, confirm colors
+- [x] Manual smoke pass: open `index.html`, add ships covering every system type, confirm colors
       match and nothing else in the builder regressed
 
 ## Comments
+
+Merged as PR #32. Introduced the shared groundwork tickets 02/03 reuse: `support/common.js` got a
+`DICE_COLORS` letter→color-name map and a `diceSegment(text, letterKey)` helper, and
+`shipSystemsDice`/`builderDice` now build arrays of `{ text, color }` segments instead of
+concatenated strings. `vue-builder-ship.js`/`.template.html`'s `diceText` became `diceSegments`,
+rendered as one `<span class="dice-<color>">` per segment inside `.chip`. `style.css` got one
+`.root .chip .dice-<color>` rule per die color, all existing `--tac-*` tokens, no new hex values.
+`support/battle.js`'s `battleDice` flattened the new segment array back into a string at the time,
+since ticket 02 (since also merged) owned the battle tracker's own colored rendering.
+
+`npx vitest run` (58/58), `npx prettier --check`, and `/code-review medium` all clean. Manual
+Playwright smoke test against the live fleet builder (frigate with catapult/defense/sensor/attack
+systems) confirmed chip segment colors matched the spec's mapping.

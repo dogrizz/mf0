@@ -44,25 +44,25 @@ their templates):
 **Blocked by:** none (ticket 01 should land first so its `style.css` additions exist to reuse, but
 this ticket can be scoped/started independently)
 
-**Status:** ready
+**Status:** done
 
-- [ ] `index.html` loads the same Google Fonts link as `battle.html`; same call on Bootstrap
+- [x] `index.html` loads the same Google Fonts link as `battle.html`; same call on Bootstrap
       CDN tags as ticket 01 made, applied consistently
-- [ ] Scoreboard uses `stat-card`s; the sync-disabled TAs/Systems fields visibly explain why
+- [x] Scoreboard uses `stat-card`s; the sync-disabled TAs/Systems fields visibly explain why
       they're disabled
-- [ ] Ship grid reflows via `auto-fill minmax(...)` at any width from 390px to 1440px
-- [ ] Duplicate/remove ship buttons are real `icon-btn`s with `aria-label`s, no bare emoji
-- [ ] System-slot editor keeps its dropdown-based editing but adopts the shared icon/typography
+- [x] Ship grid reflows via `auto-fill minmax(...)` at any width from 390px to 1440px
+- [x] Duplicate/remove ship buttons are real `icon-btn`s with `aria-label`s, no bare emoji
+- [x] System-slot editor keeps its dropdown-based editing but adopts the shared icon/typography
       language; the second-attack-type `+`/`-` toggle gets a clearer affordance than a bare `+`/`-`
       button
-- [ ] Ace picker shows ace-type as color, not text-only, once a ship has a catapult
-- [ ] Fleet-builder accordion (or its replacement) still lets a player collapse/expand the builder
+- [x] Ace picker shows ace-type as color, not text-only, once a ship has a catapult
+- [x] Fleet-builder accordion (or its replacement) still lets a player collapse/expand the builder
       independent of the scoreboard
-- [ ] `tests/helpers/load-builder-page.js` selectors updated to match new markup; no change to what
+- [x] `tests/helpers/load-builder-page.js` selectors updated to match new markup; no change to what
       `tests/builder.test.js` asserts
-- [ ] `npx vitest run` passes
-- [ ] `npx prettier --check` passes on every changed `.js` file
-- [ ] Manual smoke pass at 390px, 834px, and 1440px: add a player, add a ship, add/edit systems
+- [x] `npx vitest run` passes
+- [x] `npx prettier --check` passes on every changed `.js` file
+- [x] Manual smoke pass at 390px, 834px, and 1440px: add a player, add a ship, add/edit systems
       (including a second attack type), add a catapult + pick an ace, hit Fight! — confirm the
       handoff to `battle.html` is unaffected and PPA/total still match pre-change output
 
