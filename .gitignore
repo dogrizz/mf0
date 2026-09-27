@@ -1,6 +1,11 @@
 # Lock files aren't tracked in this repo
 package-lock.json
 
+# Local machine setup notes/tooling (e.g. NixOS-specific Playwright shell) - never commit
+# machine-specific environment caveats to the repo
+CLAUDE.local.md
+shell.nix
+
 # Logs
 logs
 *.log
@@ -108,3 +113,7 @@ dist
 
 # Mac
 .DS_Store
+
+# Playwright run output
+test-results/
+playwright-report/
