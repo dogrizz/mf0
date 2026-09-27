@@ -22,6 +22,7 @@ var VueBuilderShipTrackerComponent = {
 
     return {
       setSync: setSync,
+      fleetAccent: fleetAccentColor,
     }
   },
   template: vueBuilderShipTrackerTemplate,

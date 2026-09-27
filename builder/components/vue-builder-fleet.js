@@ -10,14 +10,25 @@ var vueBuilderFleetTemplate = (function () {
   return xhr.responseText
 })()
 
+// Matches battle/components/vue-battle-fleet.js's pluralize - kept as its own copy here since
+// builder.js and battle.js never share component files (see CLAUDE.md's architecture notes).
+function pluralize(count, singular, plural) {
+  return count + ' ' + (count === 1 ? singular : plural)
+}
+
 var VueBuilderFleetComponent = {
   props: {
     fleet: { type: Object, required: true },
+    accent: { type: String, required: true },
   },
   setup: function (props) {
     // Mirrors FleetComponent's oninit: back-fills `ships` for fleets saved before that field
     // existed.
     migrateFleetShips(props.fleet)
+
+    var meta = Vue.computed(function () {
+      return pluralize(props.fleet.ships.length, 'ship', 'ships')
+    })
 
     function add() {
       addShip(props.fleet)
@@ -25,6 +36,7 @@ var VueBuilderFleetComponent = {
     }
 
     return {
+      meta: meta,
       add: add,
     }
   },

@@ -13,6 +13,11 @@ var vueBuilderAppTemplate = (function () {
   return xhr.responseText
 })()
 
+// Fleet-builder disclosure toggle (replaces Bootstrap's accordion chevron, tactical redesign
+// ticket 02) - rotated 90deg via the .is-open class rather than swapped for a second icon.
+var CHEVRON_ICON_SVG =
+  '<svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+
 var VueBuilderAppComponent = {
   props: {
     state: { type: Object, required: true },
@@ -45,6 +50,8 @@ var VueBuilderAppComponent = {
       addPlayer: addPlayer,
       toggleTrackShips: toggleTrackShips,
       fight: fight,
+      fleetAccent: fleetAccentColor,
+      chevronIconSvg: CHEVRON_ICON_SVG,
     }
   },
   template: vueBuilderAppTemplate,

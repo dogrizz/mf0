@@ -19,10 +19,10 @@
 
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
    grid cell as <main>, without pulling it out of flow the way float does. `margin: 0` matches
-   what Bootstrap's reboot.css already zeroes out on builder.html (not yet redesigned by ticket
-   02) - needed explicitly here now that battle.html/battles.html (tickets 01/03) no longer load
-   Bootstrap at all, otherwise the browser's default 8px body margin shows as a pale border around
-   `.root`'s dark background. */
+   what Bootstrap's reboot.css used to zero out on builder.html before ticket 02 dropped Bootstrap
+   there too - needed explicitly here now that none of the three pages load Bootstrap at all,
+   otherwise the browser's default 8px body margin shows as a pale border around `.root`'s dark
+   background. */
 body {
   display: grid;
   margin: 0;
@@ -61,14 +61,15 @@ body > main.container {
 
 /* ---------------------------------------------------------------------------------------------
  * Tactical redesign (ticket 01: .scratch/tactical-redesign/issues/01-battle-tracker-tactical-redesign.md,
+ * ticket 02: .scratch/tactical-redesign/issues/02-fleet-builder-tactical-redesign.md,
  * ticket 03: .scratch/tactical-redesign/issues/03-battles-list-tactical-redesign.md, design
  * language: .scratch/tactical-redesign/spec.md).
  *
- * Everything below is scoped under `.root` (the wrapper a redesigned page's Vue app mounts into)
- * or given a `tactical-*` class name, so builder.html - not yet redesigned by ticket 02 - keeps
- * its current Bootstrap look untouched. `.root .badge`/`.root .btn` in particular must stay
- * scoped this way since Bootstrap already defines bare `.badge`/`.btn` globally on that
- * still-Bootstrap page.
+ * Everything below is scoped under `.root` (the wrapper each redesigned page's Vue app mounts
+ * into) or given a `tactical-*` class name. None of the three pages load Bootstrap any more, so
+ * nothing outside `.root` needs to worry about colliding with a bare Bootstrap `.badge`/`.btn`
+ * any more either - the scoping is kept anyway for consistency and in case a future page reuses
+ * Bootstrap before adopting this look.
  * --------------------------------------------------------------------------------------------- */
 
 :root {
@@ -705,5 +706,221 @@ body > main.container {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* Fleet builder (ticket 02: .scratch/tactical-redesign/issues/02-fleet-builder-tactical-redesign.md).
+ * Patterns specific to the build-time editor - system-slot dropdowns, the ace color-swatch picker,
+ * and the fleet-builder disclosure that replaces Bootstrap's accordion - live here rather than in
+ * the shared block above, since no other page needs them.
+ */
+
+.root .fleet-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.root .btn-lg {
+  font-size: 16px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  justify-content: center;
+}
+
+.root .btn-add {
+  border-style: dashed;
+  justify-content: center;
+  align-self: flex-start;
+}
+
+.root .stat-card-name-input,
+.root .asset-name-input {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: var(--tac-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 2px 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.root .stat-card-name-input {
+  font-size: 16px;
+}
+
+.root .asset-name-input {
+  font-size: 15px;
+}
+
+.root .stat-card-name-input:focus,
+.root .asset-name-input:focus {
+  outline: 2px solid var(--tac-focus);
+  outline-offset: 1px;
+  background: var(--tac-elevated);
+}
+
+.root .field-note {
+  font-size: 11px;
+  color: var(--tac-text-faint);
+  margin-top: -6px;
+}
+
+.root .asset-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.root .field-select {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  color: var(--tac-text);
+  background: var(--tac-elevated);
+  border: 1px solid var(--tac-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-height: 36px;
+  flex: 1;
+  min-width: 0;
+}
+
+.root .field-select:focus {
+  outline: 2px solid var(--tac-focus);
+  outline-offset: 1px;
+}
+
+.root .ship-class-select {
+  flex: none;
+  width: auto;
+}
+
+.root .system-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.root .system-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.root .system-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.root .system-slot-attack-row {
+  padding-left: 24px;
+}
+
+.root .icon-btn.is-active {
+  border-color: var(--tac-warning);
+  color: var(--tac-warning);
+}
+
+.root .check-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.root .check-toggle input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  accent-color: var(--tac-focus);
+}
+
+.root .ship-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.root .ace-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--tac-border);
+}
+
+.root .ace-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.root .ace-swatch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid var(--tac-border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--tac-text-secondary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.root .ace-swatch-btn:hover {
+  border-color: var(--tac-border-strong);
+}
+
+.root .ace-swatch-btn.is-selected {
+  border-color: var(--tac-border-strong);
+  background: var(--tac-elevated);
+  color: var(--tac-text);
+}
+
+.root .ace-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.root .disclosure {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.root .disclosure-toggle {
+  align-self: flex-start;
+}
+
+.root .disclosure-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  transition: transform 0.15s ease;
+}
+
+.root .disclosure-icon.is-open {
+  transform: rotate(90deg);
+}
+
+.root .disclosure-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 

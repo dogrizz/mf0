@@ -67,3 +67,48 @@ this ticket can be scoped/started independently)
       handoff to `battle.html` is unaffected and PPA/total still match pre-change output
 
 ## Comments
+
+Implemented in a fresh worktree off refreshed main (per docs/agents/issue-tracker.md), since
+ticket 03 had already landed and this ticket has no ordering dependency on it.
+
+`index.html` dropped Bootstrap CDN tags entirely (CSS + JS bundle) and switched to the same Google
+Fonts links as battle.html/battles.html, matching tickets 01/03's call rather than leaving builder
+on a mixed Bootstrap/tactical look. Reused `stat-card`/`asset-card`/`asset-grid`/`icon-btn`/`chip`/
+`badge`/`check-toggle` verbatim from style.css; added builder-only classes for the system-slot
+editor, the disclosure (accordion replacement), and the ace color-swatch picker.
+
+The Bootstrap accordion became a plain disclosure button + `v-show` (not `v-if`) on the body -
+`v-if` would have unmounted `builder-ship-tracker` while collapsed, which is harmless for state
+(all of it lives in `state.players`, not local component refs) but would have made
+`tests/builder.test.js`'s existing assertions - which query fleet/ship elements immediately after
+adding a player, without ever clicking to expand the disclosure - fail, since Bootstrap's original
+collapse only ever hid the content via CSS the jsdom test harness never loads, not via removing it
+from the DOM. `v-show` preserves that always-in-DOM behavior for free.
+
+The system-slot editor's class-select + up-to-two attack-type selects + toggle button didn't fit
+one row without truncating option text (verified via Playwright smoke screenshots) - split into
+two stacked rows per slot (class select on its own row, attack-type selects + toggle indented
+below when class is Attack) rather than cramming everything into the single-row layout the ticket
+sketched.
+
+Ace-picker keeps the existing single-ace-per-fleet constraint (`fleet.aceSelected`) unchanged, just
+switched from a `:hidden` checkbox to a `v-if`'d one - a presentation-only cleanup, not a behavior
+change (support/builder.js's setAce/setShipAce untouched).
+
+`tests/helpers/load-builder-page.js` selectors updated to the new markup; `tests/builder.test.js`
+assertions unchanged except one inline `.form-label` → `.stat-readout .v` selector swap (a
+Bootstrap class embedded directly in the test body, not routed through a helper — same precedent
+as `tests/battle.test.js`'s inline `.asset-name` selector from ticket 01).
+
+`npx vitest run` (56 tests) and `npx prettier --check` on every changed `.js` file both pass.
+Manual smoke pass done via Playwright screenshots (nix-shell, see CLAUDE.local.md) at 390/834/1440px:
+added a player, added a ship, set a system to Attack with a second attack type, added a catapult,
+picked a blue ace, hit Fight! - confirmed the handoff to battle.html and that PPA (5) matched
+before and after. No console/page errors at any width.
+
+`/code-review` flagged one issue, fixed: `REMOVE_ICON_SVG` was declared with the same global `var`
+name in three different builder component files (system/ship/player) - since none of them are
+IIFE-wrapped and all load as classic `<script>`s sharing one global scope, the last-loaded file's
+value silently won everywhere, so the system-slot's "remove second attack type" button rendered
+the wrong icon. Renamed each to a file-scoped name (`SHIP_REMOVE_ICON_SVG`,
+`PLAYER_REMOVE_ICON_SVG`, `SYSTEM_SLOT_REMOVE_ICON_SVG`/`SYSTEM_SLOT_ADD_ICON_SVG`).
