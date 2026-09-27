@@ -20,20 +20,46 @@
 **Blocked by:** none (independent of ticket 02; only depends on ticket 01's shared `style.css`
 classes existing to reuse)
 
-**Status:** ready
+**Status:** done
 
-- [ ] `battles.html` loads the same Google Fonts link; Bootstrap CDN tags decided consistently with
+- [x] `battles.html` loads the same Google Fonts link; Bootstrap CDN tags decided consistently with
       tickets 01/02
-- [ ] Each saved-battle row reads as a card (date, Resume, Forfeit) at any width from 390px to
+- [x] Each saved-battle row reads as a card (date, Resume, Forfeit) at any width from 390px to
       1440px — no fixed Bootstrap column widths
-- [ ] Resume and Forfeit are visually distinct (primary vs. destructive), each with real button
+- [x] Resume and Forfeit are visually distinct (primary vs. destructive), each with real button
       labels/`aria-label`s
-- [ ] Empty state uses the page's actual typography, not bare unstyled text
-- [ ] `tests/helpers/load-battles-page.js` selectors updated to match new markup; no change to what
+- [x] Empty state uses the page's actual typography, not bare unstyled text
+- [x] `tests/helpers/load-battles-page.js` selectors updated to match new markup; no change to what
       `tests/battles.test.js` asserts
-- [ ] `npx vitest run` passes
-- [ ] `npx prettier --check` passes on every changed `.js` file
-- [ ] Manual smoke pass at 390px, 834px, and 1440px: save two+ battles, resume one, forfeit one,
+- [x] `npx vitest run` passes
+- [x] `npx prettier --check` passes on every changed `.js` file
+- [x] Manual smoke pass at 390px, 834px, and 1440px: save two+ battles, resume one, forfeit one,
       confirm the empty state renders correctly once the list is emptied
 
 ## Comments
+
+Implemented battles.html/battles.js/battles/vue-battles-app.{js,template.html} in the tactical
+redesign's visual language, dropping Bootstrap entirely from the page (matching battle.html's
+ticket-01 precedent) and reusing style.css's shared design tokens. New page-specific classes added
+to style.css: `.battle-list`/`.battle-card`/`.battle-date`/`.battle-card-actions` (visual weight
+matched to `asset-card` without reusing its column layout/capitalize/icon-btn-head structure, which
+don't fit a date+two-buttons row) plus reusable `.btn-primary`/`.btn-danger` modifiers for
+Resume/Forfeit.
+
+Forfeit still deletes immediately on click with no confirm step, per this ticket's note that this
+is a judgment call, not a required change — left as-is.
+
+`tests/helpers/load-battles-page.js` selectors updated to the new markup; `tests/battles.test.js`
+assertions unchanged except one inline `.fs-5` → `.battle-date` selector swap (a Bootstrap class
+embedded directly in the test body, not routed through a helper — same precedent as
+`tests/battle.test.js`'s inline `.asset-name` selector from ticket 01).
+
+Added `tests/e2e/battles-tactical.spec.js` (Playwright, real Chromium) covering edge-to-edge
+rendering, no horizontal overflow at 390px, multi-card list + forfeit-to-empty flow, and resume
+navigation — all 9 e2e tests (5 existing battle-tracker + 4 new) pass. Manual smoke pass done via
+screenshots at 390/834/1440px plus the empty state.
+
+`/code-review` flagged two issues, both fixed: a stale style.css comment still describing
+battles.html as not-yet-redesigned/Bootstrap-only, and `formatDate()` being called three times per
+row on every render — replaced with a `battleList` computed that formats each date once and reuses
+it for the label and both aria-labels.

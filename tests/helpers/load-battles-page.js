@@ -56,26 +56,20 @@ export function readBattlesState(dom) {
   return raw === null ? null : JSON.parse(raw)
 }
 
-// The container battles are listed in - matched on both classes since each individual battle row
-// also carries the shared `battle` class.
-function battlesContainer(document) {
-  return document.querySelector('.battle.list')
-}
-
-// One rendered row per saved battle (date, Resume link, Forfeit button), in the order
+// One rendered card per saved battle (date, Resume link, Forfeit button), in the order
 // `Object.entries` yields them.
 export function battleRows(document) {
-  return [...document.querySelectorAll('.battle.col')]
+  return [...document.querySelectorAll('.battle-card')]
 }
 
 export function resumeLink(rowEl) {
-  return rowEl.querySelector('a.btn-outline-success')
+  return rowEl.querySelector('a.btn-primary')
 }
 
 export function forfeitButton(rowEl) {
-  return rowEl.querySelector('button.btn-outline-danger')
+  return rowEl.querySelector('button.btn-danger')
 }
 
 export function emptyStateMessage(document) {
-  return battlesContainer(document).querySelector('span')
+  return document.querySelector('.empty-state-message')
 }

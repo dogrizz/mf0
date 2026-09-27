@@ -19,9 +19,10 @@
 
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
    grid cell as <main>, without pulling it out of flow the way float does. `margin: 0` matches
-   what Bootstrap's reboot.css already zeroes out on builder.html/battles.html - needed explicitly
-   here now that battle.html (ticket 01) no longer loads Bootstrap at all, otherwise the browser's
-   default 8px body margin shows as a pale border around `.root`'s dark background. */
+   what Bootstrap's reboot.css already zeroes out on builder.html (not yet redesigned by ticket
+   02) - needed explicitly here now that battle.html/battles.html (tickets 01/03) no longer load
+   Bootstrap at all, otherwise the browser's default 8px body margin shows as a pale border around
+   `.root`'s dark background. */
 body {
   display: grid;
   margin: 0;
@@ -60,13 +61,14 @@ body > main.container {
 
 /* ---------------------------------------------------------------------------------------------
  * Tactical redesign (ticket 01: .scratch/tactical-redesign/issues/01-battle-tracker-tactical-redesign.md,
- * design language: .scratch/tactical-redesign/spec.md).
+ * ticket 03: .scratch/tactical-redesign/issues/03-battles-list-tactical-redesign.md, design
+ * language: .scratch/tactical-redesign/spec.md).
  *
  * Everything below is scoped under `.root` (the wrapper a redesigned page's Vue app mounts into)
- * or given a `tactical-*` class name, so builder.html/battles.html - not yet redesigned by
- * tickets 02/03 - keep their current Bootstrap look untouched. `.root .badge`/`.root .btn` in
- * particular must stay scoped this way since Bootstrap already defines bare `.badge`/`.btn`
- * globally on those still-Bootstrap pages.
+ * or given a `tactical-*` class name, so builder.html - not yet redesigned by ticket 02 - keeps
+ * its current Bootstrap look untouched. `.root .badge`/`.root .btn` in particular must stay
+ * scoped this way since Bootstrap already defines bare `.badge`/`.btn` globally on that
+ * still-Bootstrap page.
  * --------------------------------------------------------------------------------------------- */
 
 :root {
@@ -634,5 +636,74 @@ body > main.container {
     background: var(--tac-border);
     margin: 6px auto 0;
   }
+}
+
+/* Battles list (ticket 03: .scratch/tactical-redesign/issues/03-battles-list-tactical-redesign.md).
+ * Primary/danger button variants live here rather than being battles-list-specific, since any
+ * future page adopting the tactical redesign can reuse them for the same call-to-action /
+ * destructive-action distinction.
+ */
+
+.root .btn-primary {
+  background: var(--tac-success);
+  border-color: var(--tac-success);
+  color: #0d1310;
+}
+
+.root .btn-primary:hover {
+  background: #7fcf9b;
+  border-color: #7fcf9b;
+}
+
+.root .btn-danger {
+  background: transparent;
+  border-color: var(--tac-danger);
+  color: var(--tac-danger);
+}
+
+.root .btn-danger:hover {
+  background: rgba(224, 97, 111, 0.14);
+  border-color: var(--tac-danger);
+}
+
+.root .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--tac-text-secondary);
+  font-size: 14px;
+}
+
+.root .battle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.root .battle-card {
+  background: var(--tac-surface);
+  border: 1px solid var(--tac-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.root .battle-date {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.root .battle-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
