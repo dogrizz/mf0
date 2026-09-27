@@ -35,7 +35,7 @@ var SYSTEM_SLOT_ICONS = {
   sensor:
     '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" fill="currentColor"/><path d="M4.5 4.5a5 5 0 000 7M11.5 4.5a5 5 0 010 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
   catapult:
-    '<svg viewBox="0 0 16 16" fill="none"><path d="M2 13L9 6M9 6L13 2M9 6L11 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M3 13h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 12V2M8 2L5 5M8 2l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 }
 
 // Named per-file (not just ADD_ICON_SVG/REMOVE_ICON_SVG) because every builder component file is a
@@ -83,7 +83,7 @@ var VueBuilderSystemComponent = {
 
     return {
       ShipSystem: ShipSystem,
-      AttackType: AttackType,
+      AttackTypeLabels: ATTACK_TYPE_LABELS,
       secondSystem: secondSystem,
       changeClass: changeClass,
       changeAttackType: changeAttackType,

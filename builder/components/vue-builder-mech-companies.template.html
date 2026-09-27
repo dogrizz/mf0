@@ -1,5 +1,5 @@
 <div v-if="catapults.length > 0" class="ace-picker">
-  <span class="eyebrow">Mech company</span>
+  <span class="eyebrow">{{ mechCompanyLabel }}</span>
   <label v-if="!(fleet.aceSelected && !ship.hasAce)" class="check-toggle">
     <input type="checkbox" :checked="ship.hasAce" @click="setAce($event.target.checked)" />
     <span>Eligible for an ace</span>
@@ -14,7 +14,7 @@
       :aria-label="ace.label"
       @click="changeAceType(ace.value)"
     >
-      <span class="ace-swatch" :style="{ background: ace.color }"></span>
+      <span class="ace-swatch" :style="{ color: ace.color }" v-html="aceIconSvg"></span>
       <span>{{ ace.label }}</span>
     </button>
   </div>

@@ -90,7 +90,7 @@ describe('battle tracker page', () => {
     await redraw(dom)
     const [alphaShip] = shipElements(fleetElements(document)[0])
 
-    const attackCheckbox = systemCheckbox(alphaShip, 'attack')
+    const attackCheckbox = systemCheckbox(alphaShip, 'Point Defense')
     click(attackCheckbox)
     await redraw(dom)
 
