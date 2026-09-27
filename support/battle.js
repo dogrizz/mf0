@@ -51,7 +51,18 @@ function battleDice(ship) {
     return system.class === ShipSystem.INTERNAL && !system.disabled
   }).length
   var diceDescription = internals ? `${internals}W` : ''
-  return diceDescription + shipSystemsDice(ship)
+  // shipSystemsDice now returns colored segments (see support/common.js) rather than a flat
+  // string; battle.js's own colored-chip rendering is ticket 02's job (see
+  // .scratch/dice-notation-colors/issues/02-battle-tracker-dice-colors.md), so flatten back to a
+  // string here to keep battleDice's existing contract until that ticket lands.
+  return (
+    diceDescription +
+    shipSystemsDice(ship)
+      .map(function (segment) {
+        return segment.text
+      })
+      .join('')
+  )
 }
 
 function hasInternals(ship) {

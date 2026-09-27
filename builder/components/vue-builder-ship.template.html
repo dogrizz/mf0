@@ -9,7 +9,7 @@
       <option :value="ShipType.CAPITAL">Capital</option>
       <option :value="ShipType.FRIGATE">Frigate</option>
     </select>
-    <span class="chip">{{ diceText }}</span>
+    <span class="chip"><span v-for="(segment, i) in diceSegments" :key="i" :class="'dice-' + segment.color">{{ segment.text }}</span></span>
   </div>
   <div v-if="ship.hasOwnProperty('systems')" class="system-slot-list">
     <builder-system v-for="(system, i) in ship.systems" :key="i" :system="system" />

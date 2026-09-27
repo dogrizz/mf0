@@ -55,42 +55,59 @@ function fleetAccentColor(rosterIndex) {
   return FLEET_ACCENT_COLORS[rosterIndex % FLEET_ACCENT_COLORS.length]
 }
 
+// Letter -> color-name map for dice-notation chips (see .scratch/dice-notation-colors/spec.md).
+// The color names double as the '.dice-<color>' CSS class suffix in style.css.
+const DICE_COLORS = {
+  W: 'white',
+  G: 'green',
+  K: 'black',
+  B: 'blue',
+  Y: 'yellow',
+  R: 'red',
+}
+
+// Wraps a dice-notation piece (e.g. '1G') with the color its leading die letter maps to, for
+// rendering as a `.dice-<color>` span instead of plain text.
+function diceSegment(text, letterKey) {
+  return { text: text, color: DICE_COLORS[letterKey] }
+}
+
 // Scores the part of a ship's dice notation that's identical whether the ship is builder-shaped
 // or battle-shaped (frigate movement die, catapults, defense, sensors, attack) - shared by
 // support/builder.js's builderDice and support/battle.js's battleDice. Internal ("W") systems are
 // scored separately by each of those, since the two domains represent internals differently (see
 // CONTEXT.md's "Builder-shaped"/"Battle-shaped ship").
 function shipSystemsDice(ship) {
-  let diceDescription = ''
+  var segments = []
   if (ship.hasOwnProperty('class') && ship.class === ShipType.FRIGATE) {
-    diceDescription += '1G'
+    segments.push(diceSegment('1G', 'G'))
   }
   if (!ship.hasOwnProperty('systems')) {
-    return diceDescription
+    return segments
   }
 
   var catapults = ship.systems.filter(function (system) {
     return system.class === ShipSystem.CATAPULT && !system.disabled
   }).length
   if (catapults == 1) {
-    diceDescription += '1K'
+    segments.push(diceSegment('1K', 'K'))
   }
   if (catapults > 1) {
-    diceDescription += '3K'
+    segments.push(diceSegment('3K', 'K'))
   }
 
   var defence = ship.systems.filter(function (system) {
     return system.class === ShipSystem.DEFENSE && !system.disabled
   }).length
   if (defence) {
-    diceDescription = `${diceDescription}${defence}B`
+    segments.push(diceSegment(`${defence}B`, 'B'))
   }
 
   var sensors = ship.systems.filter(function (system) {
     return system.class === ShipSystem.SENSOR && !system.disabled
   }).length
   if (sensors) {
-    diceDescription = `${diceDescription}${sensors}Y`
+    segments.push(diceSegment(`${sensors}Y`, 'Y'))
   }
 
   var attack = ship.systems.filter(function (system) {
@@ -119,9 +136,9 @@ function shipSystemsDice(ship) {
       .reduce((a, b) => a + b, 0)
     if (val) {
       var dice = val <= 3 ? val : '2+d8'
-      diceDescription = `${diceDescription}R${att[0]}${dice}`
+      segments.push(diceSegment(`R${att[0]}${dice}`, 'R'))
     }
   })
 
-  return diceDescription
+  return segments
 }

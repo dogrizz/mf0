@@ -73,9 +73,9 @@ function countSystems(ships) {
 // than counting real systems the way support/battle.js's battleDice does.
 function builderDice(ship) {
   if (ship.destroyed) {
-    return ''
+    return []
   }
-  return '2W' + shipSystemsDice(ship)
+  return [diceSegment('2W', 'W')].concat(shipSystemsDice(ship))
 }
 
 function copy(obj) {
