@@ -10,12 +10,12 @@
     </select>
   </div>
   <div v-if="system.class === ShipSystem.ATTACK" class="system-slot-row system-slot-attack-row">
-    <select class="field-select system-slot-attack-select" :value="system.attackType" @input="changeAttackType($event.target.value)">
+    <select class="field-select" :value="system.attackType" @input="changeAttackType($event.target.value)">
       <option v-for="(label, code) in AttackTypeLabels" :key="code" :value="code">{{ label }}</option>
     </select>
     <select
       v-if="secondSystem"
-      class="field-select system-slot-attack-select"
+      class="field-select"
       :value="system.attackType2"
       @input="changeAttackType2($event.target.value)"
     >

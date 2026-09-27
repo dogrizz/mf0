@@ -37,6 +37,11 @@ function calculatePPA(players, syncShips) {
       player.ppa = player.ppa + 1
     }
   })
+  // Same PPA*(HVA+TAs) formula as support/battle.js's recalculate - the builder doesn't need
+  // determineRole's Defender/attacker assignment, just the shared total.
+  players.forEach(function (player) {
+    player.total = player.ppa * (player.hva + player.tas)
+  })
 }
 
 function countMechCompanies(ships) {

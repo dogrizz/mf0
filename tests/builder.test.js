@@ -40,13 +40,30 @@ describe('fleet builder page', () => {
 
     expect(scoreboardRows(document)).toHaveLength(1)
     expect(fleetElements(document)).toHaveLength(1)
-    expect(fleetElements(document)[0].querySelector('h3').textContent).toBe('Player')
+    expect(fleetElements(document)[0].querySelector('h2').textContent).toBe('Player')
 
     expect(readToolsState(dom)).toEqual({
-      players: [{ name: 'Player', hva: 3, tas: 5, systems: 10, ppa: 5, ships: [] }],
+      players: [{ name: 'Player', hva: 3, tas: 5, systems: 10, ppa: 5, total: 40, ships: [] }],
       track: false,
       sync: false,
     })
+  })
+
+  it('backfills total for a fleet saved before calculatePPA computed it', async () => {
+    dom.window.close()
+    dom = mountBuilderPage({
+      seedToolsState: {
+        players: [{ name: 'Player', hva: 3, tas: 5, systems: 10, ppa: 5, ships: [] }],
+        track: false,
+        sync: false,
+      },
+    })
+    const { document } = dom.window
+
+    expect(scoreboardRows(document)).toHaveLength(1)
+    const readoutValues = scoreboardRows(document)[0].querySelectorAll('.stat-readout-value')
+    expect(readoutValues[1].textContent).toBe(String(5 * (3 + 5)))
+    expect(readToolsState(dom).players[0].total).toBe(40)
   })
 
   it('adds a ship to a fleet with an empty frigate loadout', async () => {
@@ -163,7 +180,7 @@ describe('fleet builder page', () => {
     expect(state.players[1]).toMatchObject({ ppa: 6, tas: 0, systems: 0 })
     // The scoreboard's live PPA/total display for fleet A's row, not just localStorage.
     const [rowA] = scoreboardRows(document)
-    const displaySpans = rowA.querySelectorAll('.stat-readout .v')
+    const displaySpans = rowA.querySelectorAll('.stat-readout-value')
     expect(displaySpans[0].textContent).toBe('4')
     expect(displaySpans[1].textContent).toBe(String(4 * (3 + 1)))
 

@@ -14,10 +14,13 @@ const AttackType = {
   SUPPORT: 's',
 }
 
-// Presentation constant (see FLEET_ACCENT_COLORS above for why this lives in common.js rather
-// than a page-specific file): full names for the abbreviated AttackType codes, used anywhere a
-// system's attack type is shown to a player rather than just its class (e.g. the battle tracker's
-// per-system labels - see battle/components/vue-battle-ship.js's systemText).
+// Presentation constant, not game domain data - confirmed during the redesign code-review
+// cleanup (.scratch/tactical-redesign/issues/04-redesign-code-review-cleanup.md) as belonging
+// here rather than a page-specific file, same as FLEET_ACCENT_COLORS below: both are label/color
+// maps shared by more than one page (builder's system-slot dropdown and the battle tracker's
+// per-system labels - see battle/components/vue-battle-ship.js's systemText), not logic, so
+// they're harmless in a domain file and don't warrant their own shared-constants module for two
+// entries.
 const ATTACK_TYPE_LABELS = {
   [AttackType.POINT_DEFENSE]: 'Point Defense',
   [AttackType.ASSAULT]: 'Assault',

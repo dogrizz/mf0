@@ -23,12 +23,12 @@
   <span v-if="state.sync" class="field-note">Synced from ship data</span>
   <div class="stat-readout-row">
     <div class="stat-readout">
-      <span class="v mono">{{ player.ppa }}</span>
-      <span class="k">PPA</span>
+      <span class="stat-readout-value mono">{{ player.ppa }}</span>
+      <span class="stat-readout-label">PPA</span>
     </div>
     <div class="stat-readout">
-      <span class="v mono">{{ player.ppa * (player.hva + player.tas) }}</span>
-      <span class="k">Total</span>
+      <span class="stat-readout-value mono">{{ player.total }}</span>
+      <span class="stat-readout-label">Total</span>
     </div>
   </div>
 </div>
