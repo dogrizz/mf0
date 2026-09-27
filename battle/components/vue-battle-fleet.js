@@ -14,6 +14,25 @@ var VueBattleFleetComponent = {
   props: {
     fleet: { type: Object, required: true },
     battle: { type: Object, required: true },
+    index: { type: Number, default: 0 },
+  },
+  setup: function (props) {
+    // FLEET_COLORS is defined once in vue-battle-player.js (loaded earlier in battle.html's script
+    // order) so a fleet's scoreboard card and its ships/companies section agree on its dot color.
+    var fleetColor = Vue.computed(function () {
+      return FLEET_COLORS[props.index % FLEET_COLORS.length]
+    })
+
+    var meta = Vue.computed(function () {
+      var ships = props.fleet.ships.length
+      var companies = props.fleet.companies.length
+      return ships + (ships === 1 ? ' ship' : ' ships') + ' · ' + companies + (companies === 1 ? ' company' : ' companies')
+    })
+
+    return {
+      fleetColor: fleetColor,
+      meta: meta,
+    }
   },
   template: vueBattleFleetTemplate,
 }

@@ -10,6 +10,22 @@ var vueBattleShipTemplate = (function () {
   return xhr.responseText
 })()
 
+// One inline stroke SVG per ShipSystem class (mirrored for MechSystem in vue-battle-company.js) -
+// see .scratch/tactical-redesign/spec.md. Kept as plain markup strings (rather than a shared file)
+// since this is presentation-only and each component only needs its own domain's icon set.
+var SHIP_SYSTEM_ICONS = {
+  internal:
+    '<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/></svg>',
+  attack:
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M2 14L14 2M14 2H8M14 2V8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  defense:
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L14 4V8C14 11.5 11.5 13.8 8 14.5C4.5 13.8 2 11.5 2 8V4L8 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+  sensor:
+    '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" fill="currentColor"/><path d="M4.5 4.5a5 5 0 000 7M11.5 4.5a5 5 0 010 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  catapult:
+    '<svg viewBox="0 0 16 16" fill="none"><path d="M2 13L9 6M9 6L13 2M9 6L11 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+}
+
 var VueBattleShipComponent = {
   props: {
     ship: { type: Object, required: true },
@@ -28,6 +44,24 @@ var VueBattleShipComponent = {
     var isCaptured = Vue.computed(function () {
       return props.ship.owner !== props.fleet.id
     })
+
+    var capturedFromName = Vue.computed(function () {
+      var owner = props.battle.roster.find(function (p) {
+        return p.id === props.ship.owner
+      })
+      return owner ? owner.name : 'unknown fleet'
+    })
+
+    function systemIcon(systemClass) {
+      return SHIP_SYSTEM_ICONS[systemClass] || ''
+    }
+
+    // FLEET_COLORS is defined once in vue-battle-player.js (loaded earlier in battle.html's script
+    // order) - reused here so the transfer dialog's target list agrees with the scoreboard/fleet
+    // header's dot color for the same fleet.
+    function fleetColorFor(targetFleet) {
+      return FLEET_COLORS[props.battle.roster.indexOf(targetFleet) % FLEET_COLORS.length]
+    }
 
     function systemText(system) {
       if (system.class !== ShipSystem.ATTACK) {
@@ -74,6 +108,9 @@ var VueBattleShipComponent = {
     return {
       diceText: diceText,
       isCaptured: isCaptured,
+      capturedFromName: capturedFromName,
+      systemIcon: systemIcon,
+      fleetColorFor: fleetColorFor,
       systemText: systemText,
       systemStateChange: systemStateChange,
       otherFleets: otherFleets,

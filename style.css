@@ -1,11 +1,39 @@
 :root {
+  /* Legacy tokens - still referenced by .accordion-button below, used only by the (untouched)
+     fleet builder page's Bootstrap accordion. Kept as-is until that page gets its own tactical
+     redesign ticket. */
   --mf0-dark-bg: rgb(26, 29, 32);
   --mf0-light-text: rgb(248, 249, 250);
   --mf0-captured-text: rgb(255, 193, 7);
+
+  /* Tactical redesign tokens (see .scratch/tactical-redesign/spec.md). Introduced by battle.html's
+     ticket 01 but scoped/named to be reused unchanged by the fleet-builder and battles-list
+     tickets, not battle-page-private. */
+  --mf0-bg: #12151a;
+  --mf0-surface: #1b2027;
+  --mf0-surface-2: #232a33;
+  --mf0-border: #313a45;
+  --mf0-border-hover: #4a5563;
+  --mf0-text: #f2f4f6;
+  --mf0-text-muted: #9aa7b3;
+  --mf0-text-faint: #6b7683;
+  --mf0-danger: #e0616f; /* destroyed */
+  --mf0-warn: #e0b34f; /* captured / out-of-fuel */
+  --mf0-ok: #6fbf8b; /* fueled */
+  --mf0-fleet-a: #f2a154; /* amber */
+  --mf0-fleet-b: #4fb0e0; /* cyan */
+  --mf0-fleet-c: #9c8cf0; /* violet */
 }
 
 * {
-  font-family: 'Sofia Sans', sans-serif;
+  font-family: 'IBM Plex Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--mf0-bg);
+  color: var(--mf0-text);
 }
 
 .accordion-button:not(.collapsed) {
@@ -13,42 +41,10 @@
   background-color: var(--mf0-dark-bg);
 }
 
-.dead {
-  background-color: var(--mf0-dark-bg);
-}
-
-.captured {
-  color: var(--mf0-captured-text)
-}
-
-.popup {
-  margin: 70px auto;
-  padding: 20px;
-  width: 30%;
-  position: relative;
-  transition: all 5s ease-in-out;
-  background-color: var(--mf0-dark-bg);
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  transition: opacity 500ms;
-  visibility: hidden;
-  opacity: 1;
-}
-
-.overlay-show {
-  opacity: 1;
-  visibility: visible;
-}
-
 /* Replaces `float: right` on the nav link: overlays it in the top-right corner of the same
-   grid cell as <main>, without pulling it out of flow the way float does. */
+   grid cell as <main>, without pulling it out of flow the way float does. Still used by the fleet
+   builder and battles-list pages (unchanged this round); battle.html's own topbar (below) lays the
+   nav link out in normal flow instead, which simply makes these grid properties inert there. */
 body {
   display: grid;
 }
@@ -63,6 +59,16 @@ body > main.container {
   align-self: start;
   margin-right: 15px;
   text-decoration: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mf0-text-muted);
+}
+
+.page-nav-link:hover {
+  color: var(--mf0-text);
 }
 
 /* Replaces `float-end` on the footer: right-aligns the two footer lines as a flex column
@@ -71,10 +77,548 @@ body > main.container {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: small;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--mf0-text-faint);
+}
+
+.app-footer a {
+  color: var(--mf0-text-muted);
 }
 
 .app-footer-note {
-  font-size: smaller;
+  font-size: 11px;
 }
 
+/* ---------------------------------------------------------------------------------------------
+   Tactical readout design system (battle.html ticket 01) - shared building blocks reused verbatim
+   by the fleet-builder/battles-list tickets. See .scratch/tactical-redesign/spec.md and the mockup
+   at https://claude.ai/artifact/UKBzrUQGGKZQPuFZnXPimd for the reference markup these match.
+   --------------------------------------------------------------------------------------------- */
+
+.eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mf0-text-faint);
+}
+
+.h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--mf0-text);
+  font-size: 28px;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.btn {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--mf0-border);
+  background: var(--mf0-surface-2);
+  color: var(--mf0-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+}
+
+.btn:hover {
+  border-color: var(--mf0-border-hover);
+  background: #2a323d;
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+.chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--mf0-surface-2);
+  border: 1px solid var(--mf0-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.badge-destroyed {
+  background: rgba(224, 97, 111, 0.16);
+  color: var(--mf0-danger);
+}
+
+.badge-captured {
+  background: rgba(224, 179, 79, 0.16);
+  color: var(--mf0-warn);
+}
+
+.badge-fuel-ok {
+  background: rgba(111, 191, 139, 0.16);
+  color: var(--mf0-ok);
+}
+
+.badge-fuel-out {
+  background: rgba(224, 179, 79, 0.16);
+  color: var(--mf0-warn);
+}
+
+.badge-role-defender {
+  background: rgba(154, 167, 179, 0.16);
+  color: var(--mf0-text-muted);
+}
+
+.badge-role-primary {
+  background: rgba(242, 161, 84, 0.18);
+  color: var(--mf0-fleet-a);
+}
+
+.badge-role-secondary {
+  background: rgba(79, 176, 224, 0.18);
+  color: var(--mf0-fleet-b);
+}
+
+.fleet-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+  display: inline-block;
+}
+
+/* ---- Scoreboard (stat cards) ---- */
+
+.stat-card {
+  background: var(--mf0-surface);
+  border: 1px solid var(--mf0-border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 220px;
+}
+
+.stat-card-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mf0-text-faint);
+}
+
+.field input {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mf0-text);
+  background: var(--mf0-surface-2);
+  border: 1px solid var(--mf0-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: 100%;
+  min-height: 40px;
+}
+
+.field input:disabled {
+  opacity: 0.6;
+}
+
+.field input:focus {
+  outline: 2px solid var(--mf0-fleet-b);
+  outline-offset: 1px;
+}
+
+.stat-readout-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stat-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-readout .v {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.stat-readout .k {
+  font-size: 10px;
+  color: var(--mf0-text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ---- Page shell (battle.html-specific) ---- */
+
+.tactical-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.topbar-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Nested in the flex topbar rather than the grid-overlay layout the other two pages use (see
+   `.page-nav-link` above) - the grid-only properties are simply inert here. */
+.topbar .page-nav-link {
+  margin-right: 0;
+}
+
+.empty-state {
+  color: var(--mf0-text-muted);
+}
+
+.section-label {
+  margin-bottom: -8px;
+}
+
+.fleets {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.fleet-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.fleet-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.fleet-header .meta {
+  font-size: 12px;
+  color: var(--mf0-text-faint);
+}
+
+.fleet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- Ship/company cards ---- */
+
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.asset-card {
+  background: var(--mf0-surface);
+  border: 1px solid var(--mf0-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.asset-card.is-dead {
+  background: #171b20;
+  border-color: #262d36;
+}
+
+.asset-card.is-dead .asset-name {
+  color: var(--mf0-text-faint);
+  text-decoration: line-through;
+}
+
+.company.asset-card .asset-name {
+  text-transform: capitalize;
+}
+
+.asset-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.asset-name.captured,
+.captured {
+  color: var(--mf0-warn);
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--mf0-border);
+  background: var(--mf0-surface-2);
+  color: var(--mf0-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+}
+
+.icon-btn:hover {
+  border-color: var(--mf0-border-hover);
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.asset-meta {
+  font-size: 12px;
+  color: var(--mf0-text-faint);
+}
+
+.system-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.system-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.system-row:hover {
+  background: var(--mf0-surface-2);
+}
+
+.system-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  display: inline-flex;
+  color: var(--mf0-text-muted);
+}
+
+.system-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.system-label {
+  flex: 1;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.system-row.is-disabled .system-label {
+  color: var(--mf0-text-faint);
+  text-decoration: line-through;
+}
+
+.system-row.is-disabled .system-icon {
+  color: var(--mf0-text-faint);
+}
+
+.system-check {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--mf0-danger);
+}
+
+/* ---- Transfer dialog: centered on wide viewports, a bottom sheet below the mobile breakpoint ---- */
+
+.transfer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 13, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 20;
+}
+
+.transfer-dialog {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--mf0-surface);
+  border: 1px solid var(--mf0-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.transfer-dialog-handle {
+  display: none;
+}
+
+.transfer-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.transfer-dialog-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.transfer-dialog-sub {
+  font-size: 13px;
+  color: var(--mf0-text-muted);
+}
+
+.transfer-target {
+  justify-content: flex-start;
+  padding: 14px 16px;
+  min-height: 52px;
+  width: 100%;
+}
+
+.transfer-cancel {
+  justify-content: center;
+  padding: 12px 16px;
+  min-height: 48px;
+  border-style: dashed;
+}
+
+/* Mobile/tablet breakpoint shared by the scoreboard and the transfer dialog. */
+@media (max-width: 700px) {
+  .scoreboard {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 4px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .scoreboard .stat-card {
+    scroll-snap-align: start;
+    min-width: 260px;
+    flex: none;
+  }
+
+  .transfer-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .transfer-dialog {
+    max-width: none;
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+    padding: 10px 20px 28px;
+  }
+
+  .transfer-dialog-handle {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--mf0-border);
+    margin: 6px auto 0;
+  }
+}
