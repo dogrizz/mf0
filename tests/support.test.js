@@ -109,7 +109,7 @@ describe('builderDice', () => {
       class: 'capital',
       systems: [{ class: 'defense' }, { class: 'sensor' }, { class: 'attack', attackType: 'a' }],
     })
-    expect(builderDice(testShip)).toEqual([seg('2W', 'white'), seg('1B', 'blue'), seg('1Y', 'yellow'), seg('Ra2', 'red')])
+    expect(builderDice(testShip)).toEqual([seg('2W', 'white'), seg('1B', 'blue'), seg('1Y', 'yellow'), seg('2Ra', 'red')])
   })
 })
 
@@ -171,7 +171,7 @@ describe('battleDice', () => {
     expect(battleDice(ship({ class: 'frigate', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] }))).toEqual([
       seg('1W', 'white'),
       seg('1G', 'green'),
-      seg('Ra2', 'red'),
+      seg('2Ra', 'red'),
     ])
   })
 })
@@ -179,12 +179,12 @@ describe('battleDice', () => {
 describe('battleDice — attack notation', () => {
   it('gives an un-split attack system its full weight of 2', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }] })
-    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra2', 'red')])
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('2Ra', 'red')])
   })
 
   it('splits a dual-type attack system into 1 point per attack type', () => {
     const testShip = ship({ class: 'capital', systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a', attackType2: 's' }] })
-    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra1', 'red'), seg('Rs1', 'red')])
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('1Ra', 'red'), seg('1Rs', 'red')])
   })
 
   it('excludes disabled attack systems from the notation', () => {
@@ -197,7 +197,7 @@ describe('battleDice — attack notation', () => {
       class: 'capital',
       systems: [{ class: 'internal' }, { class: 'attack', attackType: 'a' }, { class: 'attack', attackType: 'a' }],
     })
-    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('Ra2+d8', 'red')])
+    expect(battleDice(testShip)).toEqual([seg('1W', 'white'), seg('2+d8Ra', 'red')])
   })
 })
 

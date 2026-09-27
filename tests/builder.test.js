@@ -98,7 +98,7 @@ describe('fleet builder page', () => {
     setValue(systemSelects(ship)[0], 'attack')
     await redraw(dom)
 
-    expect(diceText(ship)).toBe('2W1GRp2')
+    expect(diceText(ship)).toBe('2W1G2Rp')
     expect(readToolsState(dom).players[0].ships[0].systems[0]).toEqual({ class: 'attack', attackType: 'p' })
   })
 

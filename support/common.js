@@ -136,7 +136,7 @@ function shipSystemsDice(ship) {
       .reduce((a, b) => a + b, 0)
     if (val) {
       var dice = val <= 3 ? val : '2+d8'
-      segments.push(diceSegment(`R${att[0]}${dice}`, 'R'))
+      segments.push(diceSegment(`${dice}R${att[0]}`, 'R'))
     }
   })
 
